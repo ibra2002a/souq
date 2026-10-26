@@ -1,6 +1,6 @@
 name: Deploy to Firebase
 
-# يرفع كود الخادم وقواعد الحماية إلى Firebase تلقائيًا عند كل تحديث.
+# يرفع كود الخادم وقواعد الحماية إلى Firebase تلقائيًا عند كل تحديث (يعمل بعد إضافة FIREBASE_SA).
 on:
   push:
     branches: [main]
