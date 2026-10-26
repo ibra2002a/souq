@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>إمبراطورية السوق</title>
+<meta name="description" content="لعبة سوق رقمي: ابنِ سلسلة محلات، تاجر في البورصة، ونافس التجار كل أسبوع.">
+<meta name="theme-color" content="#0f1b1d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one-column merchant's ledger. Sticky cash header, market news, then three tabs: shops, the shared exchange, the weekly competition. One deliberate dark "night souq" look. */
+:root{
+  --night:#0f1b1d;
+  --stall:#172a2c;
+  --stall-2:#1f3739;
+  --line:#2c4a4b;
+  --brass:#e0a93b;
+  --brass-dim:#8a6a2b;
+  --ink:#eef1ea;
+  --muted:#93aaa6;
+  --good:#5fcf8f;
+  --bad:#ef6f5e;
+  --display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{background:var(--night);color:var(--ink)}
+body{margin:0;user-select:none;-webkit-user-select:none;font-family:var(--body);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--night)}
+.app{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}
+button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--good)} .down{color:var(--bad)}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--night);padding-block:8px 10px;display:flex;flex-direction:column;gap:3px;border-bottom:1px solid var(--line)}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.brand h1{font-family:var(--display);font-size:18px;margin:0;color:var(--muted);font-weight:500}
+.brand h1 b{color:var(--brass);font-weight:700}
+.icon-btn{font-size:13px;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:8px}
+.cash{font-family:var(--display);font-size:clamp(30px,9vw,42px);font-weight:700;line-height:1.15;color:var(--brass)}
+.cash small{font-size:.45em;color:var(--muted);font-weight:500;margin-inline-start:6px}
+.rate{font-size:13px;color:var(--muted);display:flex;gap:4px 14px;flex-wrap:wrap}
+.rate b{color:var(--ink);font-weight:600}
+.rate b.g{color:var(--good)}
+.acct{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.acct .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.acct.on .dot{background:var(--good)}
+.acct.on b{color:var(--ink);font-weight:600}
+
+.event{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:12px;align-items:center;background:var(--stall)}
+.event.on{border-color:var(--brass-dim);background:linear-gradient(90deg,rgba(224,169,59,.10),transparent 70%),var(--stall)}
+.event .tag{font-size:11px;color:var(--night);background:var(--muted);border-radius:6px;padding:2px 7px;white-space:nowrap;font-weight:700}
+.event.on .tag{background:var(--brass)}
+.event .txt{flex:1;min-width:0;font-size:13.5px}
+.event .txt strong{display:block;font-size:14.5px}
+.event .t{font-size:13px;color:var(--brass);white-space:nowrap}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--stall);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.tabs button{padding:9px 4px;border-radius:9px;font-weight:600;color:var(--muted);font-size:14px}
+.tabs button[aria-selected="true"]{background:var(--stall-2);color:var(--brass);box-shadow:inset 0 -2px 0 var(--brass)}
+.pane{display:flex;flex-direction:column;gap:12px}
+
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.bar .lbl{font-size:12px;color:var(--muted);letter-spacing:.03em}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{padding:6px 12px;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--brass);color:var(--night);font-weight:700}
+
+.list{display:flex;flex-direction:column;gap:10px}
+.biz{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:62px 1fr;gap:10px 12px;align-items:center}
+.biz.locked{opacity:.55}
+.run{width:62px;height:62px;border-radius:50%;background:var(--stall-2);border:2px solid var(--line);display:grid;place-items:center;position:relative;grid-row:span 2}
+.run.can{border-color:var(--brass);box-shadow:0 0 0 4px rgba(224,169,59,.12);animation:pulse 1.6s ease-in-out infinite}
+.run svg{width:30px;height:30px}
+.run .cnt{position:absolute;bottom:-6px;inset-inline-start:50%;transform:translateX(50%);background:var(--night);border:1px solid var(--line);border-radius:999px;font-size:11px;padding:0 7px;line-height:18px;white-space:nowrap}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(224,169,59,0)}}
+.info{min-width:0;display:flex;flex-direction:column;gap:5px}
+.row1{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.name{font-weight:700;font-size:15.5px}
+.mgr-chip{font-size:11px;color:var(--good);border:1px solid rgba(95,207,143,.4);border-radius:999px;padding:0 7px;white-space:nowrap}
+.mult-chip{font-size:11px;color:var(--brass);white-space:nowrap}
+.prog{height:22px;border-radius:7px;background:var(--night);border:1px solid var(--line);overflow:hidden;position:relative}
+.prog i{position:absolute;inset-block:0;inset-inline-start:0;width:0;background:linear-gradient(90deg,var(--brass),#f1c56a);opacity:.9}
+.prog i.fast{width:100%!important;background:repeating-linear-gradient(-45deg,var(--brass) 0 8px,#f1c56a 8px 16px);background-size:23px 23px;animation:slide .6s linear infinite}
+@keyframes slide{to{background-position:23px 0}}
+.prog span{position:relative;display:flex;justify-content:space-between;padding-inline:8px;font-size:12.5px;line-height:20px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.acts{grid-column:1/-1;display:flex;gap:8px}
+.buy,.hire,.sell{flex:1;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.buy{background:var(--brass);color:var(--night);font-weight:700}
+.buy small,.hire small,.sell small{font-size:11.5px;font-weight:500}
+.hire,.sell{border:1px solid var(--line);color:var(--ink);font-weight:600}
+.buy:disabled{background:var(--stall-2);color:var(--muted)}
+.hire:disabled,.sell:disabled{color:var(--muted)}
+.next{font-size:11.5px;color:var(--muted)}
+
+/* Exchange */
+.note{font-size:12.5px;color:var(--muted);margin:0}
+.port{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.port div{background:var(--stall);padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.port span{font-size:11.5px;color:var(--muted)}
+.port b{font-size:14.5px;overflow-wrap:anywhere}
+.asset{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.a-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.a-name{font-weight:700;font-size:15.5px}
+.a-unit{font-size:12px;color:var(--muted)}
+.a-price{text-align:start;display:flex;flex-direction:column;align-items:flex-end}
+.a-price b{font-size:16px}
+.a-price span{font-size:12px;font-weight:600}
+.spark{width:100%;height:46px;display:block}
+.hold{font-size:12.5px;color:var(--muted);display:flex;gap:4px 12px;flex-wrap:wrap}
+.hold b{color:var(--ink);font-weight:600}
+
+/* Competition */
+.season{background:linear-gradient(160deg,rgba(224,169,59,.14),transparent 60%),var(--stall);border:1px solid var(--brass-dim);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.season h2{font-family:var(--display);margin:0;font-size:20px;color:var(--brass)}
+.season .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.season .grid div{display:flex;flex-direction:column;min-width:0}
+.season .grid span{font-size:11.5px;color:var(--muted)}
+.season .grid b{font-size:15px;overflow-wrap:anywhere}
+.champ{font-size:13px;color:var(--muted)}
+.champ b{color:var(--brass)}
+.board{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.board ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.board li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.board li:last-child{border-bottom:0}
+.board li .r{color:var(--muted);font-weight:700;text-align:center}
+.board li:first-child .r{color:var(--brass)}
+.board li .n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board li.me .n{color:var(--brass);font-weight:700}
+.board li .v{font-size:13px}
+.board li.empty{display:block;color:var(--muted);font-size:13px;border:0}
+.rules{font-size:12.5px;color:var(--muted);margin:0;padding-inline-start:18px;display:flex;flex-direction:column;gap:3px}
+
+.toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20;padding-inline:16px}
+.toast div{background:var(--stall-2);border:1px solid var(--brass-dim);padding:10px 16px;border-radius:12px;font-size:14px;max-width:420px;text-align:center;transition:opacity .3s,transform .3s}
+.toast div.hide{opacity:0;transform:translateY(10px)}
+.modal{position:fixed;inset:0;background:rgba(5,12,13,.7);display:grid;place-items:center;z-index:30;padding:20px}
+.modal .box{background:var(--stall);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center}
+.modal h2{font-family:var(--display);margin:0;font-size:22px;color:var(--brass)}
+.modal p{margin:0;color:var(--muted)}
+.modal .big{font-family:var(--display);font-size:28px}
+.modal .btns{display:flex;gap:8px}
+.modal .btns button{flex:1;padding:10px;border-radius:10px;background:var(--brass);color:var(--night);font-weight:700}
+.modal .btns button.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.foot{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-direction:column;gap:4px}
+.acct-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.auth-btn{font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--brass);color:var(--night);white-space:nowrap}
+.auth-btn.out{background:none;border:1px solid var(--line);color:var(--muted);font-weight:500}
+.g-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff!important;color:#1f1f1f!important;border-radius:10px;padding:11px;font-weight:600}
+.g-btn svg{width:20px;height:20px}
+.modal .stack{display:flex;flex-direction:column;gap:8px}
+.modal .stack button{padding:10px;border-radius:10px;font-weight:700}
+.modal .ghost2{border:1px solid var(--line);color:var(--ink)}
+.modal .danger{border:1px solid rgba(239,111,94,.5);color:var(--bad);font-weight:600}
+.modal .small{font-size:12px}
+.modal a{color:var(--brass)}
+@media (prefers-reduced-motion:reduce){.run.can,.prog i.fast{animation:none}}
+</style>
+</head>
+<body>
+<div class="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand">
+      <h1>إمبراطورية <b>السوق</b></h1>
+      <button class="icon-btn" id="statsBtn">السجل</button>
+    </div>
+    <div class="cash num" id="cash">٠<small>دينار</small></div>
+    <div class="rate"><span>الدخل <b class="g num" id="rate">٠</b> /ثانية</span><span>صافي الثروة <b class="num" id="worth">٠</b></span></div>
+    <div class="acct-row"><div class="acct" id="acct"><span class="dot"></span><span id="acctTxt">جارٍ التحقق من الحساب…</span></div><button class="auth-btn" id="authBtn" hidden>دخول بـ Google</button></div>
+  </header>
+
+  <section class="event" id="event" aria-live="polite">
+    <span class="tag" id="evTag">أخبار السوق</span>
+    <div class="txt" id="evTxt"><strong>السوق هادئ اليوم</strong>اضغط على الدائرة لتبدأ بيع الشاي.</div>
+    <span class="t num" id="evT"></span>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="t-shop" aria-selected="true" data-p="shop">محلاتي</button>
+    <button role="tab" id="t-ex" aria-selected="false" data-p="ex">البورصة</button>
+    <button role="tab" id="t-comp" aria-selected="false" data-p="comp">المنافسة</button>
+  </nav>
+
+  <section class="pane" id="p-shop" role="tabpanel">
+    <div class="bar">
+      <span class="lbl">كمية الشراء</span>
+      <div class="seg" id="segShop" role="group" aria-label="كمية الشراء">
+        <button data-q="1" aria-pressed="true">١×</button>
+        <button data-q="10" aria-pressed="false">١٠×</button>
+        <button data-q="max" aria-pressed="false">الأقصى</button>
+      </div>
+    </div>
+    <main class="list" id="list"></main>
+  </section>
+
+  <section class="pane" id="p-ex" role="tabpanel" hidden>
+    <p class="note">بورصة السوق الرقمي: الأسعار موحّدة لكل اللاعبين في نفس اللحظة وتتحدث كل ١٠ ثوانٍ. اشترِ رخيصًا وبِع غاليًا. عمولة الوسيط ٠٫٥٪ على كل صفقة.</p>
+    <div class="port">
+      <div><span>قيمة المحفظة</span><b class="num" id="pVal">٠</b></div>
+      <div><span>ربح غير محقق</span><b class="num" id="pUn">٠</b></div>
+      <div><span>ربح محقق</span><b class="num" id="pRe">٠</b></div>
+    </div>
+    <div class="bar">
+      <span class="lbl">كمية الصفقة</span>
+      <div class="seg" id="segEx" role="group" aria-label="كمية الصفقة">
+        <button data-q="1" aria-pressed="true">١</button>
+        <button data-q="10" aria-pressed="false">١٠</button>
+        <button data-q="100" aria-pressed="false">١٠٠</button>
+        <button data-q="max" aria-pressed="false">الأقصى</button>
+      </div>
+    </div>
+    <div class="list" id="assets"></div>
+  </section>
+
+  <section class="pane" id="p-comp" role="tabpanel" hidden>
+    <div class="season">
+      <h2 id="sTitle">موسم الأسبوع</h2>
+      <div class="grid">
+        <div><span>ينتهي بعد</span><b class="num" id="sLeft">—</b></div>
+        <div><span>نقاطك</span><b class="num" id="sScore">٠</b></div>
+        <div><span>ترتيبك</span><b class="num" id="sRank">—</b></div>
+      </div>
+      <div class="champ" id="champ">بطل الموسم يحمل لقب <b>شهبندر التجار</b> ويظهر اسمه هنا طوال الأسبوع التالي.</div>
+    </div>
+    <div class="bar">
+      <span class="lbl">لوحة الصدارة</span>
+      <div class="seg" id="segBoard" role="group" aria-label="لوحة الصدارة">
+        <button data-q="season" aria-pressed="true">هذا الموسم</button>
+        <button data-q="all" aria-pressed="false">كل الأوقات</button>
+      </div>
+    </div>
+    <section class="board"><ol id="board"><li class="empty">لوحة الصدارة تظهر عند تسجيل الدخول بحسابك.</li></ol></section>
+    <ul class="rules">
+      <li>يبدأ كل موسم يوم الإثنين منتصف الليل بتوقيت بغداد ويستمر أسبوعًا.</li>
+      <li>نقاطك = ما زاد من صافي ثروتك منذ بداية الموسم: النقد والمحلات والبورصة.</li>
+      <li>الخسارة في البورصة تُنقص نقاطك، فتاجر بحذر.</li>
+    </ul>
+  </section>
+
+  <div class="foot">
+    <span>يُحفظ تقدمك في حسابك ويتابع معك على أي جهاز. المديرون يواصلون العمل أثناء غيابك حتى ٣ ساعات.</span>
+    <span>كل الأموال افتراضية داخل اللعبة ولا تُستبدل بمال حقيقي.</span>
+    <span><a href="privacy.html" style="color:var(--muted)">سياسة الخصوصية</a></span>
+  </div>
+</div>
+
+<div class="toast"><div id="toast" class="hide"></div></div>
+<div class="modal" id="modal" hidden><div class="box" id="mbox"></div></div>
+
+<script>
+(function(){
+const ICONS={
+ tea:'<path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z M16 10h2a2 2 0 0 1 0 4h-2 M8 3c0 1.5 1.5 1.5 1.5 3 M12 3c0 1.5 1.5 1.5 1.5 3"/>',
+ bread:'<path d="M3 13c0-4 4-7 9-7s9 3 9 7v4H3z M8 10l-1 3 M12 9v4 M16 10l1 3"/>',
+ falafel:'<circle cx="8" cy="14" r="3"/><circle cx="15" cy="14" r="3"/><circle cx="11.5" cy="8.5" r="3"/>',
+ cloth:'<path d="M8 4l-5 3 2 4 2-1v10h10V10l2 1 2-4-5-3a4 4 0 0 1-8 0z"/>',
+ phone:'<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+ fish:'<path d="M3 12c3-4 8-5 12-3l5-3v12l-5-3c-4 2-9 1-12-3z"/><circle cx="8" cy="11" r=".8"/>',
+ mall:'<path d="M3 21V9l9-5 9 5v12z M9 21v-6h6v6 M7 11h2 M15 11h2"/>',
+ ship:'<path d="M3 16l2 4h14l2-4z M6 16V9h12v7 M9 9V5h6v4"/>',
+ oil:'<path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/>'
+};
+const DEF=[
+ {id:'tea',    name:'كشك شاي',          cost:4e3,   rev:1.2e3, t:1.2, mgr:6e4,   tags:['food']},
+ {id:'bread',  name:'فرن صمون',         cost:6e4,   rev:4.2e4, t:3,   mgr:1e6,   tags:['power']},
+ {id:'falafel',name:'محل فلافل',        cost:7.2e5, rev:3.6e5, t:6,   mgr:9e6,   tags:['food']},
+ {id:'cloth',  name:'بسطة ملابس',       cost:8.6e6, rev:2.8e6, t:12,  mgr:7e7,   tags:['retail']},
+ {id:'phone',  name:'محل موبايلات',     cost:1.03e8,rev:3.3e7, t:24,  mgr:7e8,   tags:['power','dollar']},
+ {id:'fish',   name:'مطعم مسگوف',       cost:1.24e9,rev:4e8,   t:48,  mgr:8e9,   tags:['food']},
+ {id:'mall',   name:'مول تجاري',        cost:1.5e10,rev:4.8e9, t:96,  mgr:9e10,  tags:['retail','power']},
+ {id:'ship',   name:'شركة شحن وتخليص',  cost:1.8e11,rev:5.8e10,t:192, mgr:1.1e12,tags:['dollar']},
+ {id:'oil',    name:'مصفى نفط',         cost:2.6e12,rev:9e11,  t:384, mgr:2e13,  tags:['dollar','power']}
+];
+const GROW=1.09, MILES=[10,25,50,100,200,300,400,500];
+const EVENTS=[
+ {title:'شهر رمضان',desc:'زحمة على الأكل بعد الإفطار. محلات الطعام ×٣',tag:'food',m:3,mk:{wheat:.06}},
+ {title:'عيد الأضحى',desc:'الكل يشتري ملابس العيد. محلات التجزئة ×٣',tag:'retail',m:3},
+ {title:'انقطاع الكهرباء الوطنية',desc:'المولدات لا تكفي. المحلات المعتمدة على الكهرباء ×٠٫٥',tag:'power',m:.5,mk:{oil:.05}},
+ {title:'صعود سعر الدولار',desc:'الاستيراد يربح أكثر. أعمال الدولار ×٢',tag:'dollar',m:2,mk:{usd:.04,gold:.03}},
+ {title:'جمعة شارع المتنبي',desc:'الزوار يملؤون المقاهي. كشك الشاي ×٥',id:'tea',m:5},
+ {title:'عاصفة ترابية',desc:'الشوارع فارغة. كل الأعمال ×٠٫٦',all:true,m:.6,mk:{cement:-.05}},
+ {title:'موسم الأربعينية',desc:'ملايين الزوار. كل الأعمال ×٢',all:true,m:2},
+ {title:'صفقة حكومية',desc:'عقد توريد كبير. شركة الشحن ×٤',id:'ship',m:4,mk:{cement:.08}}
+];
+/* Exchange assets: price is a deterministic function of the 10-second step, so every player sees the same price at the same moment. */
+const ASSETS=[
+ {id:'usd',   name:'الدولار الأمريكي',      unit:'لكل ١٠٠ دولار', base:1.5e5,  vol:.035,seed:11},
+ {id:'gold',  name:'ذهب عيار ٢١',           unit:'لكل مثقال',     base:5.4e5,  vol:.07, seed:23},
+ {id:'wheat', name:'حنطة',                 unit:'لكل طن',        base:7.2e5,  vol:.11, seed:37},
+ {id:'oil',   name:'نفط خام',              unit:'لكل برميل',     base:1.0e5,  vol:.16, seed:41},
+ {id:'cement',name:'إسمنت',                unit:'لكل طن',        base:1.4e5,  vol:.09, seed:53},
+ {id:'tel',   name:'سهم دجلة للاتصالات',    unit:'لكل سهم',       base:2.5e4,  vol:.24, seed:67}
+];
+const FEE=.005, STEP=10;
+
+let S, qty='1', exQty='1', boardMode='season', evNext=25, ev=null, tab='shop';
+const $=s=>document.querySelector(s);
+const nf=new Intl.NumberFormat('ar-IQ',{maximumFractionDigits:0});
+const nf2=new Intl.NumberFormat('ar-IQ',{minimumFractionDigits:2,maximumFractionDigits:2});
+const nf1=new Intl.NumberFormat('ar-IQ',{minimumFractionDigits:1,maximumFractionDigits:1});
+const UNITS=[[1e15,'كوادريليون'],[1e12,'تريليون'],[1e9,'مليار'],[1e6,'مليون']];
+function fmt(n){const neg=n<0;n=Math.abs(n);let s=null;for(const[v,u]of UNITS)if(n>=v){s=nf2.format(n/v)+' '+u;break;}if(!s)s=nf.format(Math.floor(n));return(neg?'−':'')+s;}
+const sfmt=n=>(n>0?'+':'')+fmt(n);
+const pct=n=>(n>0?'+':n<0?'−':'')+nf1.format(Math.abs(n))+'٪';
+const ad=n=>String(n).replace(/\d/g,d=>nf.format(d));
+function fmtT(s){s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?ad(h)+':':'')+ad(String(m).padStart(h?2:1,'0'))+':'+ad(String(x).padStart(2,'0'));}
+function fmtDur(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return d?`${ad(d)} يوم ${ad(h)} س`:h?`${ad(h)} س ${ad(m)} د`:`${ad(m)} دقيقة`;}
+
+/* ---------- Seasons (weekly, Monday 00:00 Baghdad) ---------- */
+const WEEK=7*864e5, OFF=4*864e5-3*36e5;
+const seasonId=(t=Date.now())=>Math.floor((t-OFF)/WEEK);
+const seasonEnd=id=>(id+1)*WEEK+OFF;
+
+/* ---------- Exchange price model ---------- */
+function h1(i,s){const x=Math.sin(i*127.1+s*311.7)*43758.5453;return x-Math.floor(x);}
+function sm(t,s){const i=Math.floor(t),f=t-i,u=f*f*(3-2*f);return (h1(i,s)*(1-u)+h1(i+1,s)*u)*2-1;}
+const stepNow=()=>Math.floor(Date.now()/1000/STEP);
+function priceAt(a,st){const n=.5*sm(st/360,a.seed)+.3*sm(st/40,a.seed+1)+.15*sm(st/9,a.seed+2)+.05*sm(st/2,a.seed+3);
+  return Math.round(a.base*Math.exp(a.vol*2.2*n)*(1+(evShock(a.id))));}
+function evShock(id){return ev&&ev.e.mk&&ev.e.mk[id]||0;}
+const price=a=>priceAt(a,stepNow());
+
+function fresh(){return{cash:0,earned:0,ts:Date.now(),b:DEF.map((d,i)=>({n:i===0?1:0,p:0,run:false,mgr:false})),h:{},real:0,season:null};}
+function fix(s){if(!s.h)s.h={};if(!isFinite(s.real))s.real=0;return s;}
+function load(){try{const j=JSON.parse(localStorage.getItem('souq-save')||'null');if(valid(j))return fix(j);}catch(e){}return null;}
+function save(){S.ts=Date.now();try{localStorage.setItem('souq-save',JSON.stringify(S));}catch(e){}}
+function valid(s){return s&&Array.isArray(s.b)&&s.b.length===DEF.length&&isFinite(s.cash)&&isFinite(s.earned);}
+
+const speedMult=b=>{let m=1;for(const x of MILES)if(b.n>=x)m*=2;return m;};
+const nextMile=b=>MILES.find(x=>b.n<x);
+function evMult(d){if(!ev)return 1;const e=ev.e;if(e.all||e.id===d.id||(e.tag&&d.tags.includes(e.tag)))return e.m;return 1;}
+const cycT=i=>DEF[i].t/speedMult(S.b[i]);
+const cycRev=i=>DEF[i].rev*S.b[i].n*evMult(DEF[i]);
+function costOf(i,k){const d=DEF[i],o=S.b[i].n;return d.cost*Math.pow(GROW,o)*(Math.pow(GROW,k)-1)/(GROW-1);}
+function maxAff(i){const d=DEF[i],o=S.b[i].n;return Math.max(0,Math.floor(Math.log(S.cash*(GROW-1)/(d.cost*Math.pow(GROW,o))+1)/Math.log(GROW)));}
+const qtyFor=i=>qty==='max'?Math.max(1,maxAff(i)):+qty;
+function incomeRate(){let r=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)r+=cycRev(i)/cycT(i);});return r;}
+/* Shops are valued at what was paid for them (the money sunk into them is still yours). */
+function shopValue(){let v=0;S.b.forEach((b,i)=>{if(b.n){const d=DEF[i];v+=d.cost*(Math.pow(GROW,b.n)-1)/(GROW-1)+(b.mgr?d.mgr:0);}});return v-DEF[0].cost;}
+function portValue(){let v=0;ASSETS.forEach(a=>{const h=S.h[a.id];if(h&&h.q)v+=h.q*price(a)*(1-FEE);});return v;}
+const worth=()=>S.cash+shopValue()+portValue();
+function ensureSeason(){const id=seasonId();if(!S.season||S.season.id!==id){S.season={id,start:worth()};}}
+const score=()=>Math.max(0,worth()-S.season.start);
+
+/* ---------- Shops UI ---------- */
+const list=$('#list'), cards=[];
+DEF.forEach((d,i)=>{
+  const el=document.createElement('article');el.className='biz';
+  el.innerHTML=`<button class="run" aria-label="شغّل ${d.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--brass)">${ICONS[d.id]}</svg><span class="cnt num"></span></button>
+  <div class="info"><div class="row1"><span class="name">${d.name}</span><span class="chips"></span></div>
+  <div class="prog"><i></i><span class="num"><em class="rv" style="font-style:normal"></em><em class="tm" style="font-style:normal"></em></span></div>
+  <div class="next"></div></div>
+  <div class="acts"><button class="buy"><span class="bq">اشترِ</span><small class="num bc"></small></button><button class="hire"><span>وظّف مديرا</span><small class="num hc"></small></button></div>`;
+  list.appendChild(el);
+  const q=s=>el.querySelector(s);
+  const c={el,run:q('.run'),cnt:q('.cnt'),chips:q('.chips'),bar:q('.prog i'),rv:q('.rv'),tm:q('.tm'),next:q('.next'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),hire:q('.hire'),hc:q('.hc')};
+  c.run.onclick=()=>{const b=S.b[i];if(b.n&&!b.run&&!b.mgr)b.run=true;};
+  c.buy.onclick=()=>{const k=qtyFor(i),cost=costOf(i,k);if(S.cash>=cost&&k>0){const before=S.b[i].n;S.cash-=cost;S.b[i].n+=k;
+    if(before===0)toast(`افتتحت ${d.name}! اضغط الدائرة لتشغيله.`);
+    const hit=MILES.filter(x=>before<x&&S.b[i].n>=x);if(hit.length)toast(`${d.name} وصل ${nf.format(hit[hit.length-1])} فرع، السرعة تضاعفت`);
+    render(true);}};
+  c.hire.onclick=()=>{const b=S.b[i];if(!b.mgr&&b.n&&S.cash>=d.mgr){S.cash-=d.mgr;b.mgr=true;b.run=true;toast(`المدير يدير ${d.name} الآن بدونك`);render(true);}};
+  cards.push(c);
+});
+
+/* ---------- Exchange UI ---------- */
+const aWrap=$('#assets'), acards=[];
+ASSETS.forEach(a=>{
+  const el=document.createElement('article');el.className='asset';
+  el.innerHTML=`<div class="a-top"><div><div class="a-name">${a.name}</div><div class="a-unit">${a.unit}</div></div>
+  <div class="a-price"><b class="num pr"></b><span class="num ch"></span></div></div>
+  <canvas class="spark" aria-hidden="true"></canvas>
+  <div class="hold"></div>
+  <div class="acts"><button class="buy"><span class="bq">شراء</span><small class="num bc"></small></button><button class="sell"><span class="sq">بيع</span><small class="num sc"></small></button></div>`;
+  aWrap.appendChild(el);
+  const q=s=>el.querySelector(s);
+  const c={el,pr:q('.pr'),ch:q('.ch'),cv:q('.spark'),hold:q('.hold'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),sell:q('.sell'),sq:q('.sq'),sc:q('.sc')};
+  c.buy.onclick=()=>{const p=price(a)*(1+FEE),k=exQty==='max'?Math.floor(S.cash/p):+exQty;if(k<1||S.cash<k*p)return;
+    const h=S.h[a.id]||(S.h[a.id]={q:0,avg:0});h.avg=(h.avg*h.q+k*p)/(h.q+k);h.q+=k;S.cash-=k*p;toast(`اشتريت ${nf.format(k)} ${a.name}`);render(true);};
+  c.sell.onclick=()=>{const h=S.h[a.id];if(!h||!h.q)return;const k=exQty==='max'?h.q:Math.min(h.q,+exQty);const p=price(a)*(1-FEE);
+    const pl=k*(p-h.avg);S.cash+=k*p;S.real+=pl;h.q-=k;if(!h.q)h.avg=0;toast(pl>=0?`بعت بربح ${fmt(pl)} دينار`:`بعت بخسارة ${fmt(-pl)} دينار`);render(true);};
+  acards.push(c);
+});
+let lastStep=-1;
+function drawSparks(){
+  const st=stepNow();if(st===lastStep)return;lastStep=st;
+  const cs=getComputedStyle(document.documentElement),up=cs.getPropertyValue('--good').trim(),dn=cs.getPropertyValue('--bad').trim(),grid=cs.getPropertyValue('--line').trim();
+  ASSETS.forEach((a,k)=>{const cv=acards[k].cv,w=cv.clientWidth,h=cv.clientHeight;if(!w)return;const dpr=window.devicePixelRatio||1;
+    cv.width=w*dpr;cv.height=h*dpr;const g=cv.getContext('2d');g.scale(dpr,dpr);
+    const N=60,pts=[];for(let i=N-1;i>=0;i--)pts.push(priceAt(a,st-i)*(i===0?1+evShock(a.id):1));
+    const mn=Math.min(...pts),mx=Math.max(...pts),r=mx-mn||1,col=pts[N-1]>=pts[0]?up:dn;
+    g.strokeStyle=grid;g.lineWidth=1;g.setLineDash([2,4]);g.beginPath();g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke();g.setLineDash([]);
+    const X=i=>w-4-(i/(N-1))*(w-8),Y=v=>4+(1-(v-mn)/r)*(h-8);/* RTL: newest on the left edge */
+    g.beginPath();pts.forEach((v,i)=>i?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v)));
+    g.strokeStyle=col;g.lineWidth=1.8;g.stroke();
+    g.lineTo(X(N-1),h);g.lineTo(X(0),h);g.closePath();g.globalAlpha=.12;g.fillStyle=col;g.fill();g.globalAlpha=1;
+    g.beginPath();g.arc(X(N-1),Y(pts[N-1]),3,0,7);g.fillStyle=col;g.fill();});
+}
+window.addEventListener('resize',()=>{lastStep=-1;});
+
+/* ---------- Tabs & toggles ---------- */
+function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===t));
+  ['shop','ex','comp'].forEach(p=>$('#p-'+p).hidden=p!==t);if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.p));
+function seg(sel,fn){document.querySelectorAll(sel+' button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll(sel+' button').forEach(x=>x.setAttribute('aria-pressed',x===btn));fn(btn.dataset.q);render(true);});}
+seg('#segShop',v=>qty=v);seg('#segEx',v=>exQty=v);seg('#segBoard',v=>{boardMode=v;subBoard();});
+
+let tTimer;function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hide');clearTimeout(tTimer);tTimer=setTimeout(()=>t.classList.add('hide'),2600);}
+function modal(html,btns){const box=$('#mbox');box.innerHTML=html+'<div class="btns"></div>';const w=box.querySelector('.btns');btns.forEach(([l,f,g])=>{const b=document.createElement('button');b.textContent=l;if(g)b.className='ghost';b.onclick=()=>{$('#modal').hidden=true;f&&f();};w.appendChild(b);});$('#modal').hidden=false;}
+
+$('#statsBtn').onclick=()=>{
+  const owned=S.b.reduce((a,b)=>a+b.n,0),mg=S.b.filter(b=>b.mgr).length;
+  modal(`<h2>سجل التاجر</h2><p>مجموع ما ربحته من المحلات</p><div class="big num">${fmt(S.earned)}</div><p>الفروع: ${nf.format(owned)} · المديرون: ${nf.format(mg)} من ${nf.format(DEF.length)}<br>أرباح البورصة المحققة: ${sfmt(S.real)}</p>`,
+   [['رجوع'],['ابدأ من جديد',()=>modal('<h2>تأكيد</h2><p>ستخسر كل أموالك وفروعك ومحفظتك ونقاط الموسم. هل أنت متأكد؟</p>',[['إلغاء',null,true],['نعم، امسح',()=>{S=fresh();ensureSeason();if(C)S.owner=C.uid;ev=null;evNext=25;save();cloudSave(true);render(true);}]]),true]].concat(C?[['حذف حسابي',askDelete,true]]:[]));
+};
+function askDelete(){modal('<h2>حذف الحساب</h2><p>سيُحذف حسابك وكل تقدمك واسمك من لوحات الصدارة نهائيًا، ولا يمكن التراجع.</p>',[['إلغاء',null,true],['احذف نهائيًا',deleteAccount]]);}
+
+/* ---------- Render ---------- */
+let lastText=0, myRank=null;
+function render(force){
+  const now=performance.now();
+  if(tab==='shop')S.b.forEach((b,i)=>{const c=cards[i],T=cycT(i);
+    if(T<0.12&&(b.run||b.mgr))c.bar.classList.add('fast');else{c.bar.classList.remove('fast');c.bar.style.width=(b.p*100)+'%';}});
+  if(!force&&now-lastText<150)return;lastText=now;
+  $('#cash').innerHTML=fmt(S.cash)+'<small>دينار</small>';
+  $('#rate').textContent=fmt(incomeRate());$('#worth').textContent=fmt(worth());
+  if(tab==='shop')S.b.forEach((b,i)=>{const d=DEF[i],c=cards[i],T=cycT(i);
+    const locked=b.n===0;c.el.classList.toggle('locked',locked&&S.cash<d.cost);
+    c.run.classList.toggle('can',b.n>0&&!b.run&&!b.mgr);c.cnt.textContent=nf.format(b.n);
+    const em=evMult(d);
+    c.chips.innerHTML=(em!==1?`<span class="mult-chip num">×${nf1.format(em)}</span> `:'')+(b.mgr?'<span class="mgr-chip">مدير</span>':'');
+    c.rv.textContent=locked?'مغلق':fmt(d.rev*Math.max(1,b.n)*em);
+    c.tm.textContent=locked?fmtT(d.t):fmtT(b.run||b.mgr?T*(1-b.p):T);
+    const nm=nextMile(b);c.next.textContent=nm?`عند ${nf.format(nm)} فرع تتضاعف السرعة`:'أقصى سرعة';
+    const k=qtyFor(i),cost=costOf(i,k);
+    c.bq.textContent=locked?'افتتح المحل':`اشترِ ${nf.format(k)}`;c.bc.textContent=fmt(cost)+' د.ع';c.buy.disabled=S.cash<cost;
+    c.hire.hidden=b.mgr;c.hc.textContent=fmt(d.mgr)+' د.ع';c.hire.disabled=b.n===0||S.cash<d.mgr;});
+  if(tab==='ex'){
+    drawSparks();let pv=0,un=0;const st=stepNow();
+    ASSETS.forEach((a,k)=>{const c=acards[k],p=price(a),old=priceAt(a,st-30),chg=(p/old-1)*100,h=S.h[a.id]||{q:0,avg:0};
+      c.pr.textContent=fmt(p);c.ch.textContent=pct(chg)+' خلال ٥ د';c.ch.className='num ch '+(chg>=0?'up':'down');
+      const bp=p*(1+FEE),sp=p*(1-FEE);
+      if(h.q){const v=h.q*sp,pl=v-h.q*h.avg;pv+=v;un+=pl;
+        c.hold.innerHTML=`<span>تملك <b class="num">${nf.format(h.q)}</b></span><span>متوسط الشراء <b class="num">${fmt(h.avg)}</b></span><span class="num ${pl>=0?'up':'down'}">${sfmt(pl)} (${pct((sp/h.avg-1)*100)})</span>`;}
+      else c.hold.innerHTML='<span>لا تملك شيئًا من هذا الأصل</span>';
+      const kb=exQty==='max'?Math.floor(S.cash/bp):+exQty;c.bq.textContent=`شراء ${nf.format(Math.max(kb,0))}`;c.bc.textContent=fmt(Math.max(kb,1)*bp);c.buy.disabled=kb<1||S.cash<kb*bp;
+      const ks=exQty==='max'?h.q:Math.min(h.q,+exQty);c.sq.textContent=`بيع ${nf.format(ks)}`;c.sc.textContent=fmt(ks*sp);c.sell.disabled=!ks;});
+    $('#pVal').textContent=fmt(pv);const pu=$('#pUn');pu.textContent=sfmt(un);pu.className='num '+(un>=0?'up':'down');
+    const pr=$('#pRe');pr.textContent=sfmt(S.real);pr.className='num '+(S.real>=0?'up':'down');
+  }
+  if(tab==='comp'){
+    $('#sTitle').textContent='موسم الأسبوع رقم '+ad(S.season.id-2960);
+    $('#sLeft').textContent=fmtDur((seasonEnd(S.season.id)-Date.now())/1000);
+    $('#sScore').textContent=fmt(score());$('#sRank').textContent=myRank?'#'+ad(myRank):'—';
+  }
+  const E=$('#event');
+  if(ev){E.classList.add('on');$('#evTag').textContent='عاجل';$('#evTxt').innerHTML=`<strong>${ev.e.title}</strong>${ev.e.desc}${ev.e.mk?' · يؤثر على البورصة':''}`;$('#evT').textContent=fmtT(ev.left);}
+  else{E.classList.remove('on');$('#evTag').textContent='أخبار السوق';$('#evT').textContent='';
+    if(S.earned>0)$('#evTxt').innerHTML=`<strong>السوق هادئ</strong>الخبر القادم بعد ${fmtT(evNext)}`;}
+}
+
+/* ---------- Loop ---------- */
+function tick(dt){
+  S.b.forEach((b,i)=>{if(!b.n||!(b.run||b.mgr))return;const T=cycT(i);b.p+=dt/T;
+    if(b.p>=1){const cyc=Math.floor(b.p),g=cyc*cycRev(i);S.cash+=g;S.earned+=g;b.p-=cyc;if(!b.mgr){b.run=false;b.p=0;}}});
+  if(ev){ev.left-=dt;if(ev.left<=0){ev=null;evNext=35+Math.random()*40;lastStep=-1;}}
+  else if(S.earned>0){evNext-=dt;if(evNext<=0){const e=EVENTS[Math.floor(Math.random()*EVENTS.length)];ev={e,left:30};lastStep=-1;toast('خبر عاجل: '+e.title);}}
+}
+let last=performance.now(),saveAcc=0,seasonAcc=0;
+function frame(now){const dt=Math.min(1,(now-last)/1000);last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
+  if(seasonAcc>5){seasonAcc=0;const before=S.season.id;ensureSeason();if(S.season.id!==before){toast('بدأ موسم جديد! النقاط عادت للصفر');subBoard();subChamp();}}
+  if(saveAcc>5){saveAcc=0;save();}render();requestAnimationFrame(frame);}
+
+function applyAway(){
+  const away=Math.min(3*3600,(Date.now()-(S.ts||Date.now()))/1000);
+  if(away<=30)return;let g=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)g+=DEF[i].rev*b.n/cycT(i)*away;});
+  if(g>0){S.cash+=g;S.earned+=g;S.ts=Date.now();modal(`<h2>أهلا بعودتك</h2><p>مديروك اشتغلوا ${fmtT(away)} في غيابك وربحوا</p><div class="big num">${fmt(g)} د.ع</div>`,[['استلم الأرباح']]);}
+}
+
+/* ---------- Account (Google via Firebase), cloud save, competition ---------- */
+const FBV='10.12.2', FBB='https://www.gstatic.com/firebasejs/'+FBV+'/';
+let FB=null, C=null, cloudBusy=false, lastCloud='', unBoard=null, unChamp=null;
+const authBtn=$('#authBtn');
+function setAcct(name,msg){const a=$('#acct');a.classList.toggle('on',!!name);const t=$('#acctTxt');t.textContent='';
+  if(name){const b=document.createElement('b');b.textContent=name;t.append(b,' · '+(msg||'محفوظ في حسابك'));}
+  else t.textContent=msg||'ضيف · التقدم على هذا الجهاز فقط';
+  authBtn.hidden=!FB;authBtn.textContent=name?'خروج':'دخول بـ Google';authBtn.classList.toggle('out',!!name);}
+authBtn.onclick=()=>C?logout():login();
+const G_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6C12.3 13.6 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.8c-.5-1.4-.8-3-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.4 0 20.1 0 24s1 7.6 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.4 0-11.7-4.1-13.6-9.7l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>';
+function welcome(){
+  const box=$('#mbox');box.innerHTML='<h2>أهلًا بك في السوق</h2><p>سجّل دخولك بحساب Google (Gmail) لتحفظ تقدمك على كل أجهزتك وتدخل منافسة الأسبوع.</p><div class="stack"><button class="g-btn" id="wG">'+G_ICON+'<span>المتابعة بحساب Google</span></button><button class="ghost2" id="wGuest">العب كضيف</button></div><p class="small">بالمتابعة توافق على <a href="privacy.html">سياسة الخصوصية</a>.</p>';
+  $('#modal').hidden=false;
+  $('#wG').onclick=()=>{$('#modal').hidden=true;login();};
+  $('#wGuest').onclick=()=>{$('#modal').hidden=true;try{localStorage.setItem('souq-guest','1');}catch(e){}};
+}
+async function cloudInit(){
+  let cfg=null;try{cfg=(await import('./firebase-config.js')).firebaseConfig;}catch(e){}
+  if(!cfg||!cfg.apiKey||/YOUR_|ضع/.test(cfg.apiKey)){setAcct(null,'ضيف · تسجيل الدخول لم يُفعّل بعد (ملف firebase-config.js)');return;}
+  try{
+    const [app,auth,fs]=await Promise.all([import(FBB+'firebase-app.js'),import(FBB+'firebase-auth.js'),import(FBB+'firebase-firestore.js')]);
+    const a=app.initializeApp(cfg);
+    FB={A:auth,F:fs,auth:auth.getAuth(a),db:fs.getFirestore(a)};
+    FB.auth.languageCode='ar';
+    await auth.setPersistence(FB.auth,auth.browserLocalPersistence).catch(()=>{});
+    auth.getRedirectResult(FB.auth).catch(e=>toast('تعذّر تسجيل الدخول: '+(e.code||'')));
+    let first=true;
+    auth.onAuthStateChanged(FB.auth,u=>{
+      if(u)onLogin(u);else{onLogout();
+        let g=null;try{g=localStorage.getItem('souq-guest');}catch(e){}
+        if(first&&!g)welcome();}
+      first=false;});
+  }catch(e){FB=null;setAcct(null,'ضيف · لا يوجد اتصال، اللعب محلي');}
+}
+async function login(){
+  if(!FB){toast('تسجيل الدخول غير متاح الآن');return;}
+  const p=new FB.A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  try{await FB.A.signInWithPopup(FB.auth,p);}
+  catch(e){const c=e&&e.code||'';
+    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'||c==='auth/web-storage-unsupported'){await FB.A.signInWithRedirect(FB.auth,p);}
+    else if(c==='auth/unauthorized-domain')toast('هذا النطاق غير مضاف في إعدادات Firebase (Authorized domains)');
+    else if(c!=='auth/popup-closed-by-user'&&c!=='auth/cancelled-popup-request')toast('تعذّر تسجيل الدخول: '+c);}
+}
+async function logout(){await cloudSave(true);await FB.A.signOut(FB.auth);}
+async function onLogin(u){
+  const {doc,getDoc}=FB.F;
+  C={uid:u.uid,name:(u.displayName||(u.email||'').split('@')[0]||'تاجر').slice(0,40)};
+  if(!$('#modal').hidden&&$('#wG'))$('#modal').hidden=true;
+  setAcct(C.name,'جارٍ تحميل حسابك…');
+  try{
+    const s=await getDoc(doc(FB.db,'saves',C.uid));
+    const cloud=s.exists()?s.data().state:null;
+    const localIsOther=S.owner&&S.owner!==C.uid;
+    if(valid(cloud)&&(localIsOther||cloud.earned>S.earned)){S=fix(JSON.parse(JSON.stringify(cloud)));ensureSeason();applyAway();toast('تم استرجاع تقدمك من حسابك');}
+    else if(localIsOther){S=fresh();ensureSeason();}
+    S.owner=C.uid;save();render(true);
+    setAcct(C.name);await cloudSave(true);
+  }catch(e){setAcct(C.name,'تعذّر الوصول للحساب، يُحفظ محليًا');}
+  subBoard();subChamp();
+}
+function onLogout(){
+  const wasIn=!!C;C=null;if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
+  if(wasIn){S=fresh();ensureSeason();save();render(true);}
+  $('#board').innerHTML='<li class="empty">سجّل دخولك بحساب Google لتظهر في لوحة الصدارة.</li>';
+  setAcct(null);
+}
+async function cloudSave(force){
+  if(!C||!FB||cloudBusy)return;const key=Math.floor(S.earned)+'|'+Math.floor(worth());if(!force&&key===lastCloud)return;
+  cloudBusy=true;S.ts=Date.now();const snap=JSON.parse(JSON.stringify(S));const {doc,setDoc}=FB.F;
+  const w=Math.floor(worth()),sc=Math.floor(score());
+  try{
+    await setDoc(doc(FB.db,'saves',C.uid),{state:snap,updated:snap.ts});
+    await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:w,earned:Math.floor(snap.earned),ts:snap.ts});
+    await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:sc,worth:w,ts:snap.ts});
+    lastCloud=key;
+  }catch(e){}
+  cloudBusy=false;
+}
+function subBoard(){
+  if(!C||!FB)return;if(unBoard)unBoard();const {collection,query,orderBy,limit,onSnapshot}=FB.F;
+  const q=boardMode==='season'?query(collection(FB.db,'seasons',String(seasonId()),'players'),orderBy('score','desc'),limit(20))
+    :query(collection(FB.db,'board'),orderBy('worth','desc'),limit(20));
+  unBoard=onSnapshot(q,s=>renderBoard(s.docs),()=>{});
+}
+function subChamp(){
+  if(!C||!FB)return;if(unChamp)unChamp();const {collection,query,orderBy,limit,onSnapshot}=FB.F;
+  unChamp=onSnapshot(query(collection(FB.db,'seasons',String(seasonId()-1),'players'),orderBy('score','desc'),limit(1)),s=>{
+    const d=s.docs[0];if(!d)return;const el=$('#champ');el.textContent='شهبندر التجار للموسم الماضي: ';
+    const b=document.createElement('b');b.textContent=String(d.data().name||'تاجر').slice(0,40);el.append(b,' بنقاط '+fmt(Number(d.data().score)||0));},()=>{});
+}
+function renderBoard(docs){
+  const ol=$('#board');const key=boardMode==='season'?'score':'worth';
+  const rows=docs.map(d=>({id:d.id,n:String(d.data().name||'تاجر').slice(0,40),v:Number(d.data()[key])||0}));
+  myRank=null;rows.forEach((r,i)=>{if(C&&r.id===C.uid)myRank=i+1;});
+  if(!rows.length){ol.innerHTML='<li class="empty">لا يوجد تجار في هذا الموسم بعد. كن الأول!</li>';return;}
+  ol.textContent='';rows.forEach((r,i)=>{const li=document.createElement('li');if(C&&r.id===C.uid)li.className='me';
+    const a=document.createElement('span');a.className='r num';a.textContent=ad(i+1);
+    const n=document.createElement('span');n.className='n';n.textContent=(i===0&&boardMode==='season'?'♛ ':'')+r.n;
+    const v=document.createElement('span');v.className='v num';v.textContent=fmt(r.v);
+    li.append(a,n,v);ol.appendChild(li);});
+}
+async function deleteAccount(){
+  if(!C||!FB)return;const {doc,deleteDoc}=FB.F;const uid=C.uid;cloudBusy=true;
+  try{
+    await deleteDoc(doc(FB.db,'saves',uid));await deleteDoc(doc(FB.db,'board',uid));
+    await deleteDoc(doc(FB.db,'seasons',String(S.season.id),'players',uid));
+    try{await FB.auth.currentUser.delete();}
+    catch(e){if(e.code==='auth/requires-recent-login'){await FB.A.reauthenticateWithPopup(FB.auth.currentUser,new FB.A.GoogleAuthProvider());await FB.auth.currentUser.delete();}else throw e;}
+    try{localStorage.removeItem('souq-guest');}catch(e){}
+    toast('تم حذف حسابك وبياناتك');cloudBusy=false;
+  }catch(e){cloudBusy=false;toast("تعذّر الحذف، حاول مرة أخرى: "+(e.code||""));}
+}
+setInterval(()=>cloudSave(false),20000);
+
+function start(){
+  S=load()||fresh();
+  ensureSeason();
+  applyAway();
+  let t0='shop';try{t0=localStorage.getItem('souq-tab')||'shop';}catch(e){}
+  setTab(['shop','ex','comp'].includes(t0)?t0:'shop');
+  requestAnimationFrame(frame);
+  cloudInit().catch(()=>setAcct(null));
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){save();cloudSave(true);}});
+window.addEventListener('pagehide',save);
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+start();
+})();
+</script>
+</body>
+</html>
