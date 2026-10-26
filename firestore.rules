@@ -79,6 +79,79 @@ service cloud.firestore {
             && changed().hasOnly(['claimed'])));
     }
 
+    match /chat/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'text', 'ts'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && request.resource.data.text is string && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 200
+        && request.resource.data.ts is number
+        && request.resource.data.ts > request.time.toMillis() - 120000
+        && request.resource.data.ts < request.time.toMillis() + 120000;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    match /alliances/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['name', 'owner', 'members', 'names', 'worth', 'total', 'ts'])
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.members == [request.auth.uid]
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 24
+        && request.resource.data.names.keys().hasOnly([request.auth.uid])
+        && request.resource.data.worth.keys().hasOnly([request.auth.uid])
+        && request.resource.data.total is number;
+      allow update: if request.auth != null && (
+          // a member updates their own worth
+          (request.auth.uid in resource.data.members
+            && changed().hasOnly(['worth', 'total'])
+            && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid]))
+          // someone joins
+        || (!(request.auth.uid in resource.data.members) && resource.data.members.size() < 5
+            && changed().hasOnly(['members', 'names', 'worth', 'total'])
+            && request.resource.data.members == resource.data.members.concat([request.auth.uid])
+            && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid])
+            && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid]))
+          // a member leaves
+        || (request.auth.uid in resource.data.members
+            && changed().hasOnly(['members', 'names', 'worth', 'total'])
+            && request.resource.data.members == resource.data.members.removeAll([request.auth.uid])
+            && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid])
+            && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid])));
+      allow delete: if request.auth != null && resource.data.members == [request.auth.uid];
+    }
+
+    match /duels/{code} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['a', 'aName', 'b', 'bName', 'status', 'start', 'end', 'aScore', 'bScore', 'ts'])
+        && request.resource.data.a == request.auth.uid && request.resource.data.b == null
+        && request.resource.data.status == 'open'
+        && request.resource.data.aScore == 1000000 && request.resource.data.bScore == 1000000
+        && request.resource.data.aName is string && request.resource.data.aName.size() <= 40;
+      allow update: if request.auth != null && (
+          // the challenger joins
+          (resource.data.status == 'open' && resource.data.b == null && request.auth.uid != resource.data.a
+            && changed().hasOnly(['b', 'bName', 'status', 'start', 'end'])
+            && request.resource.data.b == request.auth.uid && request.resource.data.status == 'live'
+            && request.resource.data.bName is string && request.resource.data.bName.size() <= 40
+            && request.resource.data.start > request.time.toMillis() - 30000
+            && request.resource.data.start < request.time.toMillis() + 30000
+            && request.resource.data.end == request.resource.data.start + 300000)
+          // each player reports only their own score while the duel runs
+        || (resource.data.status == 'live' && request.time.toMillis() < resource.data.end + 20000
+            && ((request.auth.uid == resource.data.a && changed().hasOnly(['aScore'])
+                 && request.resource.data.aScore is number && request.resource.data.aScore >= 0 && request.resource.data.aScore <= 100000000)
+             || (request.auth.uid == resource.data.b && changed().hasOnly(['bScore'])
+                 && request.resource.data.bScore is number && request.resource.data.bScore >= 0 && request.resource.data.bScore <= 100000000)))
+          // either player closes it after the end
+        || (resource.data.status == 'live' && request.time.toMillis() >= resource.data.end
+            && (request.auth.uid == resource.data.a || request.auth.uid == resource.data.b)
+            && changed().hasOnly(['status']) && request.resource.data.status == 'done'));
+      allow delete: if request.auth != null && resource.data.a == request.auth.uid && resource.data.status == 'open';
+    }
+
     match /refs/{uid} {
       allow read: if request.auth != null && (request.auth.uid == uid || request.auth.uid == resource.data.by);
       allow create: if signedIn(uid)

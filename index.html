@@ -275,6 +275,74 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .inv-row button{flex:1;border-radius:10px;padding:9px;font-weight:700}
 .inv-row .share{background:var(--brass);color:var(--night)}
 .inv-row .copy{border:1px solid var(--line);color:var(--ink)}
+.rank-chip{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.rank-chip b{color:var(--brass);font-weight:700}
+.rank-chip .pips{display:flex;gap:3px}
+.rank-chip .pips i{width:14px;height:4px;border-radius:2px;background:var(--line)}
+.rank-chip .pips i.on{background:var(--brass)}
+.map-wrap svg{width:100%;height:auto;display:block;max-height:230px}
+.bank{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.bank.due{border-color:var(--bad)}
+.bank-row{display:flex;gap:8px}
+.bank-row button{flex:1;border-radius:10px;padding:8px 4px;font-weight:700;border:1px solid var(--line);color:var(--ink);display:flex;flex-direction:column;align-items:center;line-height:1.3;font-size:13px}
+.bank-row button small{font-weight:500;font-size:11px;color:var(--muted)}
+.bank-row button.pay{background:var(--brass);color:var(--night);border:0}
+.bank-row button.pay small{color:var(--night)}
+.bank-row button:disabled{opacity:.5}
+.art{grid-column:1/-1;margin:-4px -4px 2px;height:88px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#14282b,#10201f)}
+.art svg{width:100%;height:100%;display:block}
+.staff{font-size:12px;color:var(--muted);text-align:start;padding:0;display:flex;gap:6px;align-items:center}
+.staff b{color:var(--ink);font-weight:600}
+.staff .tr{color:var(--brass)}
+.staff .tr.bad{color:var(--bad)}
+.cand{display:flex;flex-direction:column;gap:8px;text-align:start}
+.cand button{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:start;color:var(--ink)}
+.cand button b{font-size:15px}
+.cand button span{font-size:12px;color:var(--muted)}
+.cand button em{font-style:normal;grid-row:span 2;align-self:center;font-weight:700;color:var(--brass);font-size:13px}
+.cand button:disabled{opacity:.45}
+.soc-seg{width:100%}
+.soc-seg button{flex:1;position:relative}
+.soc-seg .dot{position:absolute;top:4px;inset-inline-end:6px;width:7px;height:7px;border-radius:50%;background:var(--good)}
+.soc{display:flex;flex-direction:column;gap:12px}
+.chat{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.chat-log{height:min(52vh,420px);overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-inline-end:4px}
+.msg{display:flex;flex-direction:column;gap:2px;max-width:88%;align-self:flex-start;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
+.msg.me{align-self:flex-end;background:rgba(224,169,59,.12);border-color:var(--brass-dim)}
+.msg .mh{display:flex;gap:8px;align-items:baseline;font-size:11.5px;color:var(--muted)}
+.msg .mh b{color:var(--brass);font-size:12.5px}
+.msg .mt{font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap;user-select:text;-webkit-user-select:text}
+.msg .hide{font-size:11px;color:var(--muted);text-decoration:underline;padding:0}
+.chat-form{display:flex;gap:8px}
+.chat-form input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
+.chat-form button{border-radius:10px;padding:0 16px;flex:0 0 auto}
+.card2{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.card2 h2{font-family:var(--display);font-size:16px;margin:0;color:var(--brass)}
+.card2 input{font:inherit;font-size:14px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
+.mem{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px;border-top:1px solid var(--line);padding-top:7px}
+.mem:first-of-type{border-top:0}
+.mem.me span:first-child{color:var(--brass);font-weight:700}
+.ally-total{font-family:var(--display);font-size:24px;color:var(--ink)}
+.duel-box{background:radial-gradient(120% 80% at 0 0,rgba(95,207,143,.12),transparent 60%),var(--stall);border:1px solid var(--good);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.duel-score{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}
+.duel-score div{display:flex;flex-direction:column}
+.duel-score span{font-size:12px;color:var(--muted)}
+.duel-score b{font-size:17px}
+.duel-score .vs{font-family:var(--display);font-size:22px;color:var(--brass)}
+.duel-score .lead b{color:var(--good)}
+.d-asset{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.d-asset b{font-size:14px}
+.d-asset .dp{font-size:13px}
+.d-asset button{border-radius:9px;padding:7px 10px;font-weight:700;font-size:12.5px}
+.d-asset .db{background:var(--brass);color:var(--night)}
+.d-asset .ds{border:1px solid var(--line);color:var(--ink)}
+.d-asset button:disabled{opacity:.45}
+.d-asset small{grid-column:1/-1;font-size:11.5px;color:var(--muted)}
+.code{direction:ltr;font-family:var(--display);font-size:30px;letter-spacing:.2em;text-align:center;color:var(--ink);user-select:all;-webkit-user-select:all}
+.row2{display:flex;gap:8px}
+.row2>*{flex:1}
+.row2 button{border-radius:10px;padding:9px;font-weight:700}
+.row2 .ghostb{border:1px solid var(--line);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.run.can,.prog i.fast{animation:none}.float,.pop{animation:none}.badge.live,.auction.hot{animation:none}}
 </style>
 </head>
@@ -285,6 +353,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
       <h1>إمبراطورية <b>السوق</b></h1>
       <div class="hbtns"><button class="icon-btn snd mus" id="musBtn" aria-label="الموسيقى" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path class="x" d="M3 3l18 18"/></svg></button><button class="icon-btn snd" id="sndBtn" aria-label="الصوت" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w1" d="M16.5 9.5a3.5 3.5 0 0 1 0 5"/><path class="w2" d="M19 7a7 7 0 0 1 0 10"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg></button><button class="icon-btn" id="statsBtn">السجل</button></div>
     </div>
+    <div class="rank-chip" id="rankChip"></div>
     <div class="cash num" id="cash">٠<small>دينار</small></div>
     <div class="rate"><span>الدخل <b class="g num" id="rate">٠</b> /ثانية</span><span>صافي الثروة <b class="num" id="worth">٠</b></span></div>
     <div class="acct-row"><div class="acct" id="acct"><span class="dot"></span><span id="acctTxt">جارٍ التحقق من الحساب…</span></div><button class="auth-btn" id="authBtn" hidden>دخول بـ Google</button></div>
@@ -307,8 +376,10 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
   <section class="pane" id="p-shop" role="tabpanel">
     <section class="cities">
       <div class="sec-h"><h2>التوسع في المدن</h2><span class="sub" id="cityBonus"></span></div>
+      <div class="map-wrap" id="iraqMap"></div>
       <div class="city-row" id="cityRow"></div>
     </section>
+    <section class="bank" id="bank"></section>
     <div class="bar">
       <span class="lbl">كمية الشراء</span>
       <div class="seg" id="segShop" role="group" aria-label="كمية الشراء">
@@ -369,6 +440,13 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
   </section>
 
   <section class="pane" id="p-comp" role="tabpanel" hidden>
+    <div class="seg soc-seg" id="segSoc" role="group" aria-label="الأقسام">
+      <button data-q="rank" aria-pressed="true">الترتيب</button>
+      <button data-q="ally" aria-pressed="false">التحالف</button>
+      <button data-q="duel" aria-pressed="false">التحدي</button>
+      <button data-q="chat" aria-pressed="false">الدردشة<i class="dot" id="chatDot" hidden></i></button>
+    </div>
+    <div class="soc" id="soc-rank">
     <div class="season">
       <h2 id="sTitle">موسم الأسبوع</h2>
       <div class="grid">
@@ -391,6 +469,16 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
       <li>نقاطك = ما زاد من صافي ثروتك منذ بداية الموسم: النقد والمحلات والبورصة.</li>
       <li>الخسارة في البورصة تُنقص نقاطك، فتاجر بحذر.</li>
     </ul>
+    </div>
+    <div class="soc" id="soc-ally" hidden></div>
+    <div class="soc" id="soc-duel" hidden></div>
+    <div class="soc" id="soc-chat" hidden>
+      <section class="chat">
+        <div class="chat-log" id="chatLog"><p class="empty-s">سجّل دخولك لتدخل دردشة السوق.</p></div>
+        <form class="chat-form" id="chatForm"><input id="chatIn" maxlength="200" autocomplete="off" placeholder="اكتب رسالة للتجار…" aria-label="رسالة"><button class="buy" id="chatSend">إرسال</button></form>
+        <p class="au-note">كن محترمًا. الرسائل يراها كل اللاعبين، ويمكنك إخفاء أي لاعب يزعجك.</p>
+      </section>
+    </div>
   </section>
 
   <div class="foot">
@@ -499,9 +587,10 @@ const cityPx=(a,cid)=>1+(cityById(cid||S.city).px[a.id]||0);
 const price=(a,cid)=>Math.round(priceAt(a,stepNow())*cityPx(a,cid));
 
 function fresh(){return{cash:0,earned:0,ts:Date.now(),b:DEF.map((d,i)=>({n:i===0?1:0,p:0,run:false,mgr:false})),h:{},real:0,season:null,
-  cities:['bgd'],city:'bgd',travelAt:0,daily:{last:'',streak:0},dm:null,ach:{},st:{},rare:[],esc:null};}
+  cities:['bgd'],city:'bgd',travelAt:0,daily:{last:'',streak:0},dm:null,ach:{},st:{},rare:[],esc:null,rank:0,loan:null,boost:null,duels:{}};}
 function fix(s){if(!s.h)s.h={};if(!isFinite(s.real))s.real=0;if(!Array.isArray(s.cities))s.cities=['bgd'];if(!s.city||!s.cities.includes(s.city))s.city='bgd';
-  if(!s.daily)s.daily={last:'',streak:0};if(!s.ach)s.ach={};if(!s.st)s.st={};if(!isFinite(s.travelAt))s.travelAt=0;if(!Array.isArray(s.rare))s.rare=[];if(s.esc===undefined)s.esc=null;return s;}
+  if(!s.daily)s.daily={last:'',streak:0};if(!s.ach)s.ach={};if(!s.st)s.st={};if(!isFinite(s.travelAt))s.travelAt=0;if(!Array.isArray(s.rare))s.rare=[];if(s.esc===undefined)s.esc=null;if(!isFinite(s.rank))s.rank=0;if(s.loan===undefined)s.loan=null;if(s.boost===undefined)s.boost=null;if(!s.duels)s.duels={};
+  s.b.forEach(b=>{if(b.mgr&&!b.staff)b.staff={name:'مدير قديم',t:'steady'};});return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem('souq-save')||'null');if(valid(j))return fix(j);}catch(e){}return null;}
 function save(){S.ts=Date.now();try{localStorage.setItem('souq-save',JSON.stringify(S));}catch(e){}}
 function valid(s){return s&&Array.isArray(s.b)&&s.b.length===DEF.length&&isFinite(s.cash)&&isFinite(s.earned);}
@@ -509,9 +598,11 @@ function valid(s){return s&&Array.isArray(s.b)&&s.b.length===DEF.length&&isFinit
 const speedMult=b=>{let m=1;for(const x of MILES)if(b.n>=x)m*=2;return m;};
 const nextMile=b=>MILES.find(x=>b.n<x);
 function evMult(d){if(!ev)return 1;const e=ev.e;if(e.all||e.id===d.id||(e.tag&&d.tags.includes(e.tag)))return e.m;return 1;}
-const cycT=i=>DEF[i].t/speedMult(S.b[i]);
+const staffSp=b=>b.mgr&&b.staff&&TRAITS[b.staff.t]?TRAITS[b.staff.t].sp:1;
+const cycT=i=>DEF[i].t/speedMult(S.b[i])/staffSp(S.b[i]);
 function cityMult(d){let m=1;S.cities.forEach(id=>{const c=cityById(id);if(c.cost){m*=1.25;if(d.tags.includes(c.tag))m*=1.5;}});
-  (S.rare||[]).forEach(k=>{const r=RARE[k];if(!r)return;if(r.all)m*=r.all;else if(d.tags.includes(r.tag))m*=r.m;});return m;}
+  (S.rare||[]).forEach(k=>{const r=RARE[k];if(!r)return;if(r.all)m*=r.all;else if(d.tags.includes(r.tag))m*=r.m;});
+  m*=1+.05*(S.rank||0);if(S.boost&&Date.now()<S.boost.until)m*=S.boost.m;return m;}
 const cycRev=i=>DEF[i].rev*S.b[i].n*evMult(DEF[i])*cityMult(DEF[i]);
 function costOf(i,k){const d=DEF[i],o=S.b[i].n;return d.cost*Math.pow(GROW,o)*(Math.pow(GROW,k)-1)/(GROW-1);}
 function maxAff(i){const d=DEF[i],o=S.b[i].n;return Math.max(0,Math.floor(Math.log(S.cash*(GROW-1)/(d.cost*Math.pow(GROW,o))+1)/Math.log(GROW)));}
@@ -521,7 +612,7 @@ function incomeRate(){let r=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)r+=cycRev(i)/cyc
 function shopValue(){let v=0;S.b.forEach((b,i)=>{if(b.n){const d=DEF[i];v+=d.cost*(Math.pow(GROW,b.n)-1)/(GROW-1)+(b.mgr?d.mgr:0);}});
   S.cities.forEach(id=>v+=cityById(id).cost);return v-DEF[0].cost;}
 function portValue(){let v=0;ASSETS.forEach(a=>{const h=S.h[a.id];if(h&&h.q)v+=h.q*price(a)*(1-FEE);});return v;}
-const worth=()=>S.cash+shopValue()+portValue();
+const worth=()=>S.cash+shopValue()+portValue()+(S.esc?S.esc.amt:0)-(S.loan?S.loan.owe:0);
 function ensureSeason(){const id=seasonId();if(!S.season||S.season.id!==id){S.season={id,start:worth()};}}
 const score=()=>Math.max(0,worth()-S.season.start);
 
@@ -529,20 +620,21 @@ const score=()=>Math.max(0,worth()-S.season.start);
 const list=$('#list'), cards=[];
 DEF.forEach((d,i)=>{
   const el=document.createElement('article');el.className='biz';
-  el.innerHTML=`<button class="run" aria-label="شغّل ${d.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--brass)">${ICONS[d.id]}</svg><span class="cnt num"></span></button>
+  el.innerHTML=`<div class="art" aria-hidden="true"></div><button class="run" aria-label="شغّل ${d.name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--brass)">${ICONS[d.id]}</svg><span class="cnt num"></span></button>
   <div class="info"><div class="row1"><span class="name">${d.name}</span><span class="chips"></span></div>
   <div class="prog"><i></i><span class="num"><em class="rv" style="font-style:normal"></em><em class="tm" style="font-style:normal"></em></span></div>
-  <div class="next"></div></div>
+  <div class="next"></div><button class="staff" hidden></button></div>
   <div class="acts"><button class="buy"><span class="bq">اشترِ</span><small class="num bc"></small></button><button class="hire"><span>وظّف مديرا</span><small class="num hc"></small></button></div>`;
   list.appendChild(el);
   const q=s=>el.querySelector(s);
-  const c={el,run:q('.run'),cnt:q('.cnt'),chips:q('.chips'),bar:q('.prog i'),rv:q('.rv'),tm:q('.tm'),next:q('.next'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),hire:q('.hire'),hc:q('.hc')};
+  const c={el,art:q('.art'),staff:q('.staff'),stage:-1,staffK:'',run:q('.run'),cnt:q('.cnt'),chips:q('.chips'),bar:q('.prog i'),rv:q('.rv'),tm:q('.tm'),next:q('.next'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),hire:q('.hire'),hc:q('.hc')};
   c.run.onclick=()=>{const b=S.b[i];if(b.n&&!b.run&&!b.mgr){b.run=true;sfx.tap();bump('taps');}};
   c.buy.onclick=()=>{const k=qtyFor(i),cost=costOf(i,k);if(S.cash>=cost&&k>0){const before=S.b[i].n;S.cash-=cost;S.b[i].n+=k;bump('buys',k);sfx.buy();popEl(c.buy);
     if(before===0)toast(`افتتحت ${d.name}! اضغط الدائرة لتشغيله.`);
     const hit=MILES.filter(x=>before<x&&S.b[i].n>=x);if(hit.length){toast(`${d.name} وصل ${nf.format(hit[hit.length-1])} فرع، السرعة تضاعفت`);sfx.win();confetti();}
     render(true);}};
-  c.hire.onclick=()=>{const b=S.b[i];if(!b.mgr&&b.n&&S.cash>=d.mgr){S.cash-=d.mgr;b.mgr=true;b.run=true;sfx.win();toast(`المدير يدير ${d.name} الآن بدونك`);render(true);}};
+  c.hire.onclick=()=>{const b=S.b[i];if(!b.mgr&&b.n)hireModal(i);};
+  c.staff.onclick=()=>{if(S.b[i].mgr)staffModal(i);};
   cards.push(c);
 });
 
@@ -690,7 +782,7 @@ function fxLoop(){const g=fxc.getContext('2d'),dpr=devicePixelRatio||1;g.setTran
 let citySig='',travelSig='';
 function renderCities(){
   const sig=S.cities.join()+S.city+CITIES.map(c=>S.cash>=c.cost?1:0).join();if(sig===citySig)return;citySig=sig;
-  const row=$('#cityRow');row.textContent='';
+  $('#iraqMap').innerHTML=iraqMap();const row=$('#cityRow');row.textContent='';
   CITIES.forEach(c=>{const own=S.cities.includes(c.id),b=document.createElement('button');
     b.className='city'+(own?' own':' lock')+(S.city===c.id?' here':'')+(!own&&S.cash>=c.cost?' can':'');
     const nm=document.createElement('b');nm.textContent=c.name;
@@ -755,7 +847,11 @@ const ACH=[
   {id:'loyal',n:'وفاء أسبوع',     d:'ادخل ٧ أيام متتالية',              ok:()=>S.daily.streak>=7},
   {id:'tasks',n:'منجز المهام',    d:'أكمل ١٠ مهام يومية',               ok:()=>(S.st.tasksDone||0)>=10},
   {id:'auc',  n:'صاحب المزاد',    d:'اربح مزادًا مباشرًا',               ok:()=>(S.rare||[]).length>=1},
-  {id:'inv',  n:'تاجر محبوب',     d:'ادعُ ٣ أصدقاء إلى اللعبة',          ok:()=>(S.st.invites||0)>=3}
+  {id:'inv',  n:'تاجر محبوب',     d:'ادعُ ٣ أصدقاء إلى اللعبة',          ok:()=>(S.st.invites||0)>=3},
+  {id:'shah', n:'شهبندر',         d:'اوصل لرتبة شهبندر التجار',          ok:()=>(S.rank||0)>=5},
+  {id:'loan', n:'زبون موثوق',     d:'سدّد قرضًا للمصرف بوقته',           ok:()=>(S.st.loansPaid||0)>=1},
+  {id:'duel', n:'بطل التحدي',     d:'اربح تحديًا مباشرًا',               ok:()=>(S.st.duelWins||0)>=1},
+  {id:'ally', n:'رجل تحالفات',    d:'انضم إلى تحالف تجاري',              ok:()=>(S.st.allied||0)>=1}
 ];
 const MEDAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l-2 6h-4z"/><circle cx="12" cy="15" r="6"/><path d="M12 12.2l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 14.3l2-.3z"/></svg>';
 function checkAch(silent){let got=0;ACH.forEach(a=>{if(!S.ach[a.id]&&a.ok()){S.ach[a.id]=Date.now();got++;if(!silent){sfx.win();confetti();toast('إنجاز جديد: '+a.n);}}});if(got)tasksSig='';}
@@ -778,9 +874,118 @@ function renderTasks(){
 }
 function taskAlert(){if(!S.dm)return dailyOpen();return dailyOpen()||S.dm.m.some(m=>!m.done&&(S.dm.p[m.k]||0)>=m.n);}
 
+/* ---------- Ranks & story ---------- */
+const RANKS=[{n:'صبي في الشورجة',at:0},{n:'بائع متجوّل',at:1e6},{n:'صاحب دكان',at:1e8},{n:'تاجر معروف',at:1e10},{n:'كبير التجار',at:1e12},{n:'شهبندر التجار',at:1e14}];
+const STORY=[null,
+ 'الحجي أبو سلمان يربّت على كتفك: «شفتك تبيع الشاي بعرق جبينك. هسه صرت بائع متجوّل. نصيحتي: لا تبقى تشتغل بيدك، وظّف مدير يشتغل عنك وانت نايم.»',
+ 'الحجي أبو سلمان يبتسم: «صار عندك دكان واسم بالسوق. الشاطر ما يخلّي فلوسه نايمة: البورصة ترتفع وتنزل، اشترِ وقت الهبوط وبيع وقت الصعود.»',
+ 'الحجي أبو سلمان: «الناس تحچي عنك بالشورجة. بغداد صارت صغيرة عليك. البصرة وأربيل والنجف والموصل كلها تنتظر فروعك.»',
+ 'الحجي أبو سلمان بصوت واطي: «صرت من كبار التجار، والحساد كثار. انتبه من الموظف الشاطر اللي يلعب بالحساب، ومن الديون اللي تكبر، وخلّي عينك على المزاد.»',
+ 'الحجي أبو سلمان دموعه بعينه: «اليوم صرت شهبندر التجار. السوق كله يقوم إلك. بس لا تنسى… بديت من كشك شاي بالشورجة.»'];
+const rankOf=w=>{let i=0;RANKS.forEach((r,k)=>{if(w>=r.at)i=k;});return i;};
+let rankSig='';
+function renderRank(){const r=S.rank||0,sig=r+'';if(sig===rankSig)return;rankSig=sig;
+  $('#rankChip').innerHTML=`الرتبة: <b>${RANKS[r].n}</b><span class="pips">${RANKS.map((x,k)=>`<i class="${k<=r?'on':''}"></i>`).join('')}</span>`+(r<5?`<span class="num">· التالية عند ${fmt(RANKS[r+1].at)}</span>`:'');}
+function rankCheck(){const r=rankOf(worth());if(r>(S.rank||0)){S.rank=r;const gift=Math.round(RANKS[r].at*.05);S.cash+=gift;rankSig='';sfx.win();confetti();
+  modal(`<h2>رتبة جديدة: ${RANKS[r].n}</h2><p style="color:var(--ink);line-height:1.8">${STORY[r]}</p><p>هدية الترقية ${fmt(gift)} دينار، ودخلك صار +${ad(r*5)}٪ دائمًا.</p>`,[['يلا نكمل']]);}}
+
+/* ---------- Bank loans ---------- */
+const LOAN_RATE=.1,LOAN_TIME=30*6e4;let bankSig='';
+const loanMax=()=>Math.max(1e5,Math.floor(Math.max(0,worth())*.5));
+function takeLoan(frac){if(S.loan)return;const amt=Math.floor(loanMax()*frac);S.cash+=amt;S.loan={amt,owe:Math.round(amt*(1+LOAN_RATE)),due:Date.now()+LOAN_TIME};sfx.coin();toast('استلمت قرض '+fmt(amt)+' دينار. سدّده خلال ٣٠ دقيقة');bankSig='';render(true);}
+function repayLoan(){if(!S.loan)return;if(S.cash<S.loan.owe){toast('رصيدك لا يكفي للسداد');return;}S.cash-=S.loan.owe;S.loan=null;bump('loansPaid');sfx.win();toast('سدّدت القرض. المصرف يثق بك');bankSig='';render(true);}
+function loanCheck(){if(!S.loan||Date.now()<S.loan.due)return;let need=Math.round(S.loan.owe*1.1);const fromCash=Math.min(S.cash,need);S.cash-=fromCash;need-=fromCash;let taken=0;
+  while(need>0){let best=-1,bv=0;S.b.forEach((b,i)=>{if(b.n>1){const v=DEF[i].cost*Math.pow(GROW,b.n-1);if(v>bv){bv=v;best=i;}}});if(best<0)break;S.b[best].n--;need-=bv;taken++;}
+  S.loan=null;sfx.loss();bankSig='';modal(`<h2>المصرف حجز عليك</h2><p>تأخرت عن سداد القرض. أخذ المصرف ${fmt(fromCash)} دينار من رصيدك${taken?' وحجز '+ad(taken)+' فرعًا من محلاتك':''}، مع غرامة ١٠٪.</p>`,[['فهمت']]);render(true);}
+function renderBank(){const L=S.loan,left=L?Math.max(0,(L.due-Date.now())/1000):0,max=loanMax();
+  const sig=JSON.stringify([!!L,L&&L.owe,Math.floor(left),Math.floor(max/1e3),L&&S.cash>=L.owe]);if(sig===bankSig)return;bankSig=sig;const B=$('#bank');B.className='bank'+(L&&left<300?' due':'');
+  if(L)B.innerHTML=`<div class="sec-h"><h2>مصرف السوق</h2><span class="sub num" style="${left<300?'color:var(--bad)':''}">يُستحق بعد ${fmtT(left)}</span></div><p class="empty-s">عليك قرض بقيمة ${fmt(L.owe)} دينار مع الفائدة. إذا تأخرت يحجز المصرف على فروعك.</p><div class="bank-row"><button class="pay" id="lPay" ${S.cash<L.owe?'disabled':''}>سدّد الآن<small class="num">${fmt(L.owe)}</small></button></div>`;
+  else{B.innerHTML=`<div class="sec-h"><h2>مصرف السوق</h2><span class="sub">فائدة ١٠٪ · مدة ٣٠ دقيقة</span></div><p class="empty-s">تحتاج سيولة سريعة للتوسع؟ خذ قرضًا، لكن تأخرك عن السداد يعني حجز فروعك.</p><div class="bank-row">${[.25,.5,1].map(f=>`<button data-f="${f}">قرض ${['صغير','متوسط','كبير'][[.25,.5,1].indexOf(f)]}<small class="num">${fmt(max*f)}</small></button>`).join('')}</div>`;
+    B.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const f=+b.dataset.f,amt=Math.floor(loanMax()*f);modal(`<h2>قرض ${fmt(amt)} دينار</h2><p>تسدّد ${fmt(amt*1.1)} خلال ٣٠ دقيقة. إذا تأخرت يحجز المصرف على رصيدك وفروعك مع غرامة.</p>`,[['إلغاء',null,true],['خذ القرض',()=>takeLoan(f)]]);});}
+  const pb=$('#lPay');if(pb)pb.onclick=repayLoan;}
+
+/* ---------- Staff with personalities ---------- */
+const NAMES=['أبو علي','أم حسين','جاسم','كرار','زهراء','مصطفى','حيدر','نور','سجاد','رسل','عباس','مريم','أبو تحسين','سيف','بنين','علاوي'];
+const TRAITS={steady:{n:'أمين ومنتظم',d:'سرعة عادية، ما يخون',sp:1,cost:1},fast:{n:'سريع ونشيط',d:'أسرع ٣٠٪، راتبه أغلى',sp:1.3,cost:1.6},
+  sly:{n:'شاطر بس يلعب بالحساب',d:'أسرع ٦٠٪، لكن أحيانًا يسرق من الصندوق',sp:1.6,cost:1,steal:true},lazy:{n:'كسول بس رخيص',d:'أبطأ ٢٥٪، بنص السعر',sp:.75,cost:.5}};
+function candidates(){const ks=Object.keys(TRAITS).sort(()=>Math.random()-.5).slice(0,3),names=NAMES.slice().sort(()=>Math.random()-.5);return ks.map((t,i)=>({name:names[i],t}));}
+function hireModal(i,replace){const d=DEF[i],cs=candidates();
+  modal(`<h2>${replace?'استبدل مدير':'وظّف مديرًا'} ${d.name}</h2><p>اختار من المتقدمين:</p><div class="cand">${cs.map((c,k)=>{const T=TRAITS[c.t],cost=d.mgr*T.cost;return `<button data-k="${k}" ${S.cash<cost?'disabled':''}><b>${c.name}</b><em class="num">${fmt(cost)}</em><span>${T.n}: ${T.d}</span></button>`;}).join('')}</div>`,[['إلغاء',null,true]]);
+  $('#mbox').querySelectorAll('.cand button').forEach(b=>b.onclick=()=>{const c=cs[+b.dataset.k],cost=d.mgr*TRAITS[c.t].cost;if(S.cash<cost)return;S.cash-=cost;const bb=S.b[i];bb.mgr=true;bb.run=true;bb.staff=c;$('#modal').hidden=true;sfx.win();toast(c.name+' صار يدير '+d.name);render(true);});}
+function staffModal(i){const b=S.b[i],T=TRAITS[b.staff.t];modal(`<h2>${b.staff.name}</h2><p>مدير ${DEF[i].name} · ${T.n}</p><p>${T.d}</p>`,[['رجوع',null,true],['استبدله',()=>hireModal(i,true)]]);}
+let stealAcc=0;
+function staffTick(dt){stealAcc+=dt;if(stealAcc<60)return;stealAcc=0;S.b.forEach((b,i)=>{if(b.mgr&&b.staff&&TRAITS[b.staff.t]&&TRAITS[b.staff.t].steal&&Math.random()<.08&&S.cash>1e4){const st=Math.round(S.cash*.03);S.cash-=st;sfx.loss();toast(`${b.staff.name} مدير ${DEF[i].name} لعب بالحساب واختفى ${fmt(st)} دينار!`);}});}
+
+/* ---------- Decision events ---------- */
+let decLeft=150+Math.random()*120;
+function randShop(min){const own=S.b.map((b,i)=>[b,i]).filter(([b])=>b.n>=(min||2));return own.length?own[Math.floor(Math.random()*own.length)][1]:-1;}
+function burn(i){const b=S.b[i],lost=Math.max(1,Math.floor(b.n*.2));b.n=Math.max(1,b.n-lost);sfx.loss();toast('الحريق أكل '+ad(lost)+' فروع من '+DEF[i].name);}
+const DECS=[
+ ()=>{const i=randShop();if(i<0)return null;const d=DEF[i],fee=Math.max(1e4,Math.round(S.cash*.05));
+   return {t:'حريق في '+d.name+'!',x:'النار بدأت بالمخزن. تتصل بالإطفاء الأهلي بـ '+fmt(fee)+' دينار، لو تجازف وتنتظر الدفاع المدني؟',
+     o:[['انتظر الدفاع المدني',()=>{if(Math.random()<.5)burn(i);else{sfx.win();toast('الدفاع المدني وصل بالوقت، ما خسرت شي');}}],['ادفع للإطفاء',()=>{if(S.cash<fee){burn(i);return;}S.cash-=fee;sfx.buy();toast('انطفأ الحريق بسرعة، محلك سالم');}]]};},
+ ()=>{const tax=Math.max(2e4,Math.round(S.cash*.08));
+   return {t:'تفتيش ضريبي',x:'موظف الضريبة واقف بباب محلك ويطالب بـ '+fmt(tax)+' دينار.',
+     o:[['دبّرها',()=>{if(Math.random()<.6)toast('مرّت على خير هالمرة 😅');else{const f=Math.round(S.cash*.2);S.cash-=f;sfx.loss();toast('انكشفت! غرامة '+fmt(f)+' دينار');}}],['ادفع الضريبة',()=>{S.cash-=Math.min(S.cash,tax);toast('دفعت الضريبة، ووضعك قانوني');}]]};},
+ ()=>{const a=ASSETS[Math.floor(Math.random()*ASSETS.length)],pr=price(a),q=Math.floor(S.cash*.15/pr),cost=Math.round(q*pr*.7);if(q<1)return null;
+   return {t:'صفقة سرية',x:'تاجر غريب يعرض عليك '+ad(q)+' '+a.name+' بخصم ٣٠٪، بـ '+fmt(cost)+' دينار. يقول البضاعة «نظامية».',
+     o:[['ارفض',()=>toast('رفضت، والحذر زين')],['اشترِ',()=>{if(S.cash<cost)return;S.cash-=cost;if(Math.random()<.7){addHolding(a.id,q,cost/q);sfx.coin();toast('الصفقة طلعت نظامية! البضاعة صارت بمحفظتك');}else{sfx.loss();toast('طلع نصاب واختفى بفلوسك');}}]]};},
+ ()=>{const don=Math.max(1e4,Math.round(S.cash*.03));
+   return {t:'تبرع لموكب',x:'أهل المنطقة يجمعون تبرعات لموكب خدمة الزوار. تتبرع بـ '+fmt(don)+' دينار؟',
+     o:[['اعتذر',()=>toast('اعتذرت بلطف')],['تبرّع',()=>{S.cash-=Math.min(S.cash,don);S.boost={m:1.5,until:Date.now()+3*6e4};sfx.win();toast('الناس تحچي بطيبك: دخلك ×١٫٥ لثلاث دقائق');}]]};},
+ ()=>{const now=Math.round(Math.max(incomeRate(),50)*600);
+   return {t:'مستثمر خليجي',x:'مستثمر يعرض عليك '+fmt(now)+' دينار نقدًا الآن، مقابل ١٠٪ من دخلك لمدة ١٥ دقيقة.',
+     o:[['ارفض',()=>toast('فضّلت تبقى مستقل')],['اقبل',()=>{S.cash+=now;S.boost={m:.9,until:Date.now()+15*6e4};sfx.coin();toast('استلمت '+fmt(now)+' دينار من المستثمر');}]]};},
+ ()=>{const i=randShop(12);if(i<0)return null;const d=DEF[i],k=10,n=S.b[i].n,val=Math.round(d.cost*Math.pow(GROW,n-k)*(Math.pow(GROW,k)-1)/(GROW-1)*2);
+   return {t:'عرض شراء',x:'شركة تريد تشتري '+ad(k)+' فروع من '+d.name+' بضعف سعرها: '+fmt(val)+' دينار.',
+     o:[['ارفض',()=>toast('محلاتك مو للبيع')],['وافق',()=>{if(S.b[i].n<=k)return;S.b[i].n-=k;S.cash+=val;sfx.coin();toast('بعت الفروع بربح ممتاز');}]]};}
+];
+function decTick(dt){if(S.earned<5e4||document.hidden||!$('#modal').hidden)return;decLeft-=dt;if(decLeft>0)return;decLeft=180+Math.random()*180;
+  const order=DECS.map((f,i)=>i).sort(()=>Math.random()-.5);for(const k of order){const D=DECS[k]();if(!D)continue;MUS.want='tense';sfx.alert();
+    modal(`<h2>${D.t}</h2><p style="color:var(--ink);line-height:1.8">${D.x}</p>`,D.o.map(([l,f],j)=>[l,()=>{f();render(true);},j===0]));break;}}
+
+/* ---------- Shop illustrations ---------- */
+const SHOPCOL={tea:'#e0a93b',bread:'#d98c4a',falafel:'#7fbf6a',cloth:'#c86b95',phone:'#5aa0d6',fish:'#4fb3a8',mall:'#b38be0',ship:'#7a9cc6',oil:'#e8c05a'};
+const shopStage=n=>n<=0?0:n<10?1:n<25?2:n<50?3:4;
+function shopArt(i,st){const d=DEF[i],col=SHOPCOL[d.id];
+  if(!st)return `<svg viewBox="0 0 320 90"><rect x="0" y="82" width="320" height="8" fill="#1f3739"/><rect x="110" y="38" width="100" height="44" rx="4" fill="none" stroke="#2c4a4b" stroke-dasharray="5 5"/><text x="160" y="66" text-anchor="middle" font-size="12" fill="#6f8784" font-family="IBM Plex Sans Arabic,Tahoma,sans-serif">أرض فارغة</text></svg>`;
+  const W=[0,84,124,164,214][st],F=[0,1,1,2,3][st],x0=160-W/2,fh=17,top=82-26-(F-1)*fh;let g='';
+  for(let k=0;k<Math.min(st,3);k++)g+=`<circle cx="${30+k*22}" cy="${18+k*4}" r="1.2" fill="#eef1ea" opacity=".5"/><circle cx="${280-k*26}" cy="${12+k*5}" r="1" fill="#eef1ea" opacity=".4"/>`;
+  g+=`<rect x="0" y="82" width="320" height="8" fill="#1f3739"/>`;
+  g+=`<rect x="${x0}" y="${top}" width="${W}" height="${82-top}" rx="3" fill="#1b3436" stroke="#2c4a4b"/>`;
+  for(let f=1;f<F;f++){const y=top+(f-1)*fh+5,nw=Math.floor((W-16)/22);for(let w=0;w<nw;w++){const lit=(w*7+f*3+i)%3!==0;g+=`<rect x="${x0+10+w*22}" y="${y}" width="12" height="9" rx="1.5" fill="${lit?'#f1c56a':'#10201f'}" opacity="${lit?.85:1}"/>`;}}
+  const ay=82-26,stripes=Math.max(4,Math.round(W/16)),sw=W/stripes;
+  for(let k=0;k<stripes;k++){const c=k%2?'#eef1ea':col;g+=`<path d="M${x0+k*sw} ${ay}h${sw}v6a${sw/2} ${sw/2} 0 0 1 -${sw} 0z" fill="${c}"/>`;}
+  g+=`<rect x="${x0+W/2-10}" y="${ay+12}" width="20" height="${82-ay-12}" rx="2" fill="#10201f"/>`;
+  g+=`<rect x="${x0+6}" y="${ay+14}" width="${Math.max(16,W/2-22)}" height="10" rx="2" fill="#f1c56a" opacity=".75"/><rect x="${x0+W/2+16}" y="${ay+14}" width="${Math.max(16,W/2-22)}" height="10" rx="2" fill="#f1c56a" opacity=".75"/>`;
+  g+=`<g transform="translate(${x0+W/2-9} ${top-22}) scale(.75)"><rect x="-4" y="-2" width="32" height="28" rx="5" fill="#10201f" stroke="${col}"/><g fill="none" stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[d.id]}</g></g>`;
+  if(st>=4){for(let k=0;k<=10;k++){g+=`<circle cx="${x0+k*W/10}" cy="${top+1+Math.sin(k)*1.5}" r="2" fill="#e0a93b"/>`;}g+=`<path d="M${x0} ${top+1}Q${160} ${top+8} ${x0+W} ${top+1}" stroke="#e0a93b" stroke-width=".8" fill="none"/>`;}
+  if(st>=3)g+=`<rect x="${x0-14}" y="74" width="10" height="8" rx="2" fill="${col}" opacity=".7"/><rect x="${x0+W+4}" y="74" width="10" height="8" rx="2" fill="${col}" opacity=".7"/>`;
+  return `<svg viewBox="0 0 320 90" direction="ltr" preserveAspectRatio="xMidYMax meet">${g}</svg>`;}
+
+/* ---------- Iraq map ---------- */
+const IRQ=[[42.36,37.23],[43.6,37.25],[44.8,37.15],[45.4,35.98],[46.1,35.7],[45.9,35.0],[45.4,34.5],[45.7,34.0],[46.1,33.6],[47.4,32.9],[47.8,31.9],[47.7,31.0],[48.0,30.45],[48.55,29.95],[47.7,30.1],[47.1,29.98],[46.55,29.1],[44.7,29.2],[42.08,31.08],[40.4,31.95],[39.2,32.16],[38.79,33.38],[41.0,34.42],[41.4,35.6],[41.3,36.4]];
+const CITYLL={bgd:[44.36,33.31],bsr:[47.78,30.51],erb:[44.01,36.19],njf:[44.33,32.0],msl:[43.13,36.34]};
+const mx=lon=>(lon-38.4)*34,my=lat=>(37.6-lat)*34;
+function iraqMap(){const pts=IRQ.map(([a,b])=>mx(a).toFixed(1)+','+my(b).toFixed(1)).join(' ');
+  let g=`<polygon points="${pts}" fill="#14292b" stroke="#2c4a4b" stroke-width="1.5" stroke-linejoin="round"/>`;
+  g+=`<path d="M${mx(42.7)} ${my(36.9)} Q${mx(44.2)} ${my(34.5)} ${mx(44.6)} ${my(33.2)} T${mx(47.6)} ${my(30.9)}" stroke="#2d5a66" stroke-width="2" fill="none" opacity=".8"/><path d="M${mx(41.2)} ${my(34.4)} Q${mx(43.4)} ${my(33.4)} ${mx(44.4)} ${my(32.4)} T${mx(47.4)} ${my(31.0)}" stroke="#2d5a66" stroke-width="2" fill="none" opacity=".8"/>`;
+  CITIES.forEach(c=>{const [lo,la]=CITYLL[c.id],x=mx(lo),y=my(la),own=S.cities.includes(c.id),here=S.city===c.id;
+    if(own)g+=`<circle cx="${x}" cy="${y}" r="14" fill="#e0a93b" opacity=".15"/>`;
+    if(here)g+=`<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="#e0a93b" stroke-width="1.5"><animate attributeName="r" values="7;13;7" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite"/></circle>`;
+    g+=`<circle cx="${x}" cy="${y}" r="${own?5.5:4}" fill="${own?'#e0a93b':'#10201f'}" stroke="${own?'#f1c56a':'#6f8784'}" stroke-width="1.5"/>`;
+    g+=`<text x="${x+(c.id==='msl'?-10:10)}" y="${y+4}" text-anchor="${c.id==='msl'?'end':'start'}" font-size="13" font-weight="700" fill="${own?'#eef1ea':'#93aaa6'}" font-family="IBM Plex Sans Arabic,Tahoma,sans-serif">${c.name}</text>`;});
+  return `<svg viewBox="0 -6 360 304" direction="ltr" role="img" aria-label="خريطة فروعك في العراق">${g}</svg>`;}
+
+/* ---------- Social hub tabs ---------- */
+let socTab='rank',socSig='';
+function setSoc(t){socTab=t;document.querySelectorAll('#segSoc button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.q===t));['rank','ally','duel','chat'].forEach(k=>$('#soc-'+k).hidden=k!==t);socSig='';if(t==='chat'){CH.unread=false;CH.sig='';setTimeout(()=>{const L=$('#chatLog');L.scrollTop=L.scrollHeight;},30);}render(true);}
+document.querySelectorAll('#segSoc button').forEach(b=>b.onclick=()=>setSoc(b.dataset.q));
+function renderSocial(){if(socTab==='chat')renderChat();else if(socTab==='ally')renderAlly();else if(socTab==='duel')renderDuel();}
+
 /* ---------- Tabs & toggles ---------- */
 function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===t));
-  ['shop','ex','mkt','task','comp'].forEach(p=>$('#p-'+p).hidden=p!==t);citySig=travelSig=tasksSig=mkSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
+  ['shop','ex','mkt','task','comp'].forEach(p=>$('#p-'+p).hidden=p!==t);citySig=travelSig=tasksSig=mkSig=bankSig=socSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.p));
 function seg(sel,fn){document.querySelectorAll(sel+' button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll(sel+' button').forEach(x=>x.setAttribute('aria-pressed',x===btn));fn(btn.dataset.q);render(true);});}
 seg('#segShop',v=>qty=v);seg('#segEx',v=>exQty=v);seg('#segBoard',v=>{boardMode=v;subBoard();});
@@ -810,6 +1015,10 @@ function render(force){
   if(tab==='shop')renderCities();
   if(tab==='task')renderTasks();
   if(tab==='mkt'){renderAuction();renderMarket();}
+  if(tab==='shop')renderBank();
+  if(tab==='comp')renderSocial();
+  renderRank();
+  $('#chatDot').hidden=!(CH.unread&&!(tab==='comp'&&socTab==='chat'));
   if(tab==='shop')S.b.forEach((b,i)=>{const d=DEF[i],c=cards[i],T=cycT(i);
     const locked=b.n===0;c.el.classList.toggle('locked',locked&&S.cash<d.cost);
     c.run.classList.toggle('can',b.n>0&&!b.run&&!b.mgr);c.cnt.textContent=nf.format(b.n);
@@ -820,7 +1029,9 @@ function render(force){
     const nm=nextMile(b);c.next.textContent=nm?`عند ${nf.format(nm)} فرع تتضاعف السرعة`:'أقصى سرعة';
     const k=qtyFor(i),cost=costOf(i,k);
     c.bq.textContent=locked?'افتتح المحل':`اشترِ ${nf.format(k)}`;c.bc.textContent=fmt(cost)+' د.ع';c.buy.disabled=S.cash<cost;
-    c.hire.hidden=b.mgr;c.hc.textContent=fmt(d.mgr)+' د.ع';c.hire.disabled=b.n===0||S.cash<d.mgr;});
+    c.hire.hidden=b.mgr;c.hc.textContent='من '+fmt(d.mgr*.5)+' د.ع';c.hire.disabled=b.n===0||S.cash<d.mgr*.5;
+    const stg=shopStage(b.n);if(stg!==c.stage){c.stage=stg;c.art.innerHTML=shopArt(i,stg);}
+    const sk=b.mgr&&b.staff?b.staff.name+b.staff.t:'';if(sk!==c.staffK){c.staffK=sk;c.staff.hidden=!sk;if(sk){const T=TRAITS[b.staff.t];c.staff.innerHTML='المدير: <b></b> · <span class="tr'+(T.steal?' bad':'')+'"></span>';c.staff.querySelector('b').textContent=b.staff.name;c.staff.querySelector('.tr').textContent=T.n;}}});
   if(tab==='ex'){
     drawSparks();renderTravel();let pv=0,un=0;const st=stepNow();
     ASSETS.forEach((a,k)=>{const c=acards[k],p=price(a),old=priceAt(a,st-30)*cityPx(a),chg=(p/old-1)*100,h=S.h[a.id]||{q:0,avg:0};
@@ -858,7 +1069,8 @@ function tick(dt){
 let last=performance.now(),saveAcc=0,seasonAcc=0;
 function frame(now){const dt=Math.min(1,(now-last)/1000);last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
   if(seasonAcc>5){seasonAcc=0;const before=S.season.id;ensureSeason();if(S.season.id!==before){toast('بدأ موسم جديد! النقاط عادت للصفر');subBoard();subChamp();}}
-  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();}
+  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();}
+  staffTick(dt);decTick(dt);duelTick();
   musMood();
   if(saveAcc>5){saveAcc=0;save();}render();requestAnimationFrame(frame);}
 
@@ -927,10 +1139,10 @@ async function onLogin(u){
     S.owner=C.uid;save();render(true);
     setAcct(C.name);await cloudSave(true);
   }catch(e){setAcct(C.name,'تعذّر الوصول للحساب، يُحفظ محليًا');}
-  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();tasksSig='';
+  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();tasksSig='';socSig='';
 }
 function onLogout(){
-  const wasIn=!!C;C=null;unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
+  const wasIn=!!C;C=null;unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
   if(wasIn){S=fresh();ensureSeason();save();render(true);}
   $('#board').innerHTML='<li class="empty">سجّل دخولك بحساب Google لتظهر في لوحة الصدارة.</li>';
   setAcct(null);
@@ -938,12 +1150,13 @@ function onLogout(){
 async function cloudSave(force){
   if(!C||!FB||cloudBusy)return;const key=Math.floor(S.earned)+'|'+Math.floor(worth());if(!force&&key===lastCloud)return;
   cloudBusy=true;S.ts=Date.now();const snap=JSON.parse(JSON.stringify(S));const {doc,setDoc}=FB.F;
-  const w=Math.floor(worth()),sc=Math.floor(score());
+  const w=Math.max(0,Math.floor(worth())),sc=Math.floor(score());
   try{
     await setDoc(doc(FB.db,'saves',C.uid),{state:snap,updated:snap.ts});
     await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:w,earned:Math.floor(snap.earned),ts:snap.ts});
     await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:sc,worth:w,ts:snap.ts});
     lastCloud=key;
+    allySync(w);
   }catch(e){}
   cloudBusy=false;
 }
@@ -1170,6 +1383,112 @@ function renderInvite(){
   $('#invCopy').onclick=copyInv;
   function copyInv(){const t=msg+' '+inviteLink();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('نسخت رابط الدعوة')).catch(()=>{const r=document.createRange();r.selectNodeContents($('#invLink'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast('حدّد الرابط وانسخه');});}
 }
+/* ---------- Chat ---------- */
+let CH={msgs:[],un:null,last:0,unread:false,sig:'',seen:0,hidden:new Set()};
+try{JSON.parse(localStorage.getItem('souq-hidden')||'[]').forEach(x=>CH.hidden.add(x));}catch(e){}
+const BAD=['كلب','حمار','زبالة','قحبة','قحبه','عرص','منيوك','نيج','طيز','خنزير','زق','حيوان','ابن الكلب','كواد','گواد','سرسري'];
+function clean(t){return t.split(/(\s+)/).map(w=>BAD.some(b=>w.replace(/[^؀-ۿ]/g,'')===b)?'***':w).join('');}
+function subChat(){if(!C||!FB)return;const {collection,query,orderBy,limit,onSnapshot}=FB.F;if(CH.un)CH.un();
+  CH.un=onSnapshot(query(collection(FB.db,'chat'),orderBy('ts','desc'),limit(60)),s=>{CH.msgs=s.docs.map(d=>({id:d.id,...d.data()})).reverse();
+    const newest=CH.msgs.length?CH.msgs[CH.msgs.length-1].ts:0;if(newest>CH.seen&&CH.seen&&CH.msgs[CH.msgs.length-1].uid!==C.uid&&!(tab==='comp'&&socTab==='chat'))CH.unread=true;CH.seen=Math.max(CH.seen,newest)||Date.now();CH.sig='';},()=>{});}
+function renderChat(){const sig=CH.msgs.length+'|'+(CH.msgs.length?CH.msgs[CH.msgs.length-1].id:'')+'|'+CH.hidden.size+'|'+(C?1:0);if(sig===CH.sig)return;CH.sig=sig;
+  const L=$('#chatLog'),atBottom=L.scrollHeight-L.scrollTop-L.clientHeight<60;L.textContent='';
+  if(!C){L.innerHTML='<p class="empty-s">سجّل دخولك بحساب Google لتدخل دردشة السوق.</p>';return;}
+  const list=CH.msgs.filter(m=>!CH.hidden.has(m.uid));if(!list.length)L.innerHTML='<p class="empty-s">ما أكو رسائل بعد. سلّم على التجار!</p>';
+  list.forEach(m=>{const me=m.uid===C.uid,el=document.createElement('div');el.className='msg'+(me?' me':'');
+    el.innerHTML='<div class="mh"><b></b><span class="num"></span></div><div class="mt"></div>'+(me?'':'<button class="hide">إخفاء هذا اللاعب</button>');
+    el.querySelector('b').textContent=String(m.name||'تاجر').slice(0,40);const dt=new Date(m.ts);el.querySelector('.num').textContent=ad(String(dt.getHours()).padStart(2,'0'))+':'+ad(String(dt.getMinutes()).padStart(2,'0'));
+    el.querySelector('.mt').textContent=clean(String(m.text||'').slice(0,200));
+    const h=el.querySelector('.hide');if(h)h.onclick=()=>{CH.hidden.add(m.uid);try{localStorage.setItem('souq-hidden',JSON.stringify([...CH.hidden]));}catch(e){}CH.sig='';toast('أخفيت رسائل هذا اللاعب');render(true);};
+    L.appendChild(el);});
+  if(atBottom||list.length&&list[list.length-1].uid===C.uid)L.scrollTop=L.scrollHeight;}
+$('#chatForm').onsubmit=async e=>{e.preventDefault();if(!C||!FB){toast('سجّل دخولك أولًا');return;}const inp=$('#chatIn'),t=inp.value.trim().replace(/\s+/g,' ').slice(0,200);if(!t)return;
+  if(Date.now()-CH.last<5000){toast('انتظر ثواني قبل الرسالة الجاية');return;}CH.last=Date.now();inp.value='';
+  try{const {collection,addDoc}=FB.F;await addDoc(collection(FB.db,'chat'),{uid:C.uid,name:C.name,text:clean(t),ts:Date.now()});sfx.tap();}catch(err){inp.value=t;toast('تعذّر الإرسال');}};
+
+/* ---------- Alliances (up to 5 players; team worth is the sum of members) ---------- */
+let AL={my:null,top:[],unMy:null,unTop:null,busy:false,lastSync:0};
+function subAlly(){if(!C||!FB)return;const {collection,query,where,orderBy,limit,onSnapshot}=FB.F;if(AL.unMy)AL.unMy();if(AL.unTop)AL.unTop();
+  AL.unMy=onSnapshot(query(collection(FB.db,'alliances'),where('members','array-contains',C.uid),limit(1)),s=>{AL.my=s.docs[0]?{id:s.docs[0].id,...s.docs[0].data()}:null;if(AL.my)S.st.allied=1;socSig='';},()=>{});
+  AL.unTop=onSnapshot(query(collection(FB.db,'alliances'),orderBy('total','desc'),limit(15)),s=>{AL.top=s.docs.map(d=>({id:d.id,...d.data()}));socSig='';},()=>{});}
+const sumW=w=>Object.values(w||{}).reduce((a,b)=>a+(Number(b)||0),0);
+async function allySync(w){if(!AL.my||!C||!FB||Date.now()-AL.lastSync<60000)return;AL.lastSync=Date.now();const {doc,updateDoc}=FB.F,ww=Object.assign({},AL.my.worth,{[C.uid]:w});
+  try{await updateDoc(doc(FB.db,'alliances',AL.my.id),{['worth.'+C.uid]:w,total:sumW(ww)});}catch(e){}}
+async function createAlly(){const nm=($('#alName').value||'').trim().replace(/\s+/g,' ');if(nm.length<2||nm.length>24){toast('اسم التحالف من ٢ إلى ٢٤ حرفًا');return;}if(AL.busy||AL.my)return;AL.busy=true;
+  const w=Math.max(0,Math.floor(worth()));try{const {collection,addDoc}=FB.F;await addDoc(collection(FB.db,'alliances'),{name:clean(nm),owner:C.uid,members:[C.uid],names:{[C.uid]:C.name},worth:{[C.uid]:w},total:w,ts:Date.now()});S.st.allied=1;sfx.win();toast('أسست تحالف '+nm);}catch(e){toast('تعذّر إنشاء التحالف');}AL.busy=false;socSig='';}
+async function joinAlly(id){if(AL.busy||AL.my)return;AL.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'alliances',id),w=Math.max(0,Math.floor(worth()));
+  try{const r=await runTransaction(FB.db,async tx=>{const s=await tx.get(ref);if(!s.exists())return 'gone';const x=s.data();if(x.members.includes(C.uid))return 'in';if(x.members.length>=5)return 'full';
+      const ww=Object.assign({},x.worth,{[C.uid]:w});tx.update(ref,{members:x.members.concat([C.uid]),names:Object.assign({},x.names,{[C.uid]:C.name}),worth:ww,total:sumW(ww)});return 'ok';});
+    if(r==='ok'){S.st.allied=1;sfx.win();confetti();toast('انضممت إلى التحالف!');}else if(r==='full')toast('التحالف ممتلئ (٥ أعضاء)');else toast('تعذّر الانضمام');}catch(e){toast('تعذّر الانضمام');}AL.busy=false;socSig='';}
+async function leaveAlly(){if(!AL.my||AL.busy)return;AL.busy=true;const {doc,runTransaction,deleteField}=FB.F,ref=doc(FB.db,'alliances',AL.my.id);
+  try{await runTransaction(FB.db,async tx=>{const s=await tx.get(ref);if(!s.exists())return;const x=s.data();if(x.members.length<=1){tx.delete(ref);return;}
+      const ww=Object.assign({},x.worth);delete ww[C.uid];tx.update(ref,{members:x.members.filter(u=>u!==C.uid),['names.'+C.uid]:deleteField(),['worth.'+C.uid]:deleteField(),total:sumW(ww)});});toast('تركت التحالف');}catch(e){toast('تعذّر ترك التحالف');}AL.busy=false;socSig='';}
+function renderAlly(){const box=$('#soc-ally');const sig='a'+JSON.stringify([!!C,AL.my&&[AL.my.id,AL.my.total,AL.my.members.length,AL.my.worth],AL.top.map(a=>[a.id,a.total,a.members.length]),AL.busy]);if(sig===socSig)return;socSig=sig;
+  if(!C){box.innerHTML='<section class="card2"><h2>التحالفات التجارية</h2><p class="empty-s">سجّل دخولك لتأسس تحالفًا أو تنضم لواحد.</p></section>';return;}
+  let h='';
+  if(AL.my){const a=AL.my,rank=AL.top.findIndex(x=>x.id===a.id);
+    h+=`<section class="card2"><div class="sec-h"><h2 id="alN"></h2><span class="sub num">${rank>=0?'المركز '+ad(rank+1):''} · ${ad(a.members.length)}/٥ أعضاء</span></div><div><span class="sub">ثروة التحالف</span><div class="ally-total num">${fmt(sumW(a.worth))}</div></div><div id="alMem"></div><div class="row2"><button class="ghostb" id="alLeave">اترك التحالف</button></div><p class="au-note">ادعُ أصدقاءك يدخلون باسم التحالف من قائمة التحالفات. ثروة كل عضو تتحدث كل دقيقة.</p></section>`;}
+  else h+=`<section class="card2"><h2>أسّس تحالفًا</h2><p class="empty-s">اجمع ٥ تجار، وثروتكم كلها تُحسب للتحالف وتنافسون التحالفات الأخرى.</p><input id="alName" maxlength="24" placeholder="اسم التحالف، مثل: تجار الكرادة"><button class="buy wide" id="alNew" ${AL.busy?'disabled':''}>أسّس التحالف</button></section>`;
+  h+=`<section class="card2"><h2>ترتيب التحالفات</h2><div id="alTop"></div></section>`;box.innerHTML=h;
+  if(AL.my){$('#alN').textContent=AL.my.name;const M=$('#alMem');AL.my.members.map(u=>({u,w:Number(AL.my.worth[u])||0})).sort((a,b)=>b.w-a.w).forEach(m=>{const r=document.createElement('div');r.className='mem'+(m.u===C.uid?' me':'');r.innerHTML='<span></span><span class="num"></span>';r.children[0].textContent=String(AL.my.names[m.u]||'تاجر').slice(0,40);r.children[1].textContent=fmt(m.w);M.appendChild(r);});$('#alLeave').onclick=()=>modal('<h2>ترك التحالف</h2><p>متأكد تريد تترك التحالف؟</p>',[['إلغاء',null,true],['اترك',leaveAlly]]);}
+  else $('#alNew').onclick=createAlly;
+  const T=$('#alTop');if(!AL.top.length)T.innerHTML='<p class="empty-s">ما أكو تحالفات بعد. كن أول مؤسس!</p>';
+  AL.top.forEach((a,k)=>{const r=document.createElement('div');r.className='offer';r.innerHTML='<span class="o-t"></span><button class="o-buy"><span>انضم</span><small></small></button><span class="o-s num"></span>';
+    r.querySelector('.o-t').textContent=ad(k+1)+'. '+String(a.name).slice(0,24);r.querySelector('.o-s').textContent=fmt(sumW(a.worth))+' · '+ad(a.members.length)+'/٥ أعضاء';
+    const b=r.querySelector('button');b.querySelector('small').textContent=a.members.length>=5?'ممتلئ':'';if(AL.my||a.members.length>=5||AL.busy){b.disabled=true;if(AL.my&&AL.my.id===a.id){b.querySelector('span').textContent='تحالفك';}}b.onclick=()=>joinAlly(a.id);T.appendChild(r);});}
+
+/* ---------- Live duels: 5 minutes, same fast prices for both, 1,000,000 duel dinars each ---------- */
+const DUEL_LEN=5*6e4,DUEL_CASH=1e6,DUEL_AS=['usd','oil','tel'];
+let DU={code:null,doc:null,un:null,cash:DUEL_CASH,h:{},role:null,lastPush:0,busy:false,ended:false};
+const duelSeed=c=>hashStr('duel'+c)%997;
+function duelPrice(a,t){const st=Math.floor((t||Date.now())/2000),sd=a.seed+duelSeed(DU.code||'');const n=.6*sm(st/30,sd)+.3*sm(st/8,sd+1)+.1*sm(st/2,sd+2);return Math.round(a.base*Math.exp(a.vol*3.2*n));}
+const duelVal=()=>DU.cash+DUEL_AS.reduce((v,id)=>v+(DU.h[id]||0)*duelPrice(ASSETS.find(a=>a.id===id))*(1-FEE),0);
+function duelWatch(code){if(!FB)return;const {doc,onSnapshot}=FB.F;if(DU.un)DU.un();DU.code=code;socSig='';
+  DU.un=onSnapshot(doc(FB.db,'duels',code),s=>{const was=DU.doc&&DU.doc.status;DU.doc=s.exists()?s.data():null;if(DU.doc){DU.role=DU.doc.a===C.uid?'a':DU.doc.b===C.uid?'b':null;if(was==='open'&&DU.doc.status==='live'){sfx.alert();toast('بدأ التحدي! عندك ٥ دقائق');}}socSig='';},()=>{});}
+function duelReset(){if(DU.un)DU.un();DU={code:null,doc:null,un:null,cash:DUEL_CASH,h:{},role:null,lastPush:0,busy:false,ended:false};socSig='';}
+async function duelCreate(){if(!C||!FB||DU.busy)return;DU.busy=true;const {doc,setDoc}=FB.F,code=String(Math.floor(100000+Math.random()*900000));
+  try{await setDoc(doc(FB.db,'duels',code),{a:C.uid,aName:C.name,b:null,bName:'',status:'open',start:0,end:0,aScore:DUEL_CASH,bScore:DUEL_CASH,ts:Date.now()});duelWatch(code);}catch(e){toast('تعذّر إنشاء التحدي');}DU.busy=false;}
+async function duelJoin(code){code=String(code||'').replace(/\D/g,'');if(code.length!==6){toast('الرمز ٦ أرقام');return;}if(!C||!FB||DU.busy)return;DU.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'duels',code);
+  try{const r=await runTransaction(FB.db,async tx=>{const s=await tx.get(ref);if(!s.exists())return 'none';const x=s.data();if(x.a===C.uid)return 'self';if(x.status!=='open')return 'taken';const st=Date.now()+8000;tx.update(ref,{b:C.uid,bName:C.name,status:'live',start:st,end:st+DUEL_LEN});return 'ok';});
+    if(r==='ok'){DU.cash=DUEL_CASH;DU.h={};duelWatch(code);}else toast(r==='none'?'ما لقيت تحدي بهذا الرمز':r==='self'?'هذا تحديك أنت':'التحدي بدأ مع لاعب ثاني');}catch(e){toast('تعذّر الانضمام');}DU.busy=false;}
+function duelFromLink(){let c=null;try{c=localStorage.getItem('souq-duel');localStorage.removeItem('souq-duel');}catch(e){}if(c){setTab('comp');setSoc('duel');duelJoin(c);}}
+try{const dq=new URLSearchParams(location.search).get('duel');if(dq&&/^\d{6}$/.test(dq)){localStorage.setItem('souq-duel',dq);history.replaceState(null,'',location.pathname);}}catch(e){}
+function duelTrade(id,buy){const d=DU.doc;if(!d||d.status!=='live'||Date.now()<d.start||Date.now()>=d.end)return;const a=ASSETS.find(x=>x.id===id),p=duelPrice(a);
+  if(buy){const q=Math.floor(DU.cash*.25/(p*(1+FEE)));if(q<1)return;DU.cash-=q*p*(1+FEE);DU.h[id]=(DU.h[id]||0)+q;sfx.buy();}
+  else{const q=DU.h[id]||0;if(!q)return;DU.cash+=q*p*(1-FEE);DU.h[id]=0;sfx.coin();}socSig='';render(true);}
+async function duelPush(final){const d=DU.doc;if(!d||!DU.role||!FB)return;const v=Math.min(1e8,Math.max(0,Math.round(duelVal())));const {doc,updateDoc}=FB.F;
+  try{await updateDoc(doc(FB.db,'duels',DU.code),{[DU.role+'Score']:v});}catch(e){}}
+function duelTick(){const d=DU.doc;if(!d||d.status!=='live'||!DU.role)return;const now=Date.now();
+  if(now>=d.start&&now<d.end&&now-DU.lastPush>3000){DU.lastPush=now;duelPush();}
+  if(now>=d.end&&!DU.ended){DU.ended=true;duelPush(true).then(()=>setTimeout(duelFinish,2500));}}
+async function duelFinish(){const d=DU.doc;if(!d||S.duels[DU.code])return;const me=DU.role==='a'?d.aScore:d.bScore,op=DU.role==='a'?d.bScore:d.aScore,opName=DU.role==='a'?d.bName:d.aName;S.duels[DU.code]=1;
+  const {doc,updateDoc}=FB.F;updateDoc(doc(FB.db,'duels',DU.code),{status:'done'}).catch(()=>{});
+  if(me>op){const prize=Math.max(5e5,Math.round(incomeRate()*600));S.cash+=prize;bump('duelWins');sfx.win();confetti();modal(`<h2>فزت بالتحدي! 🏆</h2><p>غلبت ${String(opName||'').slice(0,40)}: ${fmt(me)} مقابل ${fmt(op)}</p><div class="big num">+${fmt(prize)} د.ع</div>`,[['رائع']]);}
+  else if(me<op){sfx.loss();modal(`<h2>خسرت التحدي</h2><p>${String(opName||'').slice(0,40)} فاز بـ ${fmt(op)} مقابل ${fmt(me)}. جرّب مرة ثانية!</p>`,[['حسنًا']]);}
+  else modal('<h2>تعادل!</h2><p>نفس النتيجة بالضبط. ما أحد خسر.</p>',[['حسنًا']]);save();}
+function renderDuel(){const box=$('#soc-duel'),d=DU.doc,now=Date.now(),live=d&&d.status==='live';
+  const sig='d'+JSON.stringify([!!C,DU.code,d&&[d.status,d.aScore,d.bScore,d.b],live?Math.floor((now<d.start?d.start-now:d.end-now)/1000):0,live?Math.floor(now/2000):0,DU.busy,Math.round(DU.cash),DU.h]);if(sig===socSig)return;socSig=sig;
+  if(!C){box.innerHTML='<section class="card2"><h2>تحدي مباشر</h2><p class="empty-s">سجّل دخولك لتتحدى أصدقاءك.</p></section>';return;}
+  if(!DU.code){box.innerHTML=`<section class="card2"><h2>تحدي مباشر ⚔️</h2><p class="empty-s">تتحدى صديق: كل واحد يبدأ بمليون دينار تحدي، وتتاجرون بنفس الأسعار السريعة ٥ دقائق. اللي يجمع أكثر يفوز بجائزة من دخله.</p><button class="buy wide" id="duNew" ${DU.busy?'disabled':''}>أنشئ تحديًا</button></section>
+    <section class="card2"><h2>عندك رمز تحدي؟</h2><div class="row2"><input id="duCode" inputmode="numeric" maxlength="6" placeholder="٦ أرقام"><button class="buy" id="duJoin">ادخل</button></div></section>`;
+    $('#duNew').onclick=duelCreate;$('#duJoin').onclick=()=>duelJoin($('#duCode').value.replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)));return;}
+  if(!d){box.innerHTML='<section class="card2"><p class="empty-s">جارٍ التحميل…</p></section>';return;}
+  if(d.status==='open'){const link=location.origin+location.pathname+'?duel='+DU.code;
+    box.innerHTML=`<section class="duel-box"><h2 style="margin:0;font-family:var(--display);color:var(--brass)">بانتظار المنافس…</h2><p class="empty-s">أرسل الرمز أو الرابط لصديقك. التحدي يبدأ أول ما يدخل.</p><div class="code">${DU.code}</div><div class="inv-link" id="duLink"></div><div class="row2"><button class="buy" id="duShare">شارك</button><button class="ghostb" id="duCancel">إلغاء</button></div></section>`;
+    $('#duLink').textContent=link;$('#duShare').onclick=async()=>{const msg='تحداني بـ إمبراطورية السوق ⚔️ رمز التحدي '+DU.code+':';try{if(navigator.share){await navigator.share({title:'تحدي',text:msg,url:link});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+      (navigator.clipboard?navigator.clipboard.writeText(msg+' '+link):Promise.reject()).then(()=>toast('نسخت الرابط')).catch(()=>toast('انسخ الرابط من المربع'));};
+    $('#duCancel').onclick=()=>{const {doc,deleteDoc}=FB.F;deleteDoc(doc(FB.db,'duels',DU.code)).catch(()=>{});duelReset();};return;}
+  const me=DU.role==='a'?'a':'b',op=me==='a'?'b':'a',myS=live&&now>=d.start?Math.round(duelVal()):d[me+'Score'],opS=d[op+'Score'];
+  const pre=live&&now<d.start,over=d.status==='done'||now>=d.end;
+  let h=`<section class="duel-box"><div class="sec-h"><h2 style="margin:0;font-family:var(--display);color:var(--brass)">${pre?'يبدأ بعد':over?'انتهى التحدي':'الوقت المتبقي'}</h2><span class="au-clock num">${over?'':fmtT(pre?(d.start-now)/1000:(d.end-now)/1000)}</span></div>
+    <div class="duel-score"><div class="${myS>=opS?'lead':''}"><span>أنت</span><b class="num">${fmt(myS)}</b></div><div class="vs">ضد</div><div class="${opS>myS?'lead':''}"><span id="duOp"></span><b class="num">${fmt(opS)}</b></div></div>`;
+  if(!over){h+=`<div class="sub num">نقدك في التحدي: ${fmt(DU.cash)}</div>`;DUEL_AS.forEach(id=>{const a=ASSETS.find(x=>x.id===id),p=duelPrice(a),pv=duelPrice(a,now-6000),up=p>=pv;
+      h+=`<div class="d-asset"><b>${a.name}</b><button class="db" data-b="${id}" ${pre||DU.cash<p*1.005?'disabled':''}>اشترِ ربع</button><button class="ds" data-s="${id}" ${pre||!(DU.h[id])?'disabled':''}>بيع الكل</button><small class="num"><span class="${up?'up':'down'}">${fmt(p)} ${up?'▲':'▼'}</span> · تملك ${ad(DU.h[id]||0)}</small></div>`;});}
+  else h+=`<div class="row2"><button class="buy" id="duAgain">تحدي جديد</button></div>`;
+  h+='</section>';box.innerHTML=h;$('#duOp').textContent=String(d[op+'Name']||'المنافس').slice(0,40);
+  box.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.b,true));box.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.s,false));
+  const ag=$('#duAgain');if(ag)ag.onclick=duelReset;}
+function unsubSocial(){if(CH.un)CH.un();CH.un=null;CH.msgs=[];CH.sig='';if(AL.unMy)AL.unMy();if(AL.unTop)AL.unTop();AL={my:null,top:[],unMy:null,unTop:null,busy:false,lastSync:0};duelReset();}
 async function deleteAccount(){
   if(!C||!FB)return;const {doc,deleteDoc}=FB.F;const uid=C.uid;cloudBusy=true;
   try{

@@ -1,5 +1,5 @@
 // يجعل اللعبة تفتح بدون إنترنت. غيّر رقم النسخة عند كل تحديث حتى يحصل اللاعبون على الجديد.
-const CACHE = 'souq-v4';
+const CACHE = 'souq-v5';
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest', './privacy.html',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png'];
 
