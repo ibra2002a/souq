@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install function packages
         run: npm install --prefix functions --no-audit --no-fund
@@ -38,4 +38,10 @@ jobs:
       - name: Deploy functions and rules
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
-        run: npx --yes firebase-tools@13 deploy --only functions,firestore:rules --project ibrahim-dd12e --non-interactive --force
+        run: |
+          set -o pipefail
+          npx --yes firebase-tools@latest deploy --only functions,firestore:rules --project ibrahim-dd12e --non-interactive --force 2>&1 | tee "$RUNNER_TEMP/out.txt" || {
+            # Surface the reason as annotations so it can be read without opening the full log.
+            grep -iE "error|denied|disabled|billing|enable|not found|failed|permission|quota" "$RUNNER_TEMP/out.txt" | grep -v "^\s*$" | tail -15 | while IFS= read -r line; do echo "::error::${line//%/%25}"; done
+            exit 1
+          }
