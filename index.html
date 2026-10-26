@@ -435,6 +435,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
   <section class="pane" id="p-task" role="tabpanel" hidden>
     <section class="daily" id="daily"></section>
     <section class="invite" id="invite"></section>
+    <section class="invite" id="pushBox"></section>
     <section class="mkt-sec"><div class="sec-h"><h2>مهام اليوم</h2><span class="sub num" id="taskReset"></span></div><div class="tasks" id="tasks"></div></section>
     <section class="mkt-sec"><div class="sec-h"><h2>الإنجازات</h2><span class="sub num" id="achCount"></span></div><div class="achs" id="achs"></div></section>
   </section>
@@ -1011,7 +1012,7 @@ function render(force){
   $('#rate').textContent=fmt(incomeRate());$('#worth').textContent=fmt(worth());
   $('#taskBadge').hidden=!taskAlert();
   $('#mktBadge').hidden=!auLive();
-  if(tab==='task')renderInvite();
+  if(tab==='task'){renderInvite();renderPush();}
   if(tab==='shop')renderCities();
   if(tab==='task')renderTasks();
   if(tab==='mkt'){renderAuction();renderMarket();}
@@ -1082,6 +1083,7 @@ function applyAway(){
 
 /* ---------- Account (Google via Firebase), cloud save, competition ---------- */
 const FBV='10.12.2', FBB='https://www.gstatic.com/firebasejs/'+FBV+'/';
+let serverBoards=false;
 let FB=null, C=null, cloudBusy=false, lastCloud='', unBoard=null, unChamp=null;
 const authBtn=$('#authBtn');
 function setAcct(name,msg){const a=$('#acct');a.classList.toggle('on',!!name);const t=$('#acctTxt');t.textContent='';
@@ -1102,7 +1104,7 @@ async function cloudInit(){
   try{
     const [app,auth,fs]=await Promise.all([import(FBB+'firebase-app.js'),import(FBB+'firebase-auth.js'),import(FBB+'firebase-firestore.js')]);
     const a=app.initializeApp(cfg);
-    FB={A:auth,F:fs,auth:auth.getAuth(a),db:fs.getFirestore(a)};
+    FB={A:auth,F:fs,app:a,auth:auth.getAuth(a),db:fs.getFirestore(a)};
     FB.auth.languageCode='ar';
     await auth.setPersistence(FB.auth,auth.browserLocalPersistence).catch(()=>{});
     auth.getRedirectResult(FB.auth).catch(()=>{});
@@ -1139,7 +1141,7 @@ async function onLogin(u){
     S.owner=C.uid;save();render(true);
     setAcct(C.name);await cloudSave(true);
   }catch(e){setAcct(C.name,'تعذّر الوصول للحساب، يُحفظ محليًا');}
-  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();tasksSig='';socSig='';
+  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();pushSilent();tasksSig='';socSig='';
 }
 function onLogout(){
   const wasIn=!!C;C=null;unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
@@ -1149,14 +1151,14 @@ function onLogout(){
 }
 async function cloudSave(force){
   if(!C||!FB||cloudBusy)return;const key=Math.floor(S.earned)+'|'+Math.floor(worth());if(!force&&key===lastCloud)return;
-  cloudBusy=true;S.ts=Date.now();const snap=JSON.parse(JSON.stringify(S));const {doc,setDoc}=FB.F;
+  cloudBusy=true;S.ts=Date.now();const snap=JSON.parse(JSON.stringify(S));snap.pname=C.name;const {doc,setDoc}=FB.F;
   const w=Math.max(0,Math.floor(worth())),sc=Math.floor(score());
   try{
     await setDoc(doc(FB.db,'saves',C.uid),{state:snap,updated:snap.ts});
-    await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:w,earned:Math.floor(snap.earned),ts:snap.ts});
-    await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:sc,worth:w,ts:snap.ts});
     lastCloud=key;
-    allySync(w);
+    /* Leaderboards are now written by the server after it verifies the save. Older rules still accept these writes, newer ones refuse them, and that is fine. */
+    if(!serverBoards){try{await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:w,earned:Math.floor(snap.earned),ts:snap.ts});
+      await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:sc,worth:w,ts:snap.ts});}catch(e2){serverBoards=true;}}
   }catch(e){}
   cloudBusy=false;
 }
@@ -1489,6 +1491,34 @@ function renderDuel(){const box=$('#soc-duel'),d=DU.doc,now=Date.now(),live=d&&d
   box.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.b,true));box.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.s,false));
   const ag=$('#duAgain');if(ag)ag.onclick=duelReset;}
 function unsubSocial(){if(CH.un)CH.un();CH.un=null;CH.msgs=[];CH.sig='';if(AL.unMy)AL.unMy();if(AL.unTop)AL.unTop();AL={my:null,top:[],unMy:null,unTop:null,busy:false,lastSync:0};duelReset();}
+/* ---------- Push notifications (Firebase Cloud Messaging) ---------- */
+let pushSig='',pushBusy=false;
+const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent),isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const pushState=()=>!('Notification' in window)?'none':Notification.permission;
+async function pushRegister(){
+  const cfg=await import('./firebase-config.js');const vapid=cfg.vapidKey;if(!vapid||/YOUR_/.test(vapid))return 'novapid';
+  const m=await import(FBB+'firebase-messaging.js');if(!(await m.isSupported()))return 'unsupported';
+  const reg=await navigator.serviceWorker.ready,messaging=m.getMessaging(FB.app);
+  const token=await m.getToken(messaging,{vapidKey:vapid,serviceWorkerRegistration:reg});if(!token)return 'notoken';
+  const {doc,setDoc}=FB.F;await setDoc(doc(FB.db,'tokens',token),{uid:C.uid,ts:Date.now()});
+  m.onMessage(messaging,p=>{const n=p.notification||{};sfx.alert();toast((n.title||'')+' · '+(n.body||''));});
+  try{localStorage.setItem('souq-push','1');}catch(e){}return 'ok';}
+async function enablePush(){
+  if(!C||!FB){toast('سجّل دخولك أولًا');return;}if(pushBusy)return;
+  if(isIOS&&!isStandalone){modal('<h2>الإشعارات على آيفون</h2><p>آيفون يسمح بالإشعارات فقط للعبة المضافة إلى الشاشة الرئيسية.</p><p style="color:var(--ink)">١. اضغط زر المشاركة ⬆️ في Safari<br>٢. اختر «إضافة إلى الشاشة الرئيسية»<br>٣. افتح اللعبة من أيقونتها، ثم فعّل الإشعارات من هنا</p>',[['فهمت']]);return;}
+  if(!('Notification' in window)||!('serviceWorker' in navigator)){toast('متصفحك لا يدعم الإشعارات');return;}
+  pushBusy=true;pushSig='';render(true);
+  try{const perm=await Notification.requestPermission();
+    if(perm!=='granted')toast('ما سمحت بالإشعارات. تقدر تفعّلها من إعدادات المتصفح');
+    else{const r=await pushRegister();toast(r==='ok'?'تم تفعيل الإشعارات 🔔':r==='novapid'?'الإشعارات تحتاج خطوة إعداد أخيرة من صاحب اللعبة':'متصفحك لا يدعم الإشعارات');if(r==='ok')sfx.win();}
+  }catch(e){toast('تعذّر تفعيل الإشعارات');}
+  pushBusy=false;pushSig='';render(true);}
+function pushSilent(){if(pushState()==='granted')pushRegister().catch(()=>{});}
+function renderPush(){const st=pushState(),on=st==='granted'&&(()=>{try{return localStorage.getItem('souq-push')==='1';}catch(e){return false;}})();
+  const sig=[!!C,st,on,pushBusy].join();if(sig===pushSig)return;pushSig=sig;const B=$('#pushBox');
+  B.innerHTML=`<div class="sec-h"><h2>🔔 الإشعارات</h2><span class="sub">${on?'مفعّلة':'غير مفعّلة'}</span></div><p class="empty-s">نبّهك عند بداية المزاد، وإذا زايد عليك أحد، وإذا بيعت بضاعتك، أو قبل صديقك تحديك، وبهديتك اليومية.</p>`
+    +(on?'<p class="sub">ستصلك الإشعارات على هذا الجهاز.</p>':st==='denied'?'<p class="sub">الإشعارات محظورة من إعدادات المتصفح. فعّلها من هناك ثم ارجع هنا.</p>':`<button class="buy wide" id="pushBtn" ${pushBusy||!C?'disabled':''}>${C?'فعّل الإشعارات':'سجّل دخولك لتفعيل الإشعارات'}</button>`);
+  const b=$('#pushBtn');if(b)b.onclick=enablePush;}
 async function deleteAccount(){
   if(!C||!FB)return;const {doc,deleteDoc}=FB.F;const uid=C.uid;cloudBusy=true;
   try{

@@ -1,5 +1,5 @@
 // يجعل اللعبة تفتح بدون إنترنت. غيّر رقم النسخة عند كل تحديث حتى يحصل اللاعبون على الجديد.
-const CACHE = 'souq-v5';
+const CACHE = 'souq-v6';
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest', './privacy.html',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png'];
 
@@ -17,4 +17,21 @@ self.addEventListener('fetch', e => {
     fetch(e.request).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })
       .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
   );
+});
+
+// إشعارات Firebase Cloud Messaging: يعرض الإشعار حتى لو كانت اللعبة مغلقة.
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) {}
+  const n = d.notification || d.data || {};
+  e.waitUntil(self.registration.showNotification(n.title || 'إمبراطورية السوق', {
+    body: n.body || '', icon: './icons/icon-192.png', badge: './icons/icon-192.png', dir: 'rtl', lang: 'ar', tag: n.tag || undefined
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => {
+    for (const w of ws) if ('focus' in w) return w.focus();
+    return self.clients.openWindow('./');
+  }));
 });

@@ -12,20 +12,26 @@ service cloud.firestore {
       allow write: if signedIn(uid) && request.resource.data.keys().hasOnly(['state', 'updated']);
     }
 
+    // Leaderboards are written only by the server after it checks each save (functions/index.js).
     match /board/{uid} {
       allow read: if true;
       allow delete: if signedIn(uid);
-      allow write: if signedIn(uid)
-        && request.resource.data.keys().hasOnly(['name', 'worth', 'earned', 'ts'])
-        && okName() && okNum('worth') && okNum('earned');
     }
 
     match /seasons/{season}/players/{uid} {
       allow read: if true;
       allow delete: if signedIn(uid);
-      allow write: if signedIn(uid)
-        && request.resource.data.keys().hasOnly(['name', 'score', 'worth', 'ts'])
-        && okName() && okNum('score') && okNum('worth');
+    }
+
+    match /verify/{uid} {
+      allow read, write: if false;
+    }
+
+    match /tokens/{token} {
+      allow create, update: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'ts'])
+        && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
 
     match /market/{id} {

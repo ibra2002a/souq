@@ -9,3 +9,6 @@ export const firebaseConfig = {
   appId: "1:637253401017:web:8007a337bbb84aa5de1e68",
   measurementId: "G-HBGR7YEYK7"
 };
+
+// مفتاح الإشعارات (Web Push certificate). يُضاف من Firebase Console ← Project settings ← Cloud Messaging.
+export const vapidKey = "YOUR_VAPID_KEY";

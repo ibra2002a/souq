@@ -1,0 +1,41 @@
+name: Deploy to Firebase
+
+# يرفع كود الخادم وقواعد الحماية إلى Firebase تلقائيًا عند كل تحديث.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'functions/**'
+      - 'firestore.rules'
+      - 'firebase.json'
+      - '.github/workflows/firebase.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: firebase-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install function packages
+        run: npm install --prefix functions --no-audit --no-fund
+
+      - name: Write service account key
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          if [ -z "$FIREBASE_SA" ]; then echo "::error::The FIREBASE_SA secret is missing. Add it in Settings > Secrets and variables > Actions."; exit 1; fi
+          printf '%s' "$FIREBASE_SA" > "$RUNNER_TEMP/sa.json"
+
+      - name: Deploy functions and rules
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
+        run: npx --yes firebase-tools@13 deploy --only functions,firestore:rules --project ibrahim-dd12e --non-interactive --force
