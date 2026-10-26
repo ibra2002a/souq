@@ -12,26 +12,45 @@ service cloud.firestore {
       allow write: if signedIn(uid) && request.resource.data.keys().hasOnly(['state', 'updated']);
     }
 
-    // Leaderboards are written only by the server after it checks each save (functions/index.js).
+    // Anti-cheat without a server: worth on the leaderboard may not grow faster than a generous curve
+    // measured from the player's first entry (createdAt): 100,000,000 × 10^(1.5 × hours played).
+    function cap(t0) {
+      let el = request.time.toMillis() - t0 - 60000;
+      return el <= 0 ? 100000000 : 100000000 * math.pow(10, 1.5 * el / 3600000);
+    }
+    function fresh(t) { return t is number && t > request.time.toMillis() - 120000 && t < request.time.toMillis() + 120000; }
+
     match /board/{uid} {
       allow read: if true;
       allow delete: if signedIn(uid);
+      allow create: if signedIn(uid)
+        && request.resource.data.keys().hasOnly(['name', 'worth', 'earned', 'ts', 'createdAt'])
+        && okName() && okNum('worth') && okNum('earned') && fresh(request.resource.data.ts)
+        && fresh(request.resource.data.createdAt)
+        && request.resource.data.worth <= cap(request.resource.data.createdAt)
+        && request.resource.data.earned <= cap(request.resource.data.createdAt);
+      allow update: if signedIn(uid)
+        && request.resource.data.keys().hasOnly(['name', 'worth', 'earned', 'ts', 'createdAt'])
+        && okName() && okNum('worth') && okNum('earned') && fresh(request.resource.data.ts)
+        && (
+          // normal update: the start time never changes
+          (('createdAt' in resource.data) && request.resource.data.createdAt == resource.data.createdAt)
+          // older entries from before this rule get a start time of now
+          || (!('createdAt' in resource.data) && fresh(request.resource.data.createdAt))
+        )
+        && request.resource.data.worth <= cap(request.resource.data.createdAt)
+        && request.resource.data.earned <= cap(request.resource.data.createdAt);
     }
 
     match /seasons/{season}/players/{uid} {
       allow read: if true;
       allow delete: if signedIn(uid);
-    }
-
-    match /verify/{uid} {
-      allow read, write: if false;
-    }
-
-    match /tokens/{token} {
-      allow create, update: if request.auth != null
-        && request.resource.data.keys().hasOnly(['uid', 'ts'])
-        && request.resource.data.uid == request.auth.uid;
-      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+      allow write: if signedIn(uid)
+        && request.resource.data.keys().hasOnly(['name', 'score', 'worth', 'ts'])
+        && okName() && okNum('score') && okNum('worth') && fresh(request.resource.data.ts)
+        && exists(/databases/$(database)/documents/board/$(uid))
+        && request.resource.data.worth <= get(/databases/$(database)/documents/board/$(uid)).data.worth
+        && request.resource.data.score <= request.resource.data.worth;
     }
 
     match /market/{id} {
@@ -107,16 +126,19 @@ service cloud.firestore {
         && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 24
         && request.resource.data.names.keys().hasOnly([request.auth.uid])
         && request.resource.data.worth.keys().hasOnly([request.auth.uid])
+        && request.resource.data.worth[request.auth.uid] <= 100000000
         && request.resource.data.total is number;
       allow update: if request.auth != null && (
           // a member updates their own worth
           (request.auth.uid in resource.data.members
             && changed().hasOnly(['worth', 'total'])
-            && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid]))
+            && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid])
+            && request.resource.data.worth[request.auth.uid] <= get(/databases/$(database)/documents/board/$(request.auth.uid)).data.worth)
           // someone joins
         || (!(request.auth.uid in resource.data.members) && resource.data.members.size() < 5
             && changed().hasOnly(['members', 'names', 'worth', 'total'])
             && request.resource.data.members == resource.data.members.concat([request.auth.uid])
+            && request.resource.data.worth[request.auth.uid] <= get(/databases/$(database)/documents/board/$(request.auth.uid)).data.worth
             && request.resource.data.names.diff(resource.data.names).affectedKeys().hasOnly([request.auth.uid])
             && request.resource.data.worth.diff(resource.data.worth).affectedKeys().hasOnly([request.auth.uid]))
           // a member leaves

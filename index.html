@@ -1083,7 +1083,10 @@ function applyAway(){
 
 /* ---------- Account (Google via Firebase), cloud save, competition ---------- */
 const FBV='10.12.2', FBB='https://www.gstatic.com/firebasejs/'+FBV+'/';
-let serverBoards=false;
+/* The rules cap leaderboard worth by time since the player's first board entry (see firestore.rules). The client clamps to the same curve so a legit write is never refused. */
+let boardStart=null;
+const BOUND_BASE=1e8,BOUND_RATE=1.5;
+const worthCap=t0=>BOUND_BASE*Math.pow(10,BOUND_RATE*Math.max(0,Date.now()-t0-60000)/3600000);
 let FB=null, C=null, cloudBusy=false, lastCloud='', unBoard=null, unChamp=null;
 const authBtn=$('#authBtn');
 function setAcct(name,msg){const a=$('#acct');a.classList.toggle('on',!!name);const t=$('#acctTxt');t.textContent='';
@@ -1156,9 +1159,11 @@ async function cloudSave(force){
   try{
     await setDoc(doc(FB.db,'saves',C.uid),{state:snap,updated:snap.ts});
     lastCloud=key;
-    /* Leaderboards are now written by the server after it verifies the save. Older rules still accept these writes, newer ones refuse them, and that is fine. */
-    if(!serverBoards){try{await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:w,earned:Math.floor(snap.earned),ts:snap.ts});
-      await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:sc,worth:w,ts:snap.ts});}catch(e2){serverBoards=true;}}
+    if(!boardStart){const {getDoc}=FB.F;const b=await getDoc(doc(FB.db,'board',C.uid));boardStart=b.exists()&&b.data().createdAt?b.data().createdAt:Date.now();}
+    const cap=Math.floor(worthCap(boardStart)*.98),bw=Math.min(w,cap),now=Date.now();
+    await setDoc(doc(FB.db,'board',C.uid),{name:C.name,worth:bw,earned:Math.min(Math.floor(snap.earned),cap),ts:now,createdAt:boardStart});
+    await setDoc(doc(FB.db,'seasons',String(S.season.id),'players',C.uid),{name:C.name,score:Math.min(Math.max(0,sc),bw),worth:bw,ts:now});
+    allySync(bw);
   }catch(e){}
   cloudBusy=false;
 }
@@ -1412,7 +1417,7 @@ $('#chatForm').onsubmit=async e=>{e.preventDefault();if(!C||!FB){toast('سجّل
 let AL={my:null,top:[],unMy:null,unTop:null,busy:false,lastSync:0};
 function subAlly(){if(!C||!FB)return;const {collection,query,where,orderBy,limit,onSnapshot}=FB.F;if(AL.unMy)AL.unMy();if(AL.unTop)AL.unTop();
   AL.unMy=onSnapshot(query(collection(FB.db,'alliances'),where('members','array-contains',C.uid),limit(1)),s=>{AL.my=s.docs[0]?{id:s.docs[0].id,...s.docs[0].data()}:null;if(AL.my)S.st.allied=1;socSig='';},()=>{});
-  AL.unTop=onSnapshot(query(collection(FB.db,'alliances'),orderBy('total','desc'),limit(15)),s=>{AL.top=s.docs.map(d=>({id:d.id,...d.data()}));socSig='';},()=>{});}
+  AL.unTop=onSnapshot(query(collection(FB.db,'alliances'),orderBy('total','desc'),limit(30)),s=>{AL.top=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>sumW(b.worth)-sumW(a.worth)).slice(0,15);socSig='';},()=>{});}
 const sumW=w=>Object.values(w||{}).reduce((a,b)=>a+(Number(b)||0),0);
 async function allySync(w){if(!AL.my||!C||!FB||Date.now()-AL.lastSync<60000)return;AL.lastSync=Date.now();const {doc,updateDoc}=FB.F,ww=Object.assign({},AL.my.worth,{[C.uid]:w});
   try{await updateDoc(doc(FB.db,'alliances',AL.my.id),{['worth.'+C.uid]:w,total:sumW(ww)});}catch(e){}}
@@ -1491,34 +1496,38 @@ function renderDuel(){const box=$('#soc-duel'),d=DU.doc,now=Date.now(),live=d&&d
   box.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.b,true));box.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>duelTrade(b.dataset.s,false));
   const ag=$('#duAgain');if(ag)ag.onclick=duelReset;}
 function unsubSocial(){if(CH.un)CH.un();CH.un=null;CH.msgs=[];CH.sig='';if(AL.unMy)AL.unMy();if(AL.unTop)AL.unTop();AL={my:null,top:[],unMy:null,unTop:null,busy:false,lastSync:0};duelReset();}
-/* ---------- Push notifications (Firebase Cloud Messaging) ---------- */
-let pushSig='',pushBusy=false;
+/* ---------- Push notifications (OneSignal, free) ---------- */
+let pushSig='',pushBusy=false,OS=null,osCfg=null;
 const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent),isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-const pushState=()=>!('Notification' in window)?'none':Notification.permission;
-async function pushRegister(){
-  const cfg=await import('./firebase-config.js');const vapid=cfg.vapidKey;if(!vapid||/YOUR_/.test(vapid))return 'novapid';
-  const m=await import(FBB+'firebase-messaging.js');if(!(await m.isSupported()))return 'unsupported';
-  const reg=await navigator.serviceWorker.ready,messaging=m.getMessaging(FB.app);
-  const token=await m.getToken(messaging,{vapidKey:vapid,serviceWorkerRegistration:reg});if(!token)return 'notoken';
-  const {doc,setDoc}=FB.F;await setDoc(doc(FB.db,'tokens',token),{uid:C.uid,ts:Date.now()});
-  m.onMessage(messaging,p=>{const n=p.notification||{};sfx.alert();toast((n.title||'')+' · '+(n.body||''));});
-  try{localStorage.setItem('souq-push','1');}catch(e){}return 'ok';}
+async function osLoad(){
+  if(OS)return OS;if(osCfg===false)return null;
+  try{const cfg=await import('./firebase-config.js');osCfg=cfg.oneSignalAppId&&!/YOUR_/.test(cfg.oneSignalAppId)?cfg.oneSignalAppId:false;}catch(e){osCfg=false;}
+  if(!osCfg)return null;
+  return new Promise(res=>{window.OneSignalDeferred=window.OneSignalDeferred||[];
+    OneSignalDeferred.push(async os=>{try{const base=location.pathname.replace(/[^/]*$/,'');
+        await os.init({appId:osCfg,serviceWorkerPath:base.replace(/^\//,'')+'sw.js',serviceWorkerParam:{scope:base},notifyButton:{enable:false},welcomeNotification:{disable:true}});
+        OS=os;os.Notifications.addEventListener('permissionChange',()=>{pushSig='';render(true);});res(os);}catch(e){res(null);}});
+    const sc=document.createElement('script');sc.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';sc.defer=true;sc.onerror=()=>res(null);document.head.appendChild(sc);});
+}
+const pushOn=()=>!!(OS&&OS.Notifications.permission&&OS.User&&OS.User.PushSubscription&&OS.User.PushSubscription.optedIn);
 async function enablePush(){
-  if(!C||!FB){toast('سجّل دخولك أولًا');return;}if(pushBusy)return;
+  if(pushBusy)return;
   if(isIOS&&!isStandalone){modal('<h2>الإشعارات على آيفون</h2><p>آيفون يسمح بالإشعارات فقط للعبة المضافة إلى الشاشة الرئيسية.</p><p style="color:var(--ink)">١. اضغط زر المشاركة ⬆️ في Safari<br>٢. اختر «إضافة إلى الشاشة الرئيسية»<br>٣. افتح اللعبة من أيقونتها، ثم فعّل الإشعارات من هنا</p>',[['فهمت']]);return;}
-  if(!('Notification' in window)||!('serviceWorker' in navigator)){toast('متصفحك لا يدعم الإشعارات');return;}
   pushBusy=true;pushSig='';render(true);
-  try{const perm=await Notification.requestPermission();
-    if(perm!=='granted')toast('ما سمحت بالإشعارات. تقدر تفعّلها من إعدادات المتصفح');
-    else{const r=await pushRegister();toast(r==='ok'?'تم تفعيل الإشعارات 🔔':r==='novapid'?'الإشعارات تحتاج خطوة إعداد أخيرة من صاحب اللعبة':'متصفحك لا يدعم الإشعارات');if(r==='ok')sfx.win();}
+  try{const os=await osLoad();
+    if(!os)toast(osCfg===false?'الإشعارات تحتاج خطوة إعداد أخيرة من صاحب اللعبة':'تعذّر تحميل خدمة الإشعارات');
+    else{await os.Notifications.requestPermission();if(os.User.PushSubscription.optIn)await os.User.PushSubscription.optIn();
+      if(C)try{await os.login(C.uid);}catch(e){}
+      if(os.Notifications.permission){sfx.win();toast('تم تفعيل الإشعارات 🔔');}else toast('ما سمحت بالإشعارات. تقدر تفعّلها من إعدادات المتصفح');}
   }catch(e){toast('تعذّر تفعيل الإشعارات');}
   pushBusy=false;pushSig='';render(true);}
-function pushSilent(){if(pushState()==='granted')pushRegister().catch(()=>{});}
-function renderPush(){const st=pushState(),on=st==='granted'&&(()=>{try{return localStorage.getItem('souq-push')==='1';}catch(e){return false;}})();
-  const sig=[!!C,st,on,pushBusy].join();if(sig===pushSig)return;pushSig=sig;const B=$('#pushBox');
-  B.innerHTML=`<div class="sec-h"><h2>🔔 الإشعارات</h2><span class="sub">${on?'مفعّلة':'غير مفعّلة'}</span></div><p class="empty-s">نبّهك عند بداية المزاد، وإذا زايد عليك أحد، وإذا بيعت بضاعتك، أو قبل صديقك تحديك، وبهديتك اليومية.</p>`
-    +(on?'<p class="sub">ستصلك الإشعارات على هذا الجهاز.</p>':st==='denied'?'<p class="sub">الإشعارات محظورة من إعدادات المتصفح. فعّلها من هناك ثم ارجع هنا.</p>':`<button class="buy wide" id="pushBtn" ${pushBusy||!C?'disabled':''}>${C?'فعّل الإشعارات':'سجّل دخولك لتفعيل الإشعارات'}</button>`);
+function pushSilent(){if('Notification' in window&&Notification.permission==='granted')osLoad().then(os=>{if(os&&C)os.login(C.uid).catch(()=>{});pushSig='';});}
+function renderPush(){const denied='Notification' in window&&Notification.permission==='denied',on=pushOn();
+  const sig=[on,denied,pushBusy,osCfg].join();if(sig===pushSig)return;pushSig=sig;const B=$('#pushBox');
+  B.innerHTML=`<div class="sec-h"><h2>🔔 الإشعارات</h2><span class="sub">${on?'مفعّلة':'غير مفعّلة'}</span></div><p class="empty-s">نبّهك قبل بداية كل مزاد، وبهديتك اليومية، وبالأحداث الكبرى في السوق.</p>`
+    +(on?'<p class="sub">ستصلك الإشعارات على هذا الجهاز.</p>':denied?'<p class="sub">الإشعارات محظورة من إعدادات المتصفح. فعّلها من هناك ثم ارجع هنا.</p>':`<button class="buy wide" id="pushBtn" ${pushBusy?'disabled':''}>فعّل الإشعارات</button>`);
   const b=$('#pushBtn');if(b)b.onclick=enablePush;}
+if('Notification' in window&&Notification.permission==='granted')setTimeout(()=>osLoad().then(()=>{pushSig='';}),1500);
 async function deleteAccount(){
   if(!C||!FB)return;const {doc,deleteDoc}=FB.F;const uid=C.uid;cloudBusy=true;
   try{

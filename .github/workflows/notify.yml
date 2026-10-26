@@ -1,0 +1,44 @@
+name: Scheduled notifications
+
+# يرسل إشعارات OneSignal المجانية: قبل كل مزاد، وتذكير الهدية اليومية.
+# يحتاج سرّين في GitHub: ONESIGNAL_APP_ID و ONESIGNAL_REST_KEY.
+on:
+  schedule:
+    - cron: '50 2-23/3 * * *'   # 10 minutes before each auction (auctions start every 3 hours, UTC)
+    - cron: '0 17 * * *'        # 20:00 Baghdad, daily gift reminder
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'عنوان الإشعار (اتركه فارغًا لإشعار المزاد)'
+        required: false
+      body:
+        description: 'نص الإشعار'
+        required: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and send the message
+        env:
+          APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
+          REST_KEY: ${{ secrets.ONESIGNAL_REST_KEY }}
+          EVENT_CRON: ${{ github.event.schedule }}
+          IN_TITLE: ${{ github.event.inputs.title }}
+          IN_BODY: ${{ github.event.inputs.body }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$REST_KEY" ]; then echo "::warning::OneSignal secrets are not set yet."; exit 0; fi
+          ITEMS=("فندق تراثي في أربيل" "حصة في ميناء أم قصر" "مخبز شهير في الكرادة" "دكان قديم في الشورجة" "مولّدة أهلية كبيرة" "خان تاريخي في الموصل")
+          if [ -n "$IN_TITLE" ]; then
+            TITLE="$IN_TITLE"; BODY="$IN_BODY"
+          elif [ "$EVENT_CRON" = "0 17 * * *" ]; then
+            TITLE="هديتك اليومية تنتظرك 🎁"; BODY="ادخل واستلم هدية اليوم قبل منتصف الليل حتى لا تنقطع سلسلتك."
+          else
+            SLOT=$(( ( $(date +%s) + 1200 ) / 10800 )); ITEM="${ITEMS[$(( SLOT % 6 ))]}"
+            TITLE="المزاد المباشر يبدأ بعد دقائق 🔨"; BODY="${ITEM} معروض للمزايدة لمدة ١٥ دقيقة. جهّز فلوسك!"
+          fi
+          jq -n --arg app "$APP_ID" --arg t "$TITLE" --arg b "$BODY" \
+            '{app_id:$app, target_channel:"push", included_segments:["Total Subscriptions"], headings:{en:$t, ar:$t}, contents:{en:$b, ar:$b}, url:"https://ibra2002a.github.io/souq/"}' > msg.json
+          code=$(curl -s -o out.json -w '%{http_code}' -X POST 'https://api.onesignal.com/notifications?c=push' \
+            -H "Authorization: Key $REST_KEY" -H 'Content-Type: application/json' --data @msg.json)
+          echo "HTTP $code"; if [ "$code" -ge 300 ]; then echo "::error::OneSignal: $(head -c 400 out.json)"; exit 1; fi

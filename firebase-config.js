@@ -10,5 +10,6 @@ export const firebaseConfig = {
   measurementId: "G-HBGR7YEYK7"
 };
 
-// مفتاح الإشعارات (Web Push certificate). يُضاف من Firebase Console ← Project settings ← Cloud Messaging.
-export const vapidKey = "YOUR_VAPID_KEY";
+
+// رقم تطبيق OneSignal للإشعارات المجانية (App ID). من onesignal.com ← Settings ← Keys & IDs.
+export const oneSignalAppId = "YOUR_ONESIGNAL_APP_ID";

@@ -1,5 +1,8 @@
+// إشعارات OneSignal (مجانية): عامل الخدمة الخاص بهم يعمل داخل عاملنا.
+try { importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js'); } catch (e) {}
+
 // يجعل اللعبة تفتح بدون إنترنت. غيّر رقم النسخة عند كل تحديث حتى يحصل اللاعبون على الجديد.
-const CACHE = 'souq-v6';
+const CACHE = 'souq-v7';
 const SHELL = ['./', './index.html', './firebase-config.js', './manifest.webmanifest', './privacy.html',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png'];
 
@@ -19,19 +22,3 @@ self.addEventListener('fetch', e => {
   );
 });
 
-// إشعارات Firebase Cloud Messaging: يعرض الإشعار حتى لو كانت اللعبة مغلقة.
-self.addEventListener('push', e => {
-  let d = {};
-  try { d = e.data ? e.data.json() : {}; } catch (err) {}
-  const n = d.notification || d.data || {};
-  e.waitUntil(self.registration.showNotification(n.title || 'إمبراطورية السوق', {
-    body: n.body || '', icon: './icons/icon-192.png', badge: './icons/icon-192.png', dir: 'rtl', lang: 'ar', tag: n.tag || undefined
-  }));
-});
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => {
-    for (const w of ws) if ('focus' in w) return w.focus();
-    return self.clients.openWindow('./');
-  }));
-});
