@@ -510,7 +510,7 @@ async function cloudInit(){
     FB={A:auth,F:fs,auth:auth.getAuth(a),db:fs.getFirestore(a)};
     FB.auth.languageCode='ar';
     await auth.setPersistence(FB.auth,auth.browserLocalPersistence).catch(()=>{});
-    auth.getRedirectResult(FB.auth).catch(e=>toast('تعذّر تسجيل الدخول: '+(e.code||'')));
+    auth.getRedirectResult(FB.auth).catch(()=>{});
     let first=true;
     auth.onAuthStateChanged(FB.auth,u=>{
       if(u)onLogin(u);else{onLogout();
@@ -524,7 +524,8 @@ async function login(){
   const p=new FB.A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
   try{await FB.A.signInWithPopup(FB.auth,p);}
   catch(e){const c=e&&e.code||'';
-    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'||c==='auth/web-storage-unsupported'){await FB.A.signInWithRedirect(FB.auth,p);}
+    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'||c==='auth/web-storage-unsupported'){
+      modal('<h2>افتح اللعبة في المتصفح</h2><p>هذه النافذة لا تسمح بتسجيل الدخول بحساب Google. افتح الرابط في Safari أو Chrome مباشرة، ثم سجّل الدخول.</p><p class="num" style="direction:ltr;user-select:all;-webkit-user-select:all;color:var(--ink)">'+location.href.split('#')[0]+'</p>',[['حسنًا']]);}
     else if(c==='auth/unauthorized-domain')toast('هذا النطاق غير مضاف في إعدادات Firebase (Authorized domains)');
     else if(c!=='auth/popup-closed-by-user'&&c!=='auth/cancelled-popup-request')toast('تعذّر تسجيل الدخول: '+c);}
 }
