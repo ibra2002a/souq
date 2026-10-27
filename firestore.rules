@@ -6,10 +6,12 @@ service cloud.firestore {
     function okName() { return request.resource.data.name is string && request.resource.data.name.size() <= 40; }
     function okNum(f) { return request.resource.data[f] is number && request.resource.data[f] >= 0; }
     function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function isAdmin() { return request.auth != null && request.auth.token.email in ['alshmria657@gmail.com'] && request.auth.token.email_verified == true; }
 
     match /saves/{uid} {
       allow read, delete: if signedIn(uid);
       allow write: if signedIn(uid) && request.resource.data.keys().hasOnly(['state', 'updated']);
+      allow read: if isAdmin();
     }
 
     // Anti-cheat without a server: worth on the leaderboard may not grow faster than a generous curve
@@ -717,7 +719,6 @@ service cloud.firestore {
         && fresh(request.resource.data.ts);
     }
 
-    function isAdmin() { return request.auth != null && request.auth.token.email in ['alshmria657@gmail.com'] && request.auth.token.email_verified == true; }
 
     match /topups/{id} {
       allow read: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());

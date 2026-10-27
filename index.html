@@ -31,7 +31,7 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
-[hidden]{display:none!important}
+[hidden]{display:none!important}.adm-link{display:block;text-align:center;padding:10px;border-radius:12px;text-decoration:none}
 #cash{cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:26px}
 #cash .cd{font-size:20px;color:#7fd3ff} #cash .cw{font-size:14px;border:1px solid var(--brass);border-radius:999px;width:26px;height:26px;display:grid;place-items:center;color:var(--brass)}
 #cash.ask .cw{background:var(--bad);border-color:var(--bad);color:#fff;animation:recPulse .8s infinite alternate}
@@ -3063,7 +3063,7 @@ function openWallet(){if(!C){toast('سجّل دخولك حتى تفتح محفظ
     ${WL.inReq.length?'<h3>طلبات وصلتك</h3>'+WL.inReq.map(r=>`<div class="wal-r"><span>${eh(String(r.fromName).slice(0,20))} يطلب <b class="num">${fmt(r.amt)} ${r.cur==='gem'?'💎':'🪙'}</b>${r.note?`<small>«${eh(r.note)}»</small>`:''}</span><button class="buy" data-pay="${r.id}">ادفع</button><button class="hire" data-no="${r.id}">ارفض</button></div>`).join(''):''}
     ${pend.length?'<h3>طلبات شحنك</h3>'+pend.map(t=>`<div class="wal-r"><span>💎 ${fmt(t.gems)} · ${iqd(t.price)} · ${eh(t.method)}<small>رقم الطلب ${t.id.slice(0,6).toUpperCase()} · بانتظار الموافقة</small></span><button class="hire" data-wa="${t.id}">واتساب</button></div>`).join(''):''}
     <p class="note">رقم حسابك: <b class="num">${fmtPid(S.pid)}</b> · الجواهر للهدايا بالسهرات، وتقدر تبدّلها بذهب (١ 💎 = ${ad(GEMX)} 🪙).</p>
-    ${isAdmin()?'<button class="hire wide" data-a="admin">🛠️ لوحة المالك</button>':''}</div>`,[['إغلاق',null,1]]);
+    ${isAdmin()?'<a class="hire wide adm-link" href="admin.html" target="_blank" rel="noopener">🛠️ افتح لوحة المالك</a>':''}</div>`,[['إغلاق',null,1]]);
   const B=$('#mbox');B.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==='top')topupModal();else if(a==='send')sendModal();else if(a==='ask')askModal();else if(a==='ex')exModal();else if(a==='admin')adminPanel();});
   B.querySelectorAll('[data-pay]').forEach(b=>b.onclick=()=>payReq(WL.inReq.find(r=>r.id===b.dataset.pay)));B.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>reqStatus(b.dataset.no,'declined'));
   B.querySelectorAll('[data-wa]').forEach(b=>b.onclick=()=>waTopup(WL.tops.find(t=>t.id===b.dataset.wa)));}

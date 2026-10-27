@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b1220">
+<title>لوحة لمّة</title>
+<link rel="manifest" href="admin.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1220;--card:#121c30;--card2:#18243d;--line:#26344f;--ink:#eef2fa;--muted:#93a1bd;--brass:#e0a93b;--good:#4fc98a;--bad:#ef6f5e;--blue:#7fb3ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;padding:max(14px,env(safe-area-inset-top,0px)) 14px 40px;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:10px 14px;font-weight:700}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;gap:10px;justify-content:space-between}
+header h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px} header h1 img{width:34px;height:34px;border-radius:9px}
+.who{font-size:12px;color:var(--muted);text-align:end}
+.btn{background:var(--brass);color:#141414} .ghost{background:none;border:1px solid var(--line);color:var(--ink)} .ok{background:var(--good);color:#06130b} .no{background:none;border:1px solid var(--bad);color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stat span{font-size:12px;color:var(--muted)} .stat b{font-size:20px}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
+.tabs button{flex:1;background:none;color:var(--muted);white-space:nowrap;position:relative;padding:10px 6px;font-size:14px} .tabs button[aria-selected="true"]{background:var(--card2);color:var(--ink)}
+.badge{position:absolute;top:2px;inset-inline-end:6px;min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card h2{margin:0;font-size:16px;color:var(--brass)}
+.req{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.req.new{border-color:var(--brass);box-shadow:0 0 0 2px #e0a93b55}
+.req .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.req .top b{font-size:16px} .req .gems{font-size:22px;font-weight:700;color:var(--blue)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13.5px} .kv span{color:var(--muted)}
+.acts{display:flex;gap:8px} .acts button{flex:1}
+.tag{font-size:11px;border-radius:6px;padding:1px 8px;font-weight:700} .tag.approved{background:#4fc98a33;color:var(--good)} .tag.rejected{background:#ef6f5e33;color:var(--bad)} .tag.pending{background:#e0a93b33;color:var(--brass)}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+input,select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--ink);font-size:15px;width:100%}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.empty{color:var(--muted);text-align:center;padding:20px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#000d;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;max-width:90vw}
+.center{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.center img{width:84px;height:84px;border-radius:20px}
+a{color:var(--blue)}
+.copy{background:none;border:0;padding:0 4px;color:var(--blue);font-weight:400}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="gate" class="center">
+    <img src="icons/icon-192.png" alt="">
+    <h1 style="margin:0">لوحة لمّة 🛠️</h1>
+    <p id="gateMsg" style="color:var(--muted);margin:0">لوحة تحكم المالك. ادخل بحساب Google المسموح له.</p>
+    <button class="btn" id="loginBtn">الدخول بحساب Google</button>
+  </div>
+
+  <div id="app" hidden>
+    <header><h1><img src="icons/icon-192.png" alt="">لوحة لمّة</h1><div class="who"><div id="who"></div><button class="ghost" id="outBtn" style="padding:4px 10px;margin-top:4px">خروج</button></div></header>
+    <div class="stats">
+      <div class="stat"><span>طلبات تنتظرك</span><b id="sPend">٠</b></div>
+      <div class="stat"><span>دخل اليوم</span><b id="sDay">٠</b></div>
+      <div class="stat"><span>دخل هذا الشهر</span><b id="sMonth">٠</b></div>
+    </div>
+    <nav class="tabs">
+      <button data-t="pend" aria-selected="true">📥 الطلبات<i class="badge" id="bPend" hidden></i></button>
+      <button data-t="hist" aria-selected="false">📜 السجل</button>
+      <button data-t="grant" aria-selected="false">🎁 منح</button>
+      <button data-t="player" aria-selected="false">🔍 لاعب</button>
+    </nav>
+    <section class="card" id="t-pend"><h2>طلبات الشحن الجديدة</h2><div id="pendList"></div>
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)"><input type="checkbox" id="sndChk" style="width:auto" checked> صوت وإشعار لما يوصل طلب جديد</label></section>
+    <section class="card" id="t-hist" hidden><h2>آخر الطلبات المنفذة</h2><div id="histList"></div></section>
+    <section class="card" id="t-grant" hidden><h2>منح جواهر أو ذهب لأي لاعب</h2>
+      <label>رقم حساب اللاعب<input id="gPid" placeholder="SQ-XXXXXX" maxlength="12"></label>
+      <div class="row"><label>💎 جواهر<input id="gGem" type="number" min="0" value="0" inputmode="numeric"></label><label>🪙 ذهب<input id="gGold" type="number" min="0" value="0" inputmode="numeric"></label></div>
+      <label>السبب (يشوفه اللاعب)<input id="gNote" maxlength="40" value="هدية من الإدارة"></label>
+      <button class="btn" id="gGo">امنح</button><div id="gOut" style="color:var(--muted);font-size:13px"></div></section>
+    <section class="card" id="t-player" hidden><h2>معلومات لاعب</h2>
+      <label>رقم حساب اللاعب<input id="pPid" placeholder="SQ-XXXXXX" maxlength="12"></label><button class="btn" id="pGo">ابحث</button><div id="pOut"></div></section>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script type="module">
+const V='10.12.2',B='https://www.gstatic.com/firebasejs/'+V+'/';
+const [{initializeApp},A,F,cfgm]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js'),import('./firebase-config.js')]);
+const app=initializeApp(cfgm.firebaseConfig),auth=A.getAuth(app),db=F.getFirestore(app);auth.languageCode='ar';
+const ADMINS=['alshmria657@gmail.com'];
+const $=s=>document.querySelector(s),nf=new Intl.NumberFormat('ar-IQ'),n=v=>nf.format(v||0),iqd=v=>n(v)+' د.ع';
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const pidFmt=v=>{const c=String(v||'');return c.length===8?c.slice(0,2)+'-'+c.slice(2):(c||'—');};
+const when=t=>new Date(t).toLocaleString('ar-IQ',{timeZone:'Asia/Baghdad',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600);}
+let unsubs=[],PEND=[],HIST=[],seen=null;
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));['pend','hist','grant','player'].forEach(k=>$('#t-'+k).hidden=k!==b.dataset.t);});
+$('#loginBtn').onclick=async()=>{const p=new A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});try{await A.signInWithPopup(auth,p);}catch(e){toast(e.code==='auth/popup-blocked'?'اسمح بالنوافذ المنبثقة وحاول مرة ثانية':'تعذّر الدخول');}};
+$('#outBtn').onclick=()=>A.signOut(auth);
+A.onAuthStateChanged(auth,u=>{unsubs.forEach(f=>f());unsubs=[];
+  if(!u){$('#app').hidden=true;$('#gate').hidden=false;$('#loginBtn').hidden=false;$('#gateMsg').textContent='لوحة تحكم المالك. ادخل بحساب Google المسموح له.';return;}
+  if(!ADMINS.includes(String(u.email||'').toLowerCase())){$('#app').hidden=true;$('#gate').hidden=false;$('#gateMsg').innerHTML='⛔ هذا الحساب ('+esc(u.email)+') غير مسموح له.<br>ادخل بحساب المالك.';$('#loginBtn').textContent='جرّب حساب ثاني';A.signOut(auth).catch(()=>{});return;}
+  $('#gate').hidden=true;$('#app').hidden=false;$('#who').textContent=u.email;start();});
+function start(){
+  unsubs.push(F.onSnapshot(F.query(F.collection(db,'topups'),F.where('status','==','pending')),s=>{
+    PEND=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.ts-b.ts);const ids=new Set(PEND.map(t=>t.id));
+    if(seen){const fresh=PEND.filter(t=>!seen.has(t.id));if(fresh.length)alertNew(fresh);}seen=ids;renderPend();},e=>toast('ما عندك صلاحية: '+e.code)));
+  const hist=st=>unsubs.push(F.onSnapshot(F.query(F.collection(db,'topups'),F.where('status','==',st),F.limit(300)),s=>{HIST=HIST.filter(x=>x.status!==st).concat(s.docs.map(d=>({id:d.id,...d.data()})));renderHist();},()=>{}));
+  hist('approved');hist('rejected');}
+function alertNew(list){const t=list[list.length-1];if(!$('#sndChk').checked)return;
+  try{const a=new (window.AudioContext||window.webkitAudioContext)();[880,1175,1568].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;o.connect(g);g.connect(a.destination);const s=a.currentTime+i*.12;g.gain.setValueAtTime(.15,s);g.gain.exponentialRampToValueAtTime(.001,s+.25);o.start(s);o.stop(s+.3);});}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([100,60,100]);}catch(e){}
+  if('Notification' in window&&Notification.permission==='granted'){try{new Notification('💎 طلب شحن جديد',{body:`${t.name}: ${t.gems} جوهرة · ${t.price} د.ع · ${t.method}`,icon:'icons/icon-192.png'});}catch(e){}}
+  toast('💎 وصل طلب جديد من '+t.name);}
+$('#sndChk').onchange=()=>{if($('#sndChk').checked&&'Notification' in window&&Notification.permission==='default')Notification.requestPermission();};
+document.addEventListener('click',()=>{if('Notification' in window&&Notification.permission==='default'&&$('#sndChk').checked)Notification.requestPermission();},{once:true});
+function renderPend(){const L=$('#pendList');$('#sPend').textContent=n(PEND.length);$('#bPend').hidden=!PEND.length;$('#bPend').textContent=n(PEND.length);document.title=(PEND.length?'('+PEND.length+') ':'')+'لوحة لمّة';
+  if(!PEND.length){L.innerHTML='<div class="empty">ماكو طلبات هسه ✅<br><small>الطلبات الجديدة تطلع هنا تلقائيًا</small></div>';return;}
+  L.innerHTML=PEND.map(t=>`<div class="req${Date.now()-t.ts<6e5?' new':''}"><div class="top"><b>${esc(t.name)}</b><span class="gems">💎 ${n(t.gems)}</span></div>
+    <div class="kv"><span>المبلغ</span><b>${iqd(t.price)}</b><span>الدفع</span><b>${esc(t.method)}</b><span>موبايل</span><b><a href="https://wa.me/964${esc(String(t.phone).replace(/^0/,''))}" target="_blank" rel="noopener">${esc(t.phone)}</a></b>
+    <span>رقم الحساب</span><b>${pidFmt(t.pid)}</b>${t.ref?`<span>الحوالة</span><b>${esc(t.ref)}</b>`:''}<span>رقم الطلب</span><b>${t.id.slice(0,6).toUpperCase()}</b><span>الوقت</span><b>${when(t.ts)}</b></div>
+    <div class="acts"><button class="ok" data-ok="${t.id}">✅ وافق وأرسل الجواهر</button><button class="no" data-no="${t.id}">❌ ارفض</button></div></div>`).join('');
+  L.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>decide(PEND.find(t=>t.id===b.dataset.ok),true,b));
+  L.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>{if(confirm('متأكد ترفض الطلب؟'))decide(PEND.find(t=>t.id===b.dataset.no),false,b);});}
+async function decide(t,ok,btn){if(!t)return;btn.disabled=true;const b=F.writeBatch(db);
+  b.update(F.doc(db,'topups',t.id),{status:ok?'approved':'rejected',by:auth.currentUser.email,at:Date.now()});
+  if(ok){const bonus=t.gems>=1200?Math.round(t.gems*.1):0;b.set(F.doc(F.collection(db,'grants')),{uid:t.uid,gems:t.gems+bonus,gold:0,note:`شحن ${t.gems} 💎`+(bonus?` + هدية ${bonus}`:''),ts:Date.now(),claimed:false,ref:t.id});}
+  try{await b.commit();toast(ok?'✅ انرسلت الجواهر إلى '+t.name:'❌ انرفض الطلب');}catch(e){btn.disabled=false;toast('تعذّر: '+(e.code||e.message));}}
+function renderHist(){const L=$('#histList'),list=HIST.slice().sort((a,b)=>(b.at||b.ts)-(a.at||a.ts));
+  const d0=new Date();const dayKey=t=>new Date(t+3*36e5).toISOString().slice(0,10),today=dayKey(Date.now()),month=today.slice(0,7);
+  const ap=list.filter(t=>t.status==='approved');$('#sDay').textContent=iqd(ap.filter(t=>dayKey(t.at||t.ts)===today).reduce((a,t)=>a+t.price,0));$('#sMonth').textContent=iqd(ap.filter(t=>dayKey(t.at||t.ts).slice(0,7)===month).reduce((a,t)=>a+t.price,0));
+  L.innerHTML=list.length?list.slice(0,100).map(t=>`<div class="req"><div class="top"><b>${esc(t.name)} <span class="tag ${t.status}">${t.status==='approved'?'تمت الموافقة':'مرفوض'}</span></b><span class="gems">💎 ${n(t.gems)}</span></div>
+    <div class="kv"><span>المبلغ</span><b>${iqd(t.price)} · ${esc(t.method)}</b><span>رقم الحساب</span><b>${pidFmt(t.pid)}</b><span>نُفّذ</span><b>${when(t.at||t.ts)}</b></div></div>`).join(''):'<div class="empty">ماكو سجل بعد.</div>';}
+async function findPid(code){const c='SQ'+String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/^SQ/,'');if(c.length!==8)return null;
+  const r=await F.getDoc(F.doc(db,'ids',c));if(!r.exists())return null;const uid=r.data().uid,p=await F.getDoc(F.doc(db,'profiles',uid));return {uid,code:c,name:p.exists()?String(p.data().name||'لاعب'):'لاعب',prof:p.exists()?p.data():{}};}
+$('#gGo').onclick=async()=>{const t=await findPid($('#gPid').value).catch(()=>null);if(!t){toast('ما لكينا هذا الرقم');return;}
+  const gm=Math.max(0,Math.floor(+$('#gGem').value||0)),gd=Math.max(0,Math.floor(+$('#gGold').value||0));if(!gm&&!gd){toast('اكتب الكمية');return;}
+  if(!confirm(`تمنح ${t.name}: ${gm?gm+' 💎 ':''}${gd?gd+' 🪙':''}؟`))return;
+  try{await F.addDoc(F.collection(db,'grants'),{uid:t.uid,gems:gm,gold:gd,note:String($('#gNote').value||'هدية من الإدارة').slice(0,40),ts:Date.now(),claimed:false,ref:''});
+    $('#gOut').textContent=`✅ انمنح ${t.name} (${pidFmt(t.code)}) — توصله أول ما يفتح اللعبة.`;toast('✅ تم المنح');}catch(e){toast('تعذّر: '+(e.code||e.message));}};
+$('#pGo').onclick=async()=>{const O=$('#pOut');O.innerHTML='<div class="empty">جاري البحث…</div>';const t=await findPid($('#pPid').value).catch(()=>null);if(!t){O.innerHTML='<div class="empty">ما لكينا هذا الرقم</div>';return;}
+  let save=null,gb=null,tops=[];try{const s=await F.getDoc(F.doc(db,'saves',t.uid));save=s.exists()?s.data().state:null;}catch(e){}
+  try{const g=await F.getDoc(F.doc(db,'gboard',t.uid));gb=g.exists()?g.data():null;}catch(e){}
+  try{const q=await F.getDocs(F.query(F.collection(db,'topups'),F.where('uid','==',t.uid)));tops=q.docs.map(d=>d.data());}catch(e){}
+  const paid=tops.filter(x=>x.status==='approved').reduce((a,x)=>a+x.price,0);
+  O.innerHTML=`<div class="req"><div class="top"><b>${esc(t.name)}</b><span>${pidFmt(t.code)}</span></div><div class="kv">
+    <span>🪙 ذهب</span><b>${save?n(Math.floor(save.cash||0)):'—'}</b><span>💎 جواهر</span><b>${save?n(save.gems||0):'—'}</b>
+    <span>الخبرة</span><b>${gb?n(gb.xp)+' · '+n(gb.w)+' فوز من '+n(gb.p):'—'}</b><span>شحن سابق</span><b>${n(tops.length)} طلب · ${iqd(paid)}</b>
+    <span>آخر حفظ</span><b>${save&&save.ts?when(save.ts):'—'}</b><span>المعرّف</span><b style="font-size:11px;word-break:break-all">${esc(t.uid)}</b></div>
+    <button class="btn" id="pGrant">🎁 امنحه</button></div>`;
+  $('#pGrant').onclick=()=>{$('#gPid').value=t.code;document.querySelector('.tabs [data-t="grant"]').click();};};
+</script>
+</body>
+</html>
