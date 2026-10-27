@@ -1871,7 +1871,16 @@ $('#dmCall').onclick=()=>{if(FR.open)startCall(FR.open);};
 let CALL=null,ringI=null,rbI=null;
 function ringtone(on){clearInterval(ringI);ringI=null;if(on){const f=()=>{if(!getAC())return;tone(880,.22,'sine',.16);tone(660,.3,'sine',.16,.28);};f();ringI=setInterval(f,1700);}}
 function ringback(on){clearInterval(rbI);rbI=null;if(on){const f=()=>{if(getAC())tone(425,.9,'sine',.05);};f();rbI=setInterval(f,3000);}}
-async function iceServers(){let extra=[];try{const m=await import('./firebase-config.js');extra=m.turnServers||[];}catch(e){}return [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}].concat(extra);}
+/* TURN relay so voice works behind strict 4G/NAT: Metered Open Relay (free 20 GB/month) with time-limited HMAC credentials.
+   Your own TURN servers in firebase-config.js (turnServers) are used first when present. */
+let TURNC=null;
+async function openRelay(){if(TURNC&&TURNC.exp>Date.now()/1000+3600)return TURNC.list;
+  try{const exp=Math.floor(Date.now()/1000)+86400,user=exp+':lamma',enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode('openrelayprojectsecret'),{name:'HMAC',hash:'SHA-1'},false,['sign']);
+    const sig=new Uint8Array(await crypto.subtle.sign('HMAC',key,enc.encode(user))),cred=btoa(String.fromCharCode(...sig)),h='staticauth.openrelay.metered.ca';
+    const list=[{urls:['turn:'+h+':80','turn:'+h+':80?transport=tcp','turn:'+h+':443','turns:'+h+':443?transport=tcp'],username:user,credential:cred}];TURNC={exp,list};return list;}
+  catch(e){return [];}}
+async function iceServers(){let extra=[];try{const m=await import('./firebase-config.js');extra=m.turnServers||[];}catch(e){}
+  return [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}].concat(extra,await openRelay());}
 function callUi(st){if(!CALL)return;CALL.state=st;if(st==='live'&&!CALL.t0)CALL.t0=Date.now();const U=$('#callUi');U.hidden=false;U.classList.toggle('ring',st!=='live');
   $('#callName').textContent=CALL.peer.name;paintAv($('#callAv'),null,CALL.peer.name);getProf(CALL.peer.uid).then(p=>{if(p&&CALL)paintAv($('#callAv'),p.avatar,p.name);});
   $('#callSt').textContent={calling:'جارٍ الاتصال…',ringing:'📞 مكالمة صوتية واردة',live:'متصل'}[st]||'';$('#callT').textContent='';
