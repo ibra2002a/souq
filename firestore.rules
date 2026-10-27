@@ -19,6 +19,10 @@ service cloud.firestore {
       return el <= 0 ? 100000000 : 100000000 * math.pow(10, 1.5 * el / 3600000);
     }
     function fresh(t) { return t is number && t > request.time.toMillis() - 120000 && t < request.time.toMillis() + 120000; }
+    function boardWorth(u) {
+      return exists(/databases/$(database)/documents/board/$(u)) ? get(/databases/$(database)/documents/board/$(u)).data.worth : 0;
+    }
+    function dueOk(d) { return request.resource.data.due >= request.time.toMillis() + d - 120000 && request.resource.data.due <= request.time.toMillis() + d + 120000; }
 
     match /board/{uid} {
       allow read: if true;
@@ -58,7 +62,7 @@ service cloud.firestore {
       allow read: if true;
       allow delete: if signedIn(uid);
       allow write: if signedIn(uid)
-        && request.resource.data.keys().hasOnly(['name', 'avatar', 'title', 'rank', 'worth', 'ach', 'rare', 'wins', 'joined', 'ts'])
+        && request.resource.data.keys().hasOnly(['name', 'avatar', 'title', 'rank', 'worth', 'ach', 'rare', 'wins', 'pid', 'late', 'joined', 'ts'])
         && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 24
         && request.resource.data.avatar is string && request.resource.data.avatar.size() <= 70000
         && (request.resource.data.avatar == '' || request.resource.data.avatar.matches('^(data:image/(jpeg|png|webp);base64,|https://).*'))
@@ -66,6 +70,77 @@ service cloud.firestore {
         && request.resource.data.rank is int && request.resource.data.rank >= 0 && request.resource.data.rank <= 5
         && request.resource.data.worth is number && request.resource.data.worth >= 0
         && fresh(request.resource.data.ts);
+    }
+
+    // Account numbers (SQ-XXXXXX) that point to a player.
+    match /ids/{code} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && code.matches('^SQ[A-Z0-9]{6}$')
+        && request.resource.data.keys().hasOnly(['uid', 'ts']) && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    // Transfers of virtual dinars between players. A transfer can never exceed the sender's leaderboard worth.
+    match /transfers/{id} {
+      allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'note', 'ts', 'status'])
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string && request.resource.data.to != request.auth.uid
+        && request.resource.data.status == 'sent'
+        && request.resource.data.amt is number && request.resource.data.amt >= 1
+        && request.resource.data.amt <= boardWorth(request.auth.uid)
+        && request.resource.data.fromName is string && request.resource.data.fromName.size() <= 24
+        && request.resource.data.toName is string && request.resource.data.toName.size() <= 24
+        && request.resource.data.note is string && request.resource.data.note.size() <= 60
+        && fresh(request.resource.data.ts);
+      allow update: if request.auth != null && resource.data.status == 'sent' && changed().hasOnly(['status'])
+        && ((request.auth.uid == resource.data.to && request.resource.data.status == 'claimed')
+         || (request.auth.uid == resource.data.from && request.resource.data.status == 'cancelled'));
+      allow delete: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid)
+        && resource.data.status in ['claimed', 'cancelled'];
+    }
+
+    // Loans between players.
+    match /loans/{id} {
+      allow read: if request.auth != null && (resource.data.lender == request.auth.uid || resource.data.borrower == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['lender', 'lenderName', 'borrower', 'borrowerName', 'amt', 'owe', 'rate', 'dur', 'due', 'got', 'paid', 'ts', 'status'])
+        && request.resource.data.lender is string && request.resource.data.borrower is string
+        && request.resource.data.lender != request.resource.data.borrower
+        && request.resource.data.amt is number && request.resource.data.amt >= 1000
+        && request.resource.data.rate is number && request.resource.data.rate >= 0 && request.resource.data.rate <= 0.2
+        && request.resource.data.owe >= request.resource.data.amt && request.resource.data.owe <= request.resource.data.amt * 1.2 + 1
+        && request.resource.data.dur in [3600000, 21600000, 86400000]
+        && request.resource.data.due == 0 && request.resource.data.got == false && request.resource.data.paid == 0
+        && request.resource.data.lenderName is string && request.resource.data.lenderName.size() <= 24
+        && request.resource.data.borrowerName is string && request.resource.data.borrowerName.size() <= 24
+        && fresh(request.resource.data.ts)
+        && ((request.resource.data.status == 'offered' && request.resource.data.lender == request.auth.uid
+             && request.resource.data.amt <= boardWorth(request.auth.uid))
+         || (request.resource.data.status == 'requested' && request.resource.data.borrower == request.auth.uid));
+      allow update: if request.auth != null && (
+          // the borrower accepts an offer and receives the money
+          (resource.data.status == 'offered' && request.auth.uid == resource.data.borrower
+            && request.resource.data.status == 'active' && request.resource.data.got == true
+            && changed().hasOnly(['status', 'got', 'due']) && dueOk(resource.data.dur))
+          // the borrower declines an offer (the lender then takes the escrow back)
+       || (resource.data.status == 'offered' && request.auth.uid == resource.data.borrower
+            && request.resource.data.status == 'declined' && changed().hasOnly(['status']))
+          // the lender funds a request
+       || (resource.data.status == 'requested' && request.auth.uid == resource.data.lender
+            && request.resource.data.status == 'active' && changed().hasOnly(['status', 'due'])
+            && resource.data.amt <= boardWorth(request.auth.uid) && dueOk(resource.data.dur))
+          // the borrower collects money from a funded request
+       || (resource.data.status == 'active' && resource.data.got == false && request.auth.uid == resource.data.borrower
+            && changed().hasOnly(['got']) && request.resource.data.got == true)
+          // the borrower repays at least what is owed
+       || (resource.data.status == 'active' && resource.data.got == true && request.auth.uid == resource.data.borrower
+            && request.resource.data.status == 'repaid' && changed().hasOnly(['status', 'paid', 'repaidAt'])
+            && request.resource.data.paid is number && request.resource.data.paid >= resource.data.owe));
+      allow delete: if request.auth != null && (
+          (request.auth.uid == resource.data.lender && resource.data.status in ['offered', 'requested', 'repaid', 'declined'])
+       || (request.auth.uid == resource.data.borrower && resource.data.status == 'requested'));
     }
 
     match /market/{id} {
