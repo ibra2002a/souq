@@ -2849,8 +2849,8 @@ async function joinLudo(g){if(g.stake>S.cash){toast('رصيدك لا يكفي ل
   if(g.stake)modal(`<h2>🎲 تنضم للودو؟</h2><p>الرهان <b class="num">${fmt(g.stake)}</b>. إذا فزت تاخذ رهانات الكل.</p>`,[['انضم',go],['إلغاء',null,1]]);else go();}
 function openLudo(gid){closeLudo();const {doc,onSnapshot}=FB.F;LU.id=gid;LU.sig='';LU.rolled=-1;LU.stKey='';LU.disp=null;LU.animUntil=0;LU.winShown='';$('#luWin').hidden=true;$('#ludoUi').hidden=false;
   LU.gu=onSnapshot(doc(FB.db,'ludo',gid),s=>{if(!s.exists()){closeLudo();return;}const prev=LU.g;LU.g={id:s.id,...s.data()};
-    if(!prev&&LU.g.uids.includes(C.uid))setTimeout(()=>say([`هلا وغلا يا ${nm1()}! نورت اللودو`,`أهلًا بالبطل ${nm1()}! جاهز للتحدي؟`,`هلا بيك يا ${nm1()}، الله يوفقك باللعبة`],{key:'hi'+gid,force:1}),600);
-    if(prev&&LU.g.status!==prev.status&&LU.g.status==='play'&&prev.status==='wait')say(['بدأت اللعبة! الله يوفق الجميع','يلا بدأنا! منو البطل اليوم؟'],{force:1});
+    if(!prev&&LU.g.uids.includes(C.uid))setTimeout(()=>{fun.ding();say(jk('hi'),{key:'hi'+gid,force:1});},600);
+    if(prev&&LU.g.status!==prev.status&&LU.g.status==='play'&&prev.status==='wait'){fun.drum();say(jk('start'),{force:1});}
     if(prev)setTimeout(()=>narEvents(prev,LU.g),Math.max(0,LU.animUntil-Date.now()));
     if(prev&&LU.g.seq===prev.seq+1)luAnimate(prev,LU.g);else if(!prev||prev.seq!==LU.g.seq||!LU.disp||prev.status!==LU.g.status||(LU.disp.length!==(LU.g.pc||[]).length))LU.disp=(LU.g.pc||[]).slice();
     if(LU.g.status==='done'&&(!prev||prev.status!=='done'))ludoEnd(LU.g);if(LU.g.status==='cancel')ludoSettle(LU.g);renderLudo();},()=>{});
@@ -2862,6 +2862,7 @@ async function ludoCancel(){const g=LU.g;if(!g)return;const {doc,updateDoc}=FB.F
 async function ludoCommit(g,seat,d,m){if(LU.busy)return;LU.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'ludo',g.id);
   try{await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return;const x={id:r.id,...r.data()};if(x.seq!==g.seq||x.status!=='play'||x.turn!==seat)return;tx.update(ref,lapply(x,seat,d,m));});}
   catch(e){}LU.busy=false;LU.rolled=-1;}
+function ludoRollFx(){}
 function ludoRoll(){const g=LU.g;if(!g||g.status!=='play'||g.uids[g.turn]!==C.uid||LU.rolled===g.seq)return;LU.rolled=g.seq;LU.anim=Date.now();narUnlock();lsfx.dice();LU.sig='';renderLudo();
   setTimeout(()=>{if(!LU.g||LU.g.seq!==g.seq)return;const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d);LU.sig='';renderLudo();
     if(!mv.length||(d===6&&(g.six||0)>=2)){setTimeout(()=>ludoCommit(g,g.turn,d,null),900);}
@@ -2872,7 +2873,7 @@ function ludoAuto(){const g=LU.g;if(!g||g.status!=='play'||LU.busy||Date.now()-(
   const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d).sort((a,b)=>b.to-a.to);ludoCommit(g,g.turn,d,(d===6&&(g.six||0)>=2)?null:mv[0]||null);}
 function ludoEnd(g){const st=g.stake||0,pot=st*g.uids.length,win=g.winner===C.uid,wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'لاعب').slice(0,24);
   if(g.uids.includes(C.uid))gxAward('ludo',win,g.uids.some(isBot),g.id);
-  if(win){tourWin(g.uids.some(isBot));sfx.win();confetti();bump(g.uids.some(isBot)?'botWins':'ludoHuman');toast('🏆 فزت باللودو!'+(pot?' تقبض '+fmt(pot):''));bump('ludoWins');if(pot>=1e8)news('ludo',myN()+' يفوز بلودو وقبض '+fmt(pot),pot);}
+  if(win){tourWin(g.uids.some(isBot));confetti();bump(g.uids.some(isBot)?'botWins':'ludoHuman');toast('🏆 فزت باللودو!'+(pot?' تقبض '+fmt(pot):''));bump('ludoWins');if(pot>=1e8)news('ludo',myN()+' يفوز بلودو وقبض '+fmt(pot),pot);}
   else if(g.uids.includes(C.uid))toast('🎲 '+wn+' فاز باللودو');ludoSettle(g);}
 async function ludoSettle(g){const h=S.ludoHeld[g.id];if(!h)return;
   if(g.status==='cancel'||!g.uids.includes(C.uid)||g.winner===C.uid){delete S.ludoHeld[g.id];const bots=g.winner===C.uid?g.uids.filter(isBot).length*(g.stake||0):0;S.cash+=h+bots;led('ludo',h+bots,g.winner===C.uid?(bots?'فوز لودو (رهانك + رهانات البوتات)':'استرجاع رهانك بعد الفوز'):'استرجاع رهان لودو');save();return;}
@@ -2967,24 +2968,8 @@ function say(lines,opt){if(!NAR.on)return;const o=opt||{},now=Date.now();if(o.ke
   if(!o.force&&now-NAR.last<1800)return;NAR.last=now;const t=Array.isArray(lines)?narPick(lines):lines;
   const b=(typeof TG!=='undefined'&&TG.id)?$('#tgSay'):$('#luSay');if(b){b.textContent='🎙️ '+t;b.hidden=false;b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');clearTimeout(NAR.bt);NAR.bt=setTimeout(()=>{b.hidden=true;},Math.max(2600,t.length*85));}
   if(!soundOn||!('speechSynthesis' in window))return;const v=narVoice();if(!v)return;
-  try{if(speechSynthesis.speaking&&!o.queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[🎲🏆🔥💥😂👏😎🙏😡⭐️]/gu,''));u.voice=v;u.lang=v.lang;u.rate=o.rate||1.05;u.pitch=o.pitch||1.05;u.volume=1;speechSynthesis.speak(u);}catch(e){}}
+  try{if(speechSynthesis.speaking&&!o.queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\p{Extended_Pictographic}|\uFE0F/gu,''));u.voice=v;u.lang=v.lang;u.rate=o.rate||1.08;u.pitch=o.pitch||1.12;u.volume=1;speechSynthesis.speak(u);}catch(e){}}
 const nm1=()=>String(myN()).replace(/^🤖\s*/,'').split(' ')[0];
-function narEvents(prev,g){if(!C||!prev||!g)return;const me=g.uids.indexOf(C.uid),L=g.last,n=g.uids.length;if(me<0)return;const N=nm1();
-  if(g.status==='done'&&prev.status!=='done'){const wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'').replace(/^🤖\s*/,'');
-    if(g.winner===C.uid)say([`مبروك يا ${N}! أنت البطل، فزت باللعبة!`,`يا سلام يا ${N}! فوز مستحق، عاشت إيدك!`,`بطل يا ${N}! كل القطع وصلت، والفلوس إلك!`],{force:1,rate:1});
-    else say([`للأسف يا ${N}، ${wn} فاز هالمرة. الجاية إلك إن شاء الله`,`خسرت هالجولة يا ${N}، بس لا تزعل، اللعب بعده ما خلص`,`${wn} سبقك يا ${N}! ارجع أقوى بالجولة الجاية`],{force:1,rate:1});return;}
-  if(!L||g.seq!==prev.seq+1)return;
-  const lost=[0,1,2,3].some(j=>prev.pc[me*4+j]>=0&&g.pc[me*4+j]<0);
-  if(lost&&L.s!==me){say([`أوووه! انأكلت قطعتك يا ${N}! رجعت للبيت`,`يا خسارة يا ${N}، أكلوا قطعتك!`,`لا لا لا! قطعتك انأكلت يا ${N}، انتقم!`],{force:1});return;}
-  if(L.s===me){
-    if(L.cap){say([`أكلتها! عاشت إيدك يا ${N}!`,`ضربة معلم يا ${N}! رجّعتها للبيت`,`يا سلام! أكلت قطعتهم يا ${N}`],{force:1});return;}
-    if(L.j>=0&&g.pc[me*4+L.j]===56){say([(r=>r===1?`وصلت قطعة للبيت يا ${N}! باقي قطعة وحدة بس`:`وصلت قطعة للبيت يا ${N}! باقي ${r} قطع`)(4-[0,1,2,3].filter(j=>g.pc[me*4+j]===56).length),`عاشت إيدك! قطعة سالمة بالبيت`],{force:1});return;}
-    if(L.j<0){if(L.d===6&&(prev.six||0)>=2)say([`ثلاث ستات! فشلت يا ${N}، راح الدور`,`حظك قوي زيادة يا ${N}، ثلاث ستات تحرق الدور!`],{force:1});else say([`فشلت يا ${N}، ما عندك حركة بهذا الرقم`,`ما زبطت يا ${N}، حظ أوفر بالرمية الجاية`,`لا حركة يا ${N}! صبرك`]);return;}
-    if(L.d===6&&prev.pc[me*4+L.j]<0){say([`ستة! وطلعت قطعة جديدة يا ${N}`,`طلعت للساحة يا ${N}! يلا`]);return;}
-    if(L.d===6){say([`ستة! حظك نار يا ${N}، العب مرة ثانية`,`ستة يا ${N}! دور إضافي`]);return;}
-  }else{const on=String(g.names[L.s]||'').replace(/^🤖\s*/,'');if(L.cap&&Math.random()<.5)say([`${on} أكل قطعة! انتبهوا`,`${on} قاعد ياكل الكل!`]);}}
-function narTurn(g){if(!g)return;const N=nm1();if(Math.random()<.45)say([`دورك يا ${N}، ارمِ النرد`,`يلا يا ${N}، دورك`,`${N}، الكل ينتظرك!`]);}
-function narHurry(g){say([`يلا يا ${nm1()}، الوقت راح يخلص!`,`بسرعة يا ${nm1()}! باقي خمس ثواني`],{key:'h'+g.id+g.seq,force:1});}
 function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;const n=g.uids.length,seats=LSEAT[Math.max(2,Math.min(4,n))]||LSEAT[4],me=g.uids.indexOf(C.uid),now=Date.now();
   const myTurn=g.status==='play'&&g.turn===me,rolled=myTurn&&LU.rolled===g.seq,rolling=rolled&&now-LU.anim<900,anim=now<LU.animUntil,d=rolled&&!rolling?ldie(g.id,g.seq):0,mv=d&&!anim?lmoves(g,me,d):[];
   if(myTurn&&LU.myTurnSeq!==g.seq&&!anim){LU.myTurnSeq=g.seq;lsfx.turn();narTurn(g);}
@@ -3175,7 +3160,7 @@ function quickPlay(type){if(!C||!FB){toast('سجّل دخولك بحساب Googl
       if(!RMS.id){toast('تعذّر فتح الطاولة');return;}QP={at:Date.now()+2e4,type};
       if(type==='ludo')await createLudo(n,st);else await tgNew(type,n,st);}],['إلغاء',null,1]]);}
 function quickTick(game,addFn,startFn){if(!QP||!game||game.status!=='wait'||game.host!==C.uid)return;const left=Math.ceil((QP.at-Date.now())/1000);
-  if(left>0){if(left%5===0&&QP.told!==left){QP.told=left;say(left===20?`ندور لك لاعبين يا ${nm1()}… انتظر شوية`:`باقي ${left} ثانية، إذا ما أحد إجا نجيب بوتات`,{force:1});}return;}
+  if(left>0){if(left%5===0&&QP.told!==left){QP.told=left;say(left===20?jk('waitFind'):jk('waitBots',{K:left}),{force:1});}return;}
   QP=null;addFn().then(()=>setTimeout(startFn,900));}
 function showRules(){modal(`<h2>📜 قوانين السهرات</h2><div class="rules">
   <h3>🎮 الألعاب</h3><p>لودو ودومينو وطاولي. تلعب ويا أصدقائك أو ويا لاعبين من السهرات، وإذا ما أحد موجود تلعب ويا بوتات 🤖 مكتوب عليهم إنهم بوتات.</p>
@@ -3264,7 +3249,7 @@ async function tgBots(){const g=TG.g;if(!g||g.host!==C.uid||g.status!=='wait')re
         const used=new Set(x.names),nm='🤖 '+(BOTN.find(n=>!used.has('🤖 '+n))||'بوت');tx.update(ref,{uids:x.uids.concat('bot_'+Math.random().toString(36).slice(2,8)),names:x.names.concat(nm)});return true;});if(!added)break;}sfx.tap();}
   catch(e){toast('تعذّر إضافة البوتات');}}
 async function tgStart(){const g=TG.g;if(!g||g.host!==C.uid||g.uids.length<2)return;const {doc,updateDoc}=FB.F,n=g.uids.length,seed=hashStr(g.id+':seed'),I=TGE[g.type].init(n,seed,g.id);
-  try{await updateDoc(doc(FB.db,'tables',g.id),{status:'play',st:I.st,turn:I.turn,seq:0,ts:Date.now(),max:n});roomMsg((TGI[g.type]||'')+' بدأت '+TGN[g.type]+'!','msg');}catch(e){toast('تعذّر البدء');}}
+  try{await updateDoc(doc(FB.db,'tables',g.id),{status:'play',st:I.st,turn:I.turn,seq:0,ts:Date.now(),max:n});roomMsg((TGI[g.type]||'')+' بدأت '+TGN[g.type]+'!','msg');fun.drum();}catch(e){toast('تعذّر البدء');}}
 async function tgCancel(){const g=TG.g;if(!g)return;const {doc,updateDoc}=FB.F;try{await updateDoc(doc(FB.db,'tables',g.id),{status:'cancel',ts:Date.now()});}catch(e){toast('تعذّر الإلغاء');}}
 async function tgCommit(g,seat,m){if(TG.busy)return;TG.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'tables',g.id);
   try{await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return;const x={id:r.id,...r.data()};if(x.seq!==g.seq||x.status!=='play'||x.turn!==seat)return;
@@ -3276,36 +3261,18 @@ function tgTick(){const g=TG.g;if(!g)return;renderTable();if(g.status==='wait'){
   if(isBot(cur)){let driver=g.host;if(age>LTO)driver=g.uids.find(u=>!isBot(u)&&u!==g.host)||g.host;if(age>2*LTO)driver=C.uid;
     if(driver===C.uid&&age>900+(hashStr(g.id+g.seq)%700))tgCommit(g,g.turn,E.bot(g.st,g.turn));return;}
   if(cur===C.uid){const mv=E.moves(g.st,g.turn);
-    if(g.type==='dom'&&(mv[0].draw||mv[0].pass)&&age>700){tgCommit(g,g.turn,mv[0]);if(mv[0].pass)say([`ما عندك لعب يا ${nm1()}، تمرّر`,`باص يا ${nm1()}!`]);return;}
-    if(g.type==='tawla'&&!mv.length&&age>1200){tgCommit(g,g.turn,{pass:1});say([`ما عندك حركة يا ${nm1()}، الدور راح`,`مسدودة يا ${nm1()}!`]);return;}}
+    if(g.type==='dom'&&(mv[0].draw||mv[0].pass)&&age>700){tgCommit(g,g.turn,mv[0]);if(mv[0].pass)say(jk('domPass',{N:nm1()}));return;}
+    if(g.type==='tawla'&&!mv.length&&age>1200){tgCommit(g,g.turn,{pass:1});fun.wah();say(jk('twStuck'));return;}}
   if(age>LTO&&me>=0){let helper=(g.turn+1)%g.uids.length;for(let i=1;i<g.uids.length;i++){const s2=(g.turn+i)%g.uids.length;if(!isBot(g.uids[s2])){helper=s2;break;}}
     if(me===helper||cur===C.uid||age>2*LTO)tgCommit(g,g.turn,E.bot(g.st,g.turn));}}
 function openTable(gid){closeTable();if(LU.id)closeLudo();const {doc,onSnapshot}=FB.F;TG.id=gid;TG.sig='';TG.sel=null;$('#tgUi').hidden=false;$('#tgWin').hidden=true;TG.won='';
   TG.gu=onSnapshot(doc(FB.db,'tables',gid),s=>{if(!s.exists()){closeTable();return;}const prev=TG.g;TG.g={id:s.id,...s.data()};const g=TG.g;
-    if(!prev&&g.uids.includes(C.uid))setTimeout(()=>say([`هلا بيك يا ${nm1()}! طاولة ${TGN[g.type]} جاهزة`,`أهلًا يا ${nm1()}، نورت طاولة ${TGN[g.type]}`],{key:'hi'+gid,force:1}),500);
+    if(!prev&&g.uids.includes(C.uid))setTimeout(()=>{fun.ding();say(jk('hi'),{key:'hi'+gid,force:1});},500);
     if(prev&&prev.seq!==g.seq)tgEvents(prev,g);if((g.status==='done'||g.status==='draw')&&(!prev||prev.status!==g.status))tgEnd(g);if(g.status==='cancel')tgSettle(g);TG.sig='';renderTable();},()=>{});
   TG.tick=setInterval(()=>{tgTick();renderComm();},400);commMount();}
 function closeTable(){if(TG.gu)TG.gu();TG.gu=null;clearInterval(TG.tick);TG.tick=null;TG.id=null;TG.g=null;const u=$('#tgUi');if(u)u.hidden=true;commMount();}
-function tgEvents(prev,g){const L=g.last;if(!L)return;const me=g.uids.indexOf(C.uid),N=nm1();
-  if(g.type==='chess'){if(L.m.chk){lsfx.cap();say(L.s===me?[`كش! عاشت إيدك يا ${N}`]:[`انتبه يا ${N}، كش ملك!`],{force:1});}else if(L.m.cap)tone(220,.12,'square',.07);else tone(520,.05,'triangle',.06);if(g.turn===me&&g.status==='play')lsfx.turn();return;}
-  if(g.type==='colors'){if(L.m.hit){lsfx.cap();const v=(L.s+g.st.dir+g.uids.length)%g.uids.length;if(v===me)say([`أوووه! سحبت ${L.m.hit} أوراق يا ${N}`],{force:1});}else if(L.m.draw)tone(400,.06,'sine',.05);else tone(700,.06,'triangle',.06);
-    if(L.m.one)say([`انتبهوا! ${String(g.names[L.s]||'').replace(/^🤖\s*/,'')} باقيله ورقة وحدة!`],{force:1});if(g.turn===me&&prev.turn!==me&&g.status==='play')lsfx.turn();return;}
-  if(g.type==='tarneeb'){if(L.m.c!==undefined)tone(640,.05,'triangle',.05);if(L.m.tw!==undefined){tone(880,.1,'sine',.07);}
-    if(L.m.round&&g.st.res){const r=g.st.res,mine=r.bt===me%2;say(r.made?(mine?[`نجحت الطلبة! عاشت إيدكم`]:[`نجحت طلبتهم هالمرة`]):(mine?[`انكسرت الطلبة يا ${N}! راحت ${r.hb} نقاط`]:[`كسرنا طلبتهم! يا سلام`]),{force:1});}
-    if(L.m.bid!==undefined&&L.m.bid>0&&L.s!==me&&Math.random()<.6)say([`${String(g.names[L.s]||'').replace(/^🤖\s*/,'')} طلب ${L.m.bid}`]);
-    if(g.turn===me&&prev.turn!==me&&g.status==='play')lsfx.turn();return;}
-  if(g.type==='dom'){if(L.m.t!==undefined)tone(300+Math.random()*80,.08,'square',.06);if(g.turn===me&&g.status==='play'&&prev.turn!==me){lsfx.turn();if(Math.random()<.4)say([`دورك يا ${N}`,`يلا يا ${N}، العب`]);}}
-  else{if(L.m.hit){lsfx.cap();if(L.s===me)say([`ضربتها! عاشت إيدك يا ${N}`,`ضربة معلم يا ${N}!`],{force:1});else if(me>=0)say([`انضربت قطعتك يا ${N}! رجعت للبار`],{force:1});}
-    else if(L.m.to==='off'){lsfx.home();}else tone(500,.05,'triangle',.05);
-    if(g.turn===me&&prev.turn!==me&&g.status==='play'){lsfx.turn();const d=g.st.dice;if(d.length===4)say([`دوبل ${d[0]}! حظك نار يا ${N}`],{force:1});else if(Math.random()<.4)say([`دورك يا ${N}، طلع لك ${d[0]} و ${d[1]}`]);}}}
 function tgIWon(g){const me=g.uids.indexOf(C.uid),wi=g.uids.indexOf(g.winner);if(g.status!=='done'||me<0||wi<0)return false;return g.type==='tarneeb'?me%2===wi%2:me===wi;}
 function tgPayee(g,s){const wi=g.uids.indexOf(g.winner);return g.type==='tarneeb'?(s+1)%4:wi;}
-function tgEnd(g){const me=g.uids.indexOf(C.uid),win=tgIWon(g),wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'').replace(/^🤖\s*/,'');
-  if(me>=0){gxAward(g.type,win,g.uids.some(isBot),g.id);
-    if(g.status==='draw')say([`تعادل يا ${nm1()}! لعبة قوية`,`ما أحد غلب، تعادل!`],{force:1});
-    else if(win){sfx.win();confetti();say(g.type==='tarneeb'?[`مبروك يا ${nm1()}! فريقك فاز بالطرنيب`]:[`مبروك يا ${nm1()}! فزت بالـ${TGN[g.type]}!`,`بطل يا ${nm1()}! الفوز إلك`],{force:1});}
-    else say(g.type==='tarneeb'?[`للأسف يا ${nm1()}، الفريق الثاني فاز هالمرة`]:[`للأسف يا ${nm1()}، ${wn} فاز هالمرة`,`${wn} سبقك يا ${nm1()}، الجاية إلك`],{force:1});}
-  tgSettle(g);}
 async function tgSettle(g){const h=S.tgHeld[g.id];if(!h)return;const me=g.uids.indexOf(C.uid);
   if(g.status==='cancel'||g.status==='draw'||me<0){delete S.tgHeld[g.id];S.cash+=h;led('ludo',h,'استرجاع رهان '+TGN[g.type]);save();return;}
   if(g.status!=='done')return;
@@ -3364,6 +3331,101 @@ function renderTawla(g,me,myTurn,B,act){const st=g.st,mv=myTurn?TW.moves(st,me):
   const o=$('#twOff');if(o)o.onclick=()=>tgCommit(g,me,mv.find(m=>m.from===sel&&m.to==='off'));
   const dice=st.dice||[];act.innerHTML=`<div class="tw-dice">${dice.map(d=>`<span class="die3 f${d}">${'<i></i>'.repeat(9)}</span>`).join('')}</div><span class="note">${myTurn?(mv.length?(sel===null?'اختر قطعة تضوي':'اختر المكان'):'ما عندك حركة'):''}</span>`;}
 $('#tgClose').onclick=closeTable;
+/* ---------- Lamma comedy pack: cartoon sound effects + Iraqi comic commentary ---------- */
+let NOISEB=null;
+function noiseBuf(a){if(NOISEB&&NOISEB.sampleRate===a.sampleRate)return NOISEB;const b=a.createBuffer(1,a.sampleRate,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return NOISEB=b;}
+function nz(dur,vol,delay,freq,q){const a=ac();if(!a)return;const t=a.currentTime+(delay||0),s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=noiseBuf(a);
+  f.type='bandpass';f.frequency.value=freq||1500;f.Q.value=q||1.2;g.gain.setValueAtTime(vol||.1,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(f);f.connect(g);g.connect(a.destination);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
+function vibTone(f0,f1,dur,type,vol,delay,vib){const a=ac();if(!a)return;const t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain(),lf=a.createOscillator(),lg=a.createGain(),flt=a.createBiquadFilter();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t+dur);lf.frequency.value=vib||6;lg.gain.value=(vib?f0*.03:0);lf.connect(lg);lg.connect(o.frequency);
+  flt.type='lowpass';flt.frequency.value=type==='sawtooth'?1400:8000;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.1,t+.02);g.gain.setValueAtTime(vol||.1,t+dur*.75);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(flt);flt.connect(g);g.connect(a.destination);o.start(t);lf.start(t);o.stop(t+dur+.05);lf.stop(t+dur+.05);}
+const fun={
+  rattle(){for(let i=0;i<9;i++)nz(.035,.16,i*.055+Math.random()*.02,1600+Math.random()*1800,3);vib([8,40,8,40,8]);},
+  boing(){vibTone(180,620,.18,'sine',.16,0,0);vibTone(620,140,.35,'sine',.14,.17,14);vib([30,30,60]);},
+  trombone(){[[392,.32],[370,.32],[349,.32],[330,.9]].reduce((d,[f,l])=>{vibTone(f,f*.98,l,'sawtooth',.09,d,l>.5?5:0);return d+l;},0);},
+  wah(){vibTone(330,300,.25,'sawtooth',.08,0,0);vibTone(280,200,.55,'sawtooth',.08,.24,5);},
+  slide(){vibTone(380,1500,.45,'sine',.12,0,0);},
+  slideDown(){vibTone(1400,300,.5,'sine',.11,0,0);},
+  ding(){tone(1046,.5,'sine',.08);tone(1568,.6,'sine',.06,.12);},
+  pop(){vibTone(900,150,.09,'sine',.14,0,0);},
+  fanfare(){[[523,.12],[659,.12],[784,.12],[1047,.32],[784,.12],[1047,.6]].reduce((d,[f,l])=>{tone(f,l+.05,'square',.05,d);tone(f/2,l+.05,'triangle',.06,d);return d+l;},0);},
+  applause(){for(let i=0;i<46;i++)nz(.05+Math.random()*.05,.06+Math.random()*.06,Math.random()*1.8,1200+Math.random()*2400,1.5);},
+  laugh(){[0,.13,.26,.4,.55].forEach((d,i)=>vibTone(520-i*25,420-i*25,.1,'triangle',.07,d,0));},
+  drum(){for(let i=0;i<16;i++)nz(.05,.08+i*.004,i*.05,220,1);tone(110,.4,'triangle',.12,.82);nz(.5,.12,.82,4000,.6);}};
+Object.assign(lsfx,{dice:fun.rattle,cap:fun.boing,home(){fun.slide();setTimeout(fun.ding,350);vib(30);},turn:fun.ding});
+/* comic lines — {N} me, {W} winner, {O} other player, {R} remaining, {K} count, {B} bid, {D} die */
+const JOKE={
+  hi:['هلا بالغالي {N}! نوّرت الطاولة، بس لا تخلي الحظ يزعل منك','يا هلا {N}! اليوم يومك… لو يوم غيرك؟ نشوف!','أهلًا {N}، اكعد اكعد، الجماعة ينتظروك من الصبح!','وصل {N}! جيبوا الجاي، اللعب صار جد'],
+  start:['يلا بسم الله، بدأت اللعبة! خلّي الحظ يحكم','بدأنا! منو اليوم البطل ومنو الضحية؟','بدأت! اللي يخسر يجيب الكعك للجماعة'],
+  turn:['يلا {N}، النرد يمك، لا تخليه يبرد!','دورك {N}… الجماعة ماسكين أنفاسهم','{N}، العب بسرعة ترى الجاي برد!','يا {N} ارمي، ترى الحظ ما ينتظر أحد','دورك يا {N}، ورّينا شطارتك'],
+  hurry:['{N}! نايم لو شنو؟ باقي خمس ثواني!','يا {N} الوقت راح يخلص، ولا تكول ما كلتلك!','خمسة… أربعة… {N} وينك؟!','{N} صحّي صحّي! الدور راح يطير'],
+  six:['ستّة! {N} حظه مثل حظ الوزير!','ستّة يا {N}! منو داعيلك اليوم؟','يا سلام ستّة! العب مرة ثانية يا محظوظ'],
+  out:['طلعت القطعة من البيت… ودّعت أمها وطلعت!','قطعة جديدة نزلت للشارع يا {N}، الله يستر!','طلعت للساحة يا {N}! يلا وريهم'],
+  eat:['هاااا! أكلتها يا {N}، رجّعتها للبيت تشرب جاي!','يا ساتر! {N} طلع وحش، أكلها بلا رحمة','ضربة معلم يا {N}! صاحبها راح يزعل عليك','أكلتها يا {N}! الله يعين أهلها'],
+  eaten:['أوووف يا {N}! قطعتك انأكلت ورجعت تبجي بالبيت','راحت عليك يا {N}… صبرك، الدنيا دوّارة','انأكلت قطعتك يا {N}! كلهم ضدك اليوم لو شنو؟','يا حرام يا {N}، رجعت لنقطة الصفر'],
+  otherEat:['{O} قاعد ياكل الكل! محد يقرّب عليه','{O} أكل قطعة! انتبهوا ترى جوعان'],
+  fail:['ما زبطت يا {N}… النرد زعلان منك','لا حركة يا {N}! حتى النرد ما يريدك تلعب','فشلت يا {N}، روح اشرب ماي وارجع','ولا شي يا {N}! تفرّج ويا الجماعة'],
+  three:['ثلاث ستات! {N} طمع والطمع ضرّ ما نفع!','حظك زايد يا {N}… فحرقنا دورك!'],
+  home:['وصلت وحدة للبيت يا {N}! سلّمت على أهلها','قطعة بالأمان يا {N}، باقي {R}','دخلت البيت يا {N}! حمد الله على السلامة'],
+  win:['مبروووك يا {N}! ملك الطاولة بلا منازع','{N} فاز! وزّع الحلويات يا بطل','يا سلام عليك يا {N}، خلّيت الجماعة يتحسّرون!','بطل يا {N}! اليوم إنت الشهبندر'],
+  lose:['خسرت يا {N}… بس لا تزعل، {W} صادها صدفة!','{W} غلبك يا {N}، الجاية ثار!','هاردلك يا {N}، الخسارة مو عيب، العيب ما تلعب مرة ثانية!','راحت عليك يا {N}… {W} اليوم محظوظ زيادة'],
+  draw:['تعادل! لا غالب ولا مغلوب، تعشّوا سوا','ما أحد غلب يا {N}… الحظ قسّمها بالعدل'],
+  domPass:['باص! سدّوها على {N}','{N} ما عنده شي… يتفرج ويا الجماعة','{N} يكول باص بكل ثقة!'],
+  domDraw:['{N} يسحب من الكومة… دوّر دوّر','يا {N} الكومة مو بنك، كافي سحب!'],
+  twHit:['ضربتها يا {N}! روحي للبار وانتظري دورج','ضربة طاولي محترمة يا {N}!'],
+  twHitMe:['انضربت يا {N}! البار صار بيتك الثاني','آخ يا {N}، قطعتك راحت للبار تشتكي'],
+  twDouble:['دوبل {D}! يا {N} النرد يحبك اليوم','دوبل! {N} شغّال واسطات'],
+  twStuck:['مسدودة يا {N}! ولا حركة','ما عندك حركة يا {N}، حتى الطاولة ضدك'],
+  chkMe:['كش! {N} يهجم مثل الأسد','كش ملك! يا {N} شدّ حيلك','كش! ملكهم صار يركض'],
+  chkThem:['انتبه يا {N}! ملكك بخطر، اركض اركض!','كش عليك يا {N}! خبّي الملك'],
+  draw2:['اسحب يا {N} اسحب! {K} أوراق هدية من الجماعة','{K} أوراق يا {N}! صارت إيدك مكتبة'],
+  oneCard:['{O} باقيله ورقة وحدة! الحكوه قبل لا يفوز!','انتبهوا! {O} على وشك الفوز'],
+  bid:['{O} طلب {B}! واثق من نفسه لو بس يكلك؟','{O} يطلب {B}… خلّينا نشوف الرجولة','{B}؟! {O} اليوم جايب الحظ وياه'],
+  madeUs:['الطلبة نجحت! فريقنا ما يرحم','نجحت! حلال عليكم يا أبطال'],
+  madeThem:['نجحت طلبتهم… خلّي نردّها الجولة الجاية'],
+  brokeUs:['انكسرت الطلبة يا {N}… طلبت هواية!','انكسرت! يا {N} الطمع ما يفيد'],
+  brokeThem:['كسرناهم! يستاهلون، طمعوا بالطلبة','انكسرت طلبتهم! ياااا سلام'],
+  waitFind:['ندوّر لك لاعبين يا {N}… انتظر شوية، الناس بالطريق','لحظة يا {N}، نجمّع اللمّة'],
+  waitBots:['باقي {K} ثانية، إذا ما أحد إجا نجيب بوتات… والبوتات ما تجامل!']};
+function jk(key,v){const a=JOKE[key]||[''],t=a[Math.floor(Math.random()*a.length)];return t.replace(/\{(\w)\}/g,(_,k)=>v&&v[k]!==undefined?String(v[k]):k==='N'?nm1():'');}
+const pn=(g,s)=>String(g.names[s]||'').replace(/^🤖\s*/,'').split(' ').slice(0,2).join(' ').slice(0,18);
+function narEvents(prev,g){if(!C||!prev||!g)return;const me=g.uids.indexOf(C.uid),L=g.last;if(me<0)return;const N=nm1();
+  if(g.status==='done'&&prev.status!=='done'){const wi=g.uids.indexOf(g.winner);
+    if(g.winner===C.uid){fun.fanfare();setTimeout(fun.applause,700);say(jk('win',{N}),{force:1,rate:1});}else{fun.trombone();say(jk('lose',{N,W:pn(g,wi)}),{force:1,rate:1});}return;}
+  if(!L||g.seq!==prev.seq+1)return;
+  const lost=[0,1,2,3].some(j=>prev.pc[me*4+j]>=0&&g.pc[me*4+j]<0);
+  if(lost&&L.s!==me){setTimeout(fun.wah,250);say(jk('eaten',{N}),{force:1});return;}
+  if(L.s===me){
+    if(L.cap){setTimeout(fun.laugh,300);say(jk('eat',{N}),{force:1});return;}
+    if(L.j>=0&&g.pc[me*4+L.j]===56){const r=4-[0,1,2,3].filter(j=>g.pc[me*4+j]===56).length;say(jk('home',{N,R:r===1?'وحدة بس':r+' قطع'}),{force:1});return;}
+    if(L.j<0){fun.wah();if(L.d===6&&(prev.six||0)>=2)say(jk('three',{N}),{force:1});else say(jk('fail',{N}));return;}
+    if(L.d===6&&prev.pc[me*4+L.j]<0){fun.slide();say(jk('out',{N}));return;}
+    if(L.d===6){fun.slide();say(jk('six',{N}));return;}
+  }else if(L.cap&&Math.random()<.5)say(jk('otherEat',{O:pn(g,L.s)}));}
+function narTurn(g){if(!g)return;if(Math.random()<.45)say(jk('turn'));}
+function narHurry(g){fun.pop();say(jk('hurry'),{key:'h'+g.id+g.seq,force:1});}
+function tgEvents(prev,g){const L=g.last;if(!L)return;const me=g.uids.indexOf(C.uid),N=nm1(),mine=L.s===me,myTurnNow=g.turn===me&&prev.turn!==me&&g.status==='play';
+  if(g.type==='chess'){if(L.m.chk){fun.boing();say(jk(mine?'chkMe':'chkThem',{N}),{force:1});}else if(L.m.cap){fun.pop();tone(220,.12,'square',.06);}else tone(520,.05,'triangle',.06);if(myTurnNow)lsfx.turn();return;}
+  if(g.type==='colors'){if(L.m.hit){const v=(L.s+g.st.dir+g.uids.length)%g.uids.length;if(v===me){fun.trombone();say(jk('draw2',{N,K:L.m.hit}),{force:1});}else{fun.laugh();}}else if(L.m.draw)fun.pop();else tone(700,.06,'triangle',.06);
+    if(L.m.one&&!mine){fun.drum();say(jk('oneCard',{O:pn(g,L.s)}),{force:1});}if(myTurnNow)lsfx.turn();return;}
+  if(g.type==='tarneeb'){if(L.m.c!==undefined)nz(.05,.12,0,2500,2);if(L.m.tw!==undefined){tone(880,.1,'sine',.07);}
+    if(L.m.round&&g.st.res){const r=g.st.res,us=r.bt===me%2;if(r.made){us?(fun.fanfare(),say(jk('madeUs'),{force:1})):say(jk('madeThem'),{force:1});}else{us?(fun.trombone(),say(jk('brokeUs',{N}),{force:1})):(fun.applause(),say(jk('brokeThem'),{force:1}));}}
+    if(L.m.bid!==undefined&&L.m.bid>=9&&!mine)say(jk('bid',{O:pn(g,L.s),B:L.m.bid}));
+    if(myTurnNow)lsfx.turn();return;}
+  if(g.type==='dom'){if(L.m.t!==undefined){nz(.04,.2,0,900,2);tone(180,.06,'square',.05);}else if(L.m.pass){if(mine){fun.wah();}else if(Math.random()<.5){fun.laugh();say(jk('domPass',{N:pn(g,L.s)}));}}
+    else if(L.m.draw&&mine&&Math.random()<.25)say(jk('domDraw',{N}));
+    if(myTurnNow){lsfx.turn();if(Math.random()<.35)say(jk('turn'));}return;}
+  if(L.m.hit){fun.boing();if(mine)say(jk('twHit',{N}),{force:1});else if(me>=0){setTimeout(fun.wah,300);say(jk('twHitMe',{N}),{force:1});}}
+  else if(L.m.to==='off'){lsfx.home();}else tone(500,.05,'triangle',.05);
+  if(myTurnNow){lsfx.turn();const d=g.st.dice;if(d.length===4){fun.slide();say(jk('twDouble',{N,D:d[0]}),{force:1});}else if(Math.random()<.35)say(jk('turn'));}}
+function tgEnd(g){const me=g.uids.indexOf(C.uid),win=tgIWon(g),wi=g.uids.indexOf(g.winner);
+  if(me>=0){gxAward(g.type,win,g.uids.some(isBot),g.id);
+    if(g.status==='draw'){fun.wah();say(jk('draw',{N:nm1()}),{force:1});}
+    else if(win){fun.fanfare();setTimeout(fun.applause,700);confetti();say(jk('win'),{force:1});}
+    else{fun.trombone();say(jk('lose',{W:g.type==='tarneeb'?'الفريق الثاني':pn(g,wi)}),{force:1});}}
+  tgSettle(g);}
+
 /* ---------- More table games: chess, colours (UNO-style), tarneeb ---------- */
 /* --- Chess --- */
 const N8=[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]],K8=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
