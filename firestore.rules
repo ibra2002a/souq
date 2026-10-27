@@ -638,7 +638,7 @@ service cloud.firestore {
         && request.resource.data.uids == [request.auth.uid]
         && request.resource.data.names.size() == 1 && request.resource.data.names[0] is string && request.resource.data.names[0].size() <= 24
         && request.resource.data.status == 'wait'
-        && request.resource.data.type in ['dom', 'tawla']
+        && request.resource.data.type in ['dom', 'tawla', 'chess', 'colors', 'tarneeb']
         && request.resource.data.max is int && request.resource.data.max >= 2 && request.resource.data.max <= 4
         && request.resource.data.stake is int && request.resource.data.stake >= 0 && request.resource.data.stake <= 100000000
         && request.resource.data.stake <= boardWorth(request.auth.uid)
@@ -674,11 +674,11 @@ service cloud.firestore {
         || (resource.data.status == 'play' && request.auth.uid in resource.data.uids
             && changed().hasOnly(['st', 'seq', 'turn', 'last', 'ts', 'status', 'winner'])
             && request.resource.data.seq == resource.data.seq + 1
-            && request.resource.data.status in ['play', 'done']
+            && request.resource.data.status in ['play', 'done', 'draw']
                         && (request.auth.uid == resource.data.uids[resource.data.turn]
                 || (resource.data.uids[resource.data.turn].matches('^bot_.*') && request.auth.uid == resource.data.host)
                 || request.time.toMillis() > resource.data.ts + 20000)
-            && (request.resource.data.status == 'play' || request.resource.data.winner in resource.data.uids)));
+            && (request.resource.data.status != 'done' || request.resource.data.winner in resource.data.uids)));
     }
 
     match /gboard/{uid} {
