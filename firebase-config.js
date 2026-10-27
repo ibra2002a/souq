@@ -1,4 +1,4 @@
-// إعدادات مشروع Firebase الخاص بلعبة «إمبراطورية السوق».
+// إعدادات مشروع Firebase الخاص بلعبة «لمّة Lamma».
 // هذه القيم ليست سرّية، والحماية تأتي من firestore.rules.
 export const firebaseConfig = {
   apiKey: "AIzaSyAGtVQ5pIjnLg9vb6y1bpBBaZ9xRJSg4ko",

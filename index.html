@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>إمبراطورية السوق</title>
+<title>لمّة Lamma</title>
 <meta name="description" content="لعبة سوق رقمي: ابنِ سلسلة محلات، تاجر في البورصة، ونافس التجار كل أسبوع.">
 <meta name="theme-color" content="#0f1b1d">
 <link rel="manifest" href="manifest.webmanifest">
@@ -46,7 +46,7 @@
 .tg-board{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:center;height:100%}
 .tg-act{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;min-height:70px}
 .mini-dom{display:inline-flex;flex-direction:column;gap:2px;background:#fffdf6;border-radius:4px;padding:2px;vertical-align:middle;box-shadow:0 1px 3px #0006}.mini-dom i{width:10px;height:10px;border-radius:2px;background:radial-gradient(circle,#111 26%,transparent 30%)}.mini-dom i+i{background:radial-gradient(circle at 30% 30%,#111 18%,transparent 22%),radial-gradient(circle at 70% 70%,#111 18%,transparent 22%);border-top:1px solid #999}
-.g-card .gi .mini-dom{transform:scale(2.2);transform-origin:top left;margin:2px}
+.g-card .gi .mini-dom{transform:scale(1.7);transform-origin:top left;margin:2px}
 .dom-table{background:radial-gradient(120% 120% at 50% 40%,#2f7a52,#123b28);border:6px solid #5a3416;border-radius:18px;padding:12px 8px;box-shadow:inset 0 0 30px #0007,0 10px 26px #0008;display:flex;flex-direction:column;gap:8px}
 .dom-chain{display:flex;flex-wrap:nowrap;gap:3px;overflow-x:auto;align-items:center;direction:ltr;padding:8px 4px;min-height:74px}
 .dom-ends{display:flex;justify-content:space-between;color:#e8ffe9;font-weight:700;font-size:13px;direction:ltr} .dom-ends .note{color:#bfe5c8}
@@ -742,7 +742,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 <div class="app" dir="rtl" lang="ar">
   <header class="top">
     <div class="brand">
-      <h1>سهرات <b>السوق</b></h1>
+      <h1>لمّة <b>Lamma</b></h1>
       <div class="hbtns"><button class="icon-btn paper-btn" id="paperBtn" aria-label="جريدة السوق">📰<i class="dot" id="paperDot" hidden></i></button><button class="icon-btn snd mus" id="musBtn" aria-label="الموسيقى" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path class="x" d="M3 3l18 18"/></svg></button><button class="icon-btn snd" id="sndBtn" aria-label="الصوت" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w1" d="M16.5 9.5a3.5 3.5 0 0 1 0 5"/><path class="w2" d="M19 7a7 7 0 0 1 0 10"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg></button><button class="me-btn" id="statsBtn" aria-label="ملفي الشخصي"><span class="av sm" id="meAv"></span></button></div>
     </div>
     <div class="rank-chip" id="rankChip"></div><button class="lvl-chip" id="lvlChip"></button>
@@ -2524,7 +2524,7 @@ function quizEnd(i,sc,tot){const pass=sc===tot;
 function claimLesson(i){const p=S.edu.path,P=EDU[p],dn=S.edu.done[p]||(S.edu.done[p]=[]);if(dn.includes(i)||!P.L[i].k[1]())return;
   const r=eduRew(i);dn.push(i);S.cash+=r;led('edu',r,'درس: '+P.L[i].t);bump('lessons');sfx.win();confetti();EDS.sig='';
   if(dn.length===P.L.length&&!S.edu.cert.includes(p)){S.edu.cert.push(p);const big=r*3;S.cash+=big;led('edu',big,'شهادة '+P.cert);
-    modal(`<div class="cert"><span class="cert-k">شهادة إتمام</span><b>${P.cert}</b><p>تشهد إمبراطورية السوق أن التاجر</p><h3>${eh(myN())}</h3><p>أتمّ مسار «${P.n}» بنجاح، وتعلّم ${P.L.map(l=>l.t).join('، ')}.</p><span class="num">${new Date().toLocaleDateString('ar-IQ',{day:'numeric',month:'long',year:'numeric'})}</span></div>
+    modal(`<div class="cert"><span class="cert-k">شهادة إتمام</span><b>${P.cert}</b><p>تشهد لمّة أن التاجر</p><h3>${eh(myN())}</h3><p>أتمّ مسار «${P.n}» بنجاح، وتعلّم ${P.L.map(l=>l.t).join('، ')}.</p><span class="num">${new Date().toLocaleDateString('ar-IQ',{day:'numeric',month:'long',year:'numeric'})}</span></div>
       <p class="note">جائزة الشهادة ${fmt(big)} دينار، وصار عندك لقب «${P.cert}» تختاره من ملفك.</p>`,[['استخدم اللقب',()=>setTitle(P.cert)],['تمام',null,1]]);
     news('cert',myN()+' يحصل على شهادة '+P.cert,big);}
   else toast('🎓 أنهيت درس «'+P.L[i].t+'» وقبضت '+fmt(r));save();}
@@ -2707,7 +2707,7 @@ async function payPrize(g,w){if(!S.gHeld||S.gHeld.seed!==g.seed)return;const p=S
     roomMsg('🏆 '+String(w.name).slice(0,24)+' فاز وقبض '+fmt(p),'sys');news('roomWin',String(w.name).slice(0,24)+' يفوز بمسابقة سهرة '+String(RMS.room.title).slice(0,30),p);}
   catch(e){S.cash+=p;led('room',p,'استرجاع جائزة المسابقة');toast('تعذّر إرسال الجائزة فرجعت لرصيدك');}save();}
 function roomMenu(){const R=RMS.room;if(!R)return;const isHost=R.host===C.uid;
-  modal(`<h2>${eh(R.title)}</h2><p class="note">صاحب السهرة: ${eh(R.hostName)}</p>`,[...(isHost?[['🎮 ابدأ مسابقة',startGameModal],['⏹️ أنهِ السهرة',()=>modal('<h2>تنهي السهرة للكل؟</h2>',[['أنهِها',endRoom],['لا',null,1]]),1]]:[]),['🔗 ادعُ صديقًا',()=>{const u=location.origin+location.pathname+'?room='+R.id;(navigator.share?navigator.share({title:R.title,text:'تعال لسهرتي بإمبراطورية السوق',url:u}):navigator.clipboard.writeText(u).then(()=>toast('نسخت الرابط'))).catch(()=>{});},1],['إغلاق',null,1]]);}
+  modal(`<h2>${eh(R.title)}</h2><p class="note">صاحب السهرة: ${eh(R.hostName)}</p>`,[...(isHost?[['🎮 ابدأ مسابقة',startGameModal],['⏹️ أنهِ السهرة',()=>modal('<h2>تنهي السهرة للكل؟</h2>',[['أنهِها',endRoom],['لا',null,1]]),1]]:[]),['🔗 ادعُ صديقًا',()=>{const u=location.origin+location.pathname+'?room='+R.id;(navigator.share?navigator.share({title:R.title,text:'تعال لسهرتي بـ لمّة',url:u}):navigator.clipboard.writeText(u).then(()=>toast('نسخت الرابط'))).catch(()=>{});},1],['إغلاق',null,1]]);}
 async function endRoom(){const {doc,updateDoc}=FB.F;try{await updateDoc(doc(FB.db,'rooms',RMS.id),{status:'closed',until:Date.now()});}catch(e){toast('تعذّر');}}
 $('#rmLeave').onclick=()=>leaveRoom();$('#rmMenu').onclick=roomMenu;$('#rmMic').onclick=toggleMic;$('#rmGift').onclick=()=>giftModal(null);
 $('#rmForm').onsubmit=e=>{e.preventDefault();const i=$('#rmIn');if(!i.value.trim())return;roomMsg(i.value,'msg');i.value='';};
@@ -2990,7 +2990,7 @@ function renderGames(){const G=gx(),k=lvlOf(G.xp),sig=JSON.stringify([!!C,G.xp,G
   $('#gDaily').innerHTML=`<div class="sec-h"><h2>🎁 الهدية اليومية</h2><span class="sub">اليوم ${ad(day)} من ٧</span></div><div class="streak">${[1,2,3,4,5,6,7].map(i=>`<div class="${i<day||(!open&&i===day)?'got':i===day?'now':''}"><small>${ad(i)}</small><b class="num">${fmt(dailyReward(i))}</b></div>`).join('')}</div>${open?'<button class="buy wide" id="gClaim">استلم هديتك</button>':'<p class="note">رجع باچر حتى تاخذ هدية أكبر.</p>'}`;
   const cl=$('#gClaim');if(cl)cl.onclick=()=>{claimDaily(cl);GM.sig='';};}
 function gamesInit(){const w=$('#wheelBox');if(w&&$('#gWheelSlot'))$('#gWheelSlot').appendChild(w);
-  if(!S.gbonus){S.gbonus=1;S.cash+=5e6;led('gift',5e6,'هدية البداية');save();setTimeout(()=>{if($('#modal').hidden)modal(`<h2>🎉 هلا بيك بسهرات السوق!</h2><p>عطيناك <b class="num">٥ ملايين دينار</b> هدية حتى تبدأ تلعب.</p><p class="note">العب لودو ودومينو وطاولي ويا أصدقائك أو ويا البوتات، وادخل السهرات، واجمع نقاط حتى ترتفع مستواك.</p>`,[['يلا نلعب!']]);},1500);}}
+  if(!S.gbonus){S.gbonus=1;S.cash+=5e6;led('gift',5e6,'هدية البداية');save();setTimeout(()=>{if($('#modal').hidden)modal(`<h2>🎉 هلا بيك بـ لمّة!</h2><p>عطيناك <b class="num">٥ ملايين دينار</b> هدية حتى تبدأ تلعب.</p><p class="note">العب لودو ودومينو وطاولي ويا أصدقائك أو ويا البوتات، وادخل السهرات، واجمع نقاط حتى ترتفع مستواك.</p>`,[['يلا نلعب!']]);},1500);}}
 let QP=null;
 function quickPlay(type){if(!C||!FB){toast('سجّل دخولك بحساب Google حتى تلعب');login();return;}
   const cap=lvlCap();modal(`<h2>${gIcon(type)} ${type==='ludo'?'لودو':type==='dom'?'دومينو':'طاولي'} · لعب سريع</h2><p class="note">ندور لك لاعبين حقيقيين ٢٠ ثانية، وإذا ما أحد إجا نكمل ويا بوتات 🤖.</p>
@@ -3371,8 +3371,8 @@ function renderInvite(){
     <p class="empty-s">كل صديق ينضم برابطك يحصل على ${fmt(REF_NEW)} دينار، وتحصل أنت على ٣٠ دقيقة من دخلك (مليون دينار على الأقل).</p>
     <div class="inv-link" id="invLink"></div><div class="inv-row"><button class="share" id="invShare">شارك الرابط</button><button class="copy" id="invCopy">نسخ</button></div>`;
   $('#invLink').textContent=inviteLink();
-  const msg='تعال نافسني في لعبة إمبراطورية السوق 🏪 ابنِ محلاتك وتاجر في البورصة. سجّل من رابطي وخذ هدية '+fmt(REF_NEW)+' دينار:';
-  $('#invShare').onclick=async()=>{try{if(navigator.share){await navigator.share({title:'إمبراطورية السوق',text:msg,url:inviteLink()});return;}}catch(e){if(e&&e.name==='AbortError')return;}copyInv();};
+  const msg='تعال العب وياي لودو ودومينو وطاولي بـ لمّة 🎲 سهرات وصوت وهدايا. سجّل من رابطي وخذ هدية '+fmt(REF_NEW)+' دينار:';
+  $('#invShare').onclick=async()=>{try{if(navigator.share){await navigator.share({title:'لمّة Lamma',text:msg,url:inviteLink()});return;}}catch(e){if(e&&e.name==='AbortError')return;}copyInv();};
   $('#invCopy').onclick=copyInv;
   function copyInv(){const t=msg+' '+inviteLink();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('نسخت رابط الدعوة')).catch(()=>{const r=document.createRange();r.selectNodeContents($('#invLink'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast('حدّد الرابط وانسخه');});}
 }
@@ -3468,7 +3468,7 @@ function renderDuel(){const box=$('#soc-duel'),d=DU.doc,now=Date.now(),live=d&&d
   if(!d){box.innerHTML='<section class="card2"><p class="empty-s">جارٍ التحميل…</p></section>';return;}
   if(d.status==='open'){const link=location.origin+location.pathname+'?duel='+DU.code;
     box.innerHTML=`<section class="duel-box"><h2 style="margin:0;font-family:var(--display);color:var(--brass)">بانتظار المنافس…</h2><p class="empty-s">أرسل الرمز أو الرابط لصديقك. التحدي يبدأ أول ما يدخل.</p><div class="code">${DU.code}</div><div class="inv-link" id="duLink"></div><div class="row2"><button class="buy" id="duShare">شارك</button><button class="ghostb" id="duCancel">إلغاء</button></div></section>`;
-    $('#duLink').textContent=link;$('#duShare').onclick=async()=>{const msg='تحداني بـ إمبراطورية السوق ⚔️ رمز التحدي '+DU.code+':';try{if(navigator.share){await navigator.share({title:'تحدي',text:msg,url:link});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+    $('#duLink').textContent=link;$('#duShare').onclick=async()=>{const msg='تحداني بـ لمّة ⚔️ رمز التحدي '+DU.code+':';try{if(navigator.share){await navigator.share({title:'تحدي',text:msg,url:link});return;}}catch(e){if(e&&e.name==='AbortError')return;}
       (navigator.clipboard?navigator.clipboard.writeText(msg+' '+link):Promise.reject()).then(()=>toast('نسخت الرابط')).catch(()=>toast('انسخ الرابط من المربع'));};
     $('#duCancel').onclick=()=>{const {doc,deleteDoc}=FB.F;deleteDoc(doc(FB.db,'duels',DU.code)).catch(()=>{});duelReset();};return;}
   const me=DU.role==='a'?'a':'b',op=me==='a'?'b':'a',myS=live&&now>=d.start?Math.round(duelVal()):d[me+'Score'],opS=d[op+'Score'];
@@ -3633,7 +3633,7 @@ function renderMoney(){const B=$('#monBox');if(!B)return;
     <section class="card2"><div class="sec-h"><h2>القروض والتحويلات</h2><span class="sub num">${ad(titles.length)} مفتوحة</span></div>${titles.length?rows:'<p class="empty-s">ما عندك قروض أو تحويلات معلّقة. شارك رقم حسابك مع أصدقائك ليحوّلوا لك أو يقرضوك.</p>'}</section>`;
   B.querySelectorAll('.lrow .lt').forEach((e,i)=>e.textContent=titles[i]);
   B.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{b.disabled=true;acts[+b.dataset.a]();});
-  const msg='رقم حسابي في إمبراطورية السوق: '+fmtPid(S.pid);
+  const msg='رقم حسابي في لمّة: '+fmtPid(S.pid);
   $('#pidCopy').onclick=()=>{(navigator.clipboard?navigator.clipboard.writeText(fmtPid(S.pid)):Promise.reject()).then(()=>toast('نسخت رقم حسابك')).catch(()=>toast('حدّد الرقم وانسخه'));};
   $('#pidShare').onclick=async()=>{try{if(navigator.share){await navigator.share({title:'رقم حسابي',text:msg,url:location.origin+location.pathname});return;}}catch(e){if(e&&e.name==='AbortError')return;}$('#pidCopy').click();};
   $('#mvSend').onclick=()=>moneyForm('send');$('#mvLend').onclick=()=>moneyForm('lend');$('#mvAsk').onclick=()=>moneyForm('ask');}
