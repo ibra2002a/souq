@@ -602,6 +602,15 @@ service cloud.firestore {
             && request.resource.data.stake <= boardWorth(request.auth.uid)
             && inRoom(resource.data.room))
         || (resource.data.status == 'wait' && request.auth.uid == resource.data.host
+            && changed().hasOnly(['uids', 'names'])
+            && request.resource.data.uids.size() == resource.data.uids.size() + 1
+            && request.resource.data.uids.size() <= resource.data.max
+            && request.resource.data.uids[request.resource.data.uids.size() - 1].matches('^bot_[a-z0-9]{1,12}$')
+            && request.resource.data.uids.hasAll(resource.data.uids)
+            && request.resource.data.names.size() == request.resource.data.uids.size()
+            && request.resource.data.names[request.resource.data.names.size() - 1] is string
+            && request.resource.data.names[request.resource.data.names.size() - 1].size() <= 24)
+        || (resource.data.status == 'wait' && request.auth.uid == resource.data.host
             && changed().hasOnly(['status', 'pc', 'turn', 'seq', 'six', 'ts', 'max'])
             && ((request.resource.data.status == 'play' && resource.data.uids.size() >= 2
                  && request.resource.data.max == resource.data.uids.size()
@@ -612,7 +621,9 @@ service cloud.firestore {
             && request.resource.data.seq == resource.data.seq + 1
             && request.resource.data.status in ['play', 'done']
             && request.resource.data.pc.size() == resource.data.pc.size()
-            && (request.auth.uid == resource.data.uids[resource.data.turn] || request.time.toMillis() > resource.data.ts + 20000)
+            && (request.auth.uid == resource.data.uids[resource.data.turn]
+                || (resource.data.uids[resource.data.turn].matches('^bot_.*') && request.auth.uid == resource.data.host)
+                || request.time.toMillis() > resource.data.ts + 20000)
             && (request.resource.data.status == 'play' || request.resource.data.winner in resource.data.uids)));
     }
   }
