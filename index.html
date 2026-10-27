@@ -24,6 +24,8 @@
   --muted:#93aaa6;
   --good:#5fcf8f;
   --bad:#ef6f5e;
+  --hot:#ff8a3d;
+  --night-blue:#5b6fb0;
   --display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
   --body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
   color-scheme:dark;
@@ -413,6 +415,44 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .quick{display:flex;gap:6px}
 .quick button{flex:1;border:1px solid var(--line);border-radius:9px;padding:6px;font-size:13px;color:var(--ink)}
 .field select{font:inherit;font-size:15px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+.phase{display:flex;align-items:center;gap:10px;border-radius:12px;padding:10px 12px;border:1px solid var(--line);background:var(--stall)}
+.phase .ph-i{font-size:28px;line-height:1}
+.phase .ph-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.phase .ph-t strong{font-size:15px}
+.phase .ph-t span{font-size:12.5px;color:var(--muted)}
+.phase .ph-t small{font-size:11.5px;color:var(--muted)}
+.phase .ph-c{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.phase .ph-c b{font-family:var(--display);font-size:18px}
+.phase .ph-c button{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.phase.gold{border-color:var(--brass);background:linear-gradient(90deg,rgba(224,169,59,.22),transparent 75%),var(--stall)}
+.phase.gold strong,.phase.gold .ph-c b{color:var(--brass)}
+.phase.storm{border-color:var(--bad);background:linear-gradient(90deg,rgba(239,111,94,.28),transparent 75%),var(--stall);animation:stormPulse 1.1s ease-in-out infinite}
+.phase.storm strong,.phase.storm .ph-c b{color:var(--bad)}
+.phase.spec{border-color:var(--hot);background:linear-gradient(90deg,rgba(255,138,61,.24),transparent 75%),var(--stall)}
+.phase.spec strong,.phase.spec .ph-c b{color:var(--hot)}
+.phase.closed{border-color:var(--night-blue);background:linear-gradient(90deg,rgba(91,111,176,.25),transparent 75%),var(--stall)}
+.phase.closed strong{color:#9fb0e8}
+.phase.warn{border-color:var(--bad);border-style:dashed}
+@keyframes stormPulse{50%{box-shadow:0 0 0 4px rgba(239,111,94,.18)}}
+body.m-storm::after,body.m-gold::after,body.m-spec::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:4}
+body.m-storm::after{box-shadow:inset 0 0 90px rgba(239,111,94,.28)}
+body.m-gold::after{box-shadow:inset 0 0 80px rgba(224,169,59,.18)}
+body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
+.ex-warn{border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--stall)}
+.ex-warn.storm{border-color:var(--bad);color:var(--bad);background:rgba(239,111,94,.1)}
+.ex-warn.closed{border-color:var(--night-blue);color:#9fb0e8;background:rgba(91,111,176,.12)}
+.ex-warn.spec{border-color:var(--hot);color:var(--hot);background:rgba(255,138,61,.1)}
+.ex-warn.gold{border-color:var(--brass);color:var(--brass);background:rgba(224,169,59,.1)}
+.sch{display:flex;flex-direction:column;gap:2px;text-align:start;max-height:56vh;overflow-y:auto}
+.sch-row{display:grid;grid-template-columns:30px 1fr auto;gap:2px 10px;align-items:center;border-top:1px solid var(--line);padding:8px 2px}
+.sch-row:first-child{border-top:0}
+.sch-row i{font-style:normal;font-size:20px;grid-row:span 2}
+.sch-row b{font-size:14px}
+.sch-row small{font-size:11.5px;color:var(--muted);grid-column:2}
+.sch-row span{grid-row:span 2;font-size:12.5px;color:var(--muted);direction:ltr}
+.sch-row.now{background:rgba(224,169,59,.08);border-radius:10px}
+.sch-row.past{opacity:.45}
+@media (prefers-reduced-motion:reduce){.phase.storm{animation:none}}
 @media (prefers-reduced-motion:reduce){.run.can,.prog i.fast{animation:none}.float,.pop{animation:none}.badge.live,.auction.hot{animation:none}}
 </style>
 </head>
@@ -428,6 +468,12 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
     <div class="rate"><span>الدخل <b class="g num" id="rate">٠</b> /ثانية</span><span>صافي الثروة <b class="num" id="worth">٠</b></span></div>
     <div class="acct-row"><div class="acct" id="acct"><span class="dot"></span><span id="acctTxt">جارٍ التحقق من الحساب…</span></div><button class="auth-btn" id="authBtn" hidden>دخول بـ Google</button></div>
   </header>
+
+  <section class="phase" id="phase" aria-live="polite">
+    <span class="ph-i" id="phI">⚖️</span>
+    <div class="ph-t"><strong id="phN">سوق عادي</strong><span id="phD"></span><small id="phNext"></small></div>
+    <div class="ph-c"><b class="num" id="phT"></b><button id="phSch">الجدول</button></div>
+  </section>
 
   <section class="event" id="event" aria-live="polite">
     <span class="tag" id="evTag">أخبار السوق</span>
@@ -462,6 +508,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
   </section>
 
   <section class="pane" id="p-ex" role="tabpanel" hidden>
+    <div class="ex-warn" id="exWarn" hidden></div>
     <div class="citybar">
       <div><span class="lbl">أنت الآن في</span><b id="curCity">بغداد</b></div>
       <div class="travel" id="travel"></div>
@@ -625,7 +672,7 @@ const ASSETS=[
  {id:'cement',name:'إسمنت',                unit:'لكل طن',        base:1.4e5,  vol:.09, seed:53},
  {id:'tel',   name:'سهم دجلة للاتصالات',    unit:'لكل سهم',       base:2.5e4,  vol:.24, seed:67}
 ];
-const FEE=.005, STEP=10, MKT_FEE=.02;
+let FEE=.005;const STEP=10, MKT_FEE=.02;
 /* Cities: each owned city lifts all income ×1.25 and its specialty ×1.5. Exchange prices differ by city. */
 const CITIES=[
  {id:'bgd',name:'بغداد', cost:0,    tag:null,    tagName:'',               px:{}},
@@ -670,8 +717,33 @@ const seasonEnd=id=>(id+1)*WEEK+OFF;
 function h1(i,s){const x=Math.sin(i*127.1+s*311.7)*43758.5453;return x-Math.floor(x);}
 function sm(t,s){const i=Math.floor(t),f=t-i,u=f*f*(3-2*f);return (h1(i,s)*(1-u)+h1(i+1,s)*u)*2-1;}
 const stepNow=()=>Math.floor(Date.now()/1000/STEP);
+/* ---------- Market hours (Baghdad time, the same for every player) ---------- */
+const BGD=3*36e5,PHS={
+  normal:{n:'سوق عادي',i:'⚖️',inc:1,fee:0,d:'الأسعار والدخل طبيعية'},
+  gold:{n:'ساعات الذروة',i:'☀️',inc:2,fee:-.003,d:'دخل المحلات ×٢ وعمولة البورصة ٠٫٢٪ فقط'},
+  storm:{n:'عاصفة السوق',i:'⛈️',inc:.7,fee:.06,d:'الأسعار تنهار، وكل صفقة تخسر ٦٪، والدخل ×٠٫٧'},
+  spec:{n:'ساعة المضاربة',i:'🔥',inc:1,fee:-.005,d:'تقلبات ×٣ وبدون عمولة. ربح كبير أو خسارة كبيرة'},
+  closed:{n:'السوق مغلق',i:'🌙',inc:.5,fee:0,closed:true,d:'البورصة مغلقة، والمديرون يشتغلون بنصف الطاقة'}};
+const schCache=new Map();
+const dayStart=t=>Math.floor((t+BGD)/864e5)*864e5-BGD;
+function schedule(d0){if(schCache.has(d0))return schCache.get(d0);const M=m=>d0+m*6e4;
+  const L=[{k:'closed',s:M(120),e:M(420)},{k:'gold',s:M(600),e:M(720)},{k:'gold',s:M(1200),e:M(1380)}];
+  const free=(a,b)=>!L.some(p=>a<p.e+30*6e4&&b>p.s-30*6e4);
+  let h=hashStr('souq-day-'+d0);const nx=()=>(h=(Math.imul(h,1664525)+1013904223)>>>0);
+  const cands=[];for(let m=420;m<=1530;m+=15)cands.push(m);
+  const pick=(len,k,n)=>{for(let tries=0,got=0;got<n&&tries<300;tries++){const a=M(cands[nx()%cands.length]),b=a+len*6e4;if(!free(a,b))continue;L.push({k,s:a,e:b});got++;}};
+  pick(30,'storm',2);pick(20,'spec',1);L.sort((a,b)=>a.s-b.s);schCache.set(d0,L);if(schCache.size>8)schCache.delete(schCache.keys().next().value);return L;}
+function phaseAt(t){const d=dayStart(t);for(const d0 of [d-864e5,d])for(const p of schedule(d0))if(t>=p.s&&t<p.e)return p;return {k:'normal',s:0,e:0};}
+const revealed=p=>(p.k!=='storm'&&p.k!=='spec')||Date.now()>=p.s-(p.k==='storm'?15:10)*6e4;
+function upcoming(t){const d=dayStart(t);return [...schedule(d-864e5),...schedule(d),...schedule(d+864e5)].filter(p=>p.s>t).sort((a,b)=>a.s-b.s);}
+let PHC={t:0,p:{k:'normal',s:0,e:0}};
+function curPhase(){const n=Date.now();if(n-PHC.t>1000)PHC={t:n,p:phaseAt(n)};return PHC.p;}
+function stormMul(t){const p=phaseAt(t);if(p.k!=='storm')return 1;const pr=(t-p.s)/(p.e-p.s);return 1-.2*Math.sin(Math.PI*.9*pr);}
+const hhmm=t=>new Date(t).toLocaleTimeString('ar-IQ',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Baghdad'});
+
 function priceAt(a,st){const n=.5*sm(st/360,a.seed)+.3*sm(st/40,a.seed+1)+.15*sm(st/9,a.seed+2)+.05*sm(st/2,a.seed+3);
-  return Math.round(a.base*Math.exp(a.vol*2.2*n)*(1+(evShock(a.id))));}
+  const t=st*STEP*1000,ph=phaseAt(t);const n2=ph.k==='spec'?n+.45*sm(st/1.5,a.seed+9)+.25*sm(st/.6,a.seed+11):n;
+  return Math.round(a.base*Math.exp(a.vol*2.2*n2)*(1+(evShock(a.id)))*stormMul(t));}
 function evShock(id){return ev&&ev.e.mk&&ev.e.mk[id]||0;}
 const cityPx=(a,cid)=>1+(cityById(cid||S.city).px[a.id]||0);
 const price=(a,cid)=>Math.round(priceAt(a,stepNow())*cityPx(a,cid));
@@ -692,7 +764,7 @@ const staffSp=b=>b.mgr&&b.staff&&TRAITS[b.staff.t]?TRAITS[b.staff.t].sp:1;
 const cycT=i=>DEF[i].t/speedMult(S.b[i])/staffSp(S.b[i]);
 function cityMult(d){let m=1;S.cities.forEach(id=>{const c=cityById(id);if(c.cost){m*=1.25;if(d.tags.includes(c.tag))m*=1.5;}});
   (S.rare||[]).forEach(k=>{const r=RARE[k];if(!r)return;if(r.all)m*=r.all;else if(d.tags.includes(r.tag))m*=r.m;});
-  m*=1+.05*(S.rank||0);if(S.boost&&Date.now()<S.boost.until)m*=S.boost.m;return m;}
+  m*=1+.05*(S.rank||0);if(S.boost&&Date.now()<S.boost.until)m*=S.boost.m;m*=PHS[curPhase().k].inc;return m;}
 const cycRev=i=>DEF[i].rev*S.b[i].n*evMult(DEF[i])*cityMult(DEF[i]);
 function costOf(i,k){const d=DEF[i],o=S.b[i].n;return d.cost*Math.pow(GROW,o)*(Math.pow(GROW,k)-1)/(GROW-1);}
 function maxAff(i){const d=DEF[i],o=S.b[i].n;return Math.max(0,Math.floor(Math.log(S.cash*(GROW-1)/(d.cost*Math.pow(GROW,o))+1)/Math.log(GROW)));}
@@ -741,10 +813,10 @@ ASSETS.forEach(a=>{
   aWrap.appendChild(el);
   const q=s=>el.querySelector(s);
   const c={el,pr:q('.pr'),ch:q('.ch'),cv:q('.spark'),hold:q('.hold'),ac:q('.a-city'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),sell:q('.sell'),sq:q('.sq'),sc:q('.sc')};
-  c.buy.onclick=()=>{const p=price(a)*(1+FEE),k=exQty==='max'?Math.floor(S.cash/p):+exQty;if(k<1||S.cash<k*p)return;
-    const h=S.h[a.id]||(S.h[a.id]={q:0,avg:0});h.avg=(h.avg*h.q+k*p)/(h.q+k);h.q+=k;S.cash-=k*p;bump('trades');S.tr.vol+=k*p;sfx.buy();popEl(c.buy);toast(`اشتريت ${nf.format(k)} ${a.name} في ${cityById(S.city).name}`);render(true);};
-  c.sell.onclick=()=>{const h=S.h[a.id];if(!h||!h.q)return;const k=exQty==='max'?h.q:Math.min(h.q,+exQty);const p=price(a)*(1-FEE);
-    const pl=k*(p-h.avg);S.cash+=k*p;S.real+=pl;h.q-=k;if(!h.q)h.avg=0;bump('trades');if(pl>0)bump('profits');tradeStat(pl,k*p);led(pl>=0?'tradeW':'tradeL',pl,'بيع '+nf.format(k)+' '+a.name+' في '+cityById(S.city).name);
+  c.buy.onclick=()=>{if(PHS[curPhase().k].closed){toast('🌙 البورصة مغلقة الآن، تفتح الساعة ٧ صباحًا');return;}const p=price(a)*(1+FEE),k=exQty==='max'?Math.floor(S.cash/p):+exQty;if(k<1||S.cash<k*p)return;
+    const h=S.h[a.id]||(S.h[a.id]={q:0,avg:0});h.avg=(h.avg*h.q+k*p)/(h.q+k);h.q+=k;S.cash-=k*p;bump('trades');S.tr.vol+=k*p;if(curPhase().k==='storm')h.sb=1;sfx.buy();popEl(c.buy);toast(`اشتريت ${nf.format(k)} ${a.name} في ${cityById(S.city).name}`);render(true);};
+  c.sell.onclick=()=>{if(PHS[curPhase().k].closed){toast('🌙 البورصة مغلقة الآن، تفتح الساعة ٧ صباحًا');return;}const h=S.h[a.id];if(!h||!h.q)return;const k=exQty==='max'?h.q:Math.min(h.q,+exQty);const p=price(a)*(1-FEE);
+    const pl=k*(p-h.avg);S.cash+=k*p;S.real+=pl;h.q-=k;if(!h.q)h.avg=0;bump('trades');if(pl>0)bump('profits');tradeStat(pl,k*p);if(pl>0&&h.sb&&curPhase().k!=='storm'){bump('stormWin');toast('🎣 صياد القاع! اشتريت وقت العاصفة وبعت بربح');}if(!h.q)h.sb=0;led(pl>=0?'tradeW':'tradeL',pl,'بيع '+nf.format(k)+' '+a.name+' في '+cityById(S.city).name);
     if(pl>=0){sfx.coin();floatAt(c.sell,'+'+fmt(pl));}else sfx.loss();
     toast(pl>=0?`بعت بربح ${fmt(pl)} دينار`:`بعت بخسارة ${fmt(-pl)} دينار`);render(true);};
   acards.push(c);
@@ -845,6 +917,7 @@ function musMood(){
   let m='calm';
   if(ev&&ev.e.m<1)m='tense';
   else if(ev&&ev.e.m>1)m='excite';
+  {const k=curPhase().k;if(k==='storm')m='tense';else if((k==='spec'||k==='gold')&&m==='calm')m='excite';}
   if(typeof auLive==='function'&&auLive()){const left=AU.doc?AU.doc.endsAt-Date.now():slotNow()*SLOT+AU_LEN-Date.now();m=left<AU_SNIPE?'tense':'excite';}
   MUS.want=m;
 }
@@ -941,7 +1014,8 @@ const ACH=[
   {id:'shah', n:'شهبندر',         d:'اوصل لرتبة شهبندر التجار',          ok:()=>(S.rank||0)>=5},
   {id:'loan', n:'زبون موثوق',     d:'سدّد قرضًا للمصرف بوقته',           ok:()=>(S.st.loansPaid||0)>=1},
   {id:'duel', n:'بطل التحدي',     d:'اربح تحديًا مباشرًا',               ok:()=>(S.st.duelWins||0)>=1},
-  {id:'ally', n:'رجل تحالفات',    d:'انضم إلى تحالف تجاري',              ok:()=>(S.st.allied||0)>=1}
+  {id:'ally', n:'رجل تحالفات',    d:'انضم إلى تحالف تجاري',              ok:()=>(S.st.allied||0)>=1},
+  {id:'storm',n:'صياد القاع',     d:'اشترِ وقت العاصفة وبِع بربح بعدها', ok:()=>(S.st.stormWin||0)>=1}
 ];
 const MEDAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l-2 6h-4z"/><circle cx="12" cy="15" r="6"/><path d="M12 12.2l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 14.3l2-.3z"/></svg>';
 function checkAch(silent){let got=0;ACH.forEach(a=>{if(!S.ach[a.id]&&a.ok()){S.ach[a.id]=Date.now();got++;if(!silent){sfx.win();confetti();toast('إنجاز جديد: '+a.n);}}});if(got)tasksSig='';}
@@ -1203,6 +1277,27 @@ function renderWheel(){const ready=S.wheel!==todayStr(),sig=ready+'|'+wheelBusy;
   if(!$('#wheelCv')){B.innerHTML=`<div class="sec-h"><h2>🎡 عجلة الحظ</h2><span class="sub" id="whSub"></span></div><div class="wheel-wrap"><canvas id="wheelCv"></canvas><div class="ptr"></div></div><button class="buy wide" id="whBtn"></button>`;$('#whBtn').onclick=spinWheel;}
   $('#whSub').textContent=ready?'دورة مجانية كل يوم':'رجّع بكرة لدورة جديدة';const b=$('#whBtn');b.disabled=!ready||wheelBusy;b.textContent=wheelBusy?'تدور…':ready?'دوّر العجلة':'استخدمت دورة اليوم';drawWheel();}
 
+/* ---------- Market hours UI ---------- */
+let lastPhK=null,phSig='';const phWarned=new Set();
+function renderPhase(){const p=curPhase(),P=PHS[p.k],now=Date.now(),nx=upcoming(now).find(revealed);
+  const bar=$('#phase'),soon=nx&&(nx.k==='storm'||nx.k==='spec')&&p.k==='normal';
+  const cls='phase '+p.k+(soon&&nx.k==='storm'?' warn':'');if(bar.className!==cls)bar.className=cls;
+  const bc=['m-storm','m-gold','m-spec'];bc.forEach(c=>document.body.classList.toggle(c,c==='m-'+p.k));
+  const sig=p.k+'|'+(nx?nx.s:0);if(sig!==phSig){phSig=sig;$('#phI').textContent=P.i;$('#phN').textContent=P.n;$('#phD').textContent=P.d;}
+  if(p.k==='normal'){$('#phT').textContent=nx?fmtT((nx.s-now)/1000):'';$('#phNext').textContent=nx?('التالي: '+PHS[nx.k].i+' '+PHS[nx.k].n+(soon?' ⚠️':'')):'';}
+  else{$('#phT').textContent=fmtT((p.e-now)/1000);$('#phNext').textContent='ينتهي '+hhmm(p.e)+(nx&&nx.s===p.e?'':'');}}
+function phaseWatch(){const p=curPhase(),now=Date.now();
+  if(lastPhK!==null&&p.k!==lastPhK){const P=PHS[p.k];if(p.k==='normal')toast('⚖️ رجع السوق لوضعه الطبيعي');
+    else{if(p.k==='storm'){sfx.alert();vib([80,50,80,50,120]);}else{sfx.win();if(p.k!=='closed')confetti();}toast(P.i+' بدأت '+P.n+': '+P.d);}lastStep=-1;}
+  lastPhK=p.k;
+  const n=upcoming(now)[0];if(n&&(n.k==='storm'||n.k==='spec')&&revealed(n)&&!phWarned.has(n.s)){phWarned.add(n.s);sfx.alert();vib([60,40,60]);
+    toast(n.k==='storm'?'⛈️ تحذير: عاصفة السوق بعد '+fmtDur((n.s-now)/1000)+'! بِع سلعك أو جهّز فلوسك للقاع':'🔥 ساعة المضاربة تبدأ بعد '+fmtDur((n.s-now)/1000)+'!');}}
+function showSchedule(){const now=Date.now(),d=dayStart(now),L=[...schedule(d-864e5).filter(p=>p.e>d),...schedule(d)].filter(p=>p.s<d+864e5).sort((a,b)=>a.s-b.s);
+  const rows=L.map(p=>{const P=PHS[p.k],hid=!revealed(p)&&p.s>now,cls=now>=p.s&&now<p.e?'now':p.e<=now?'past':'';
+    return `<div class="sch-row ${cls}"><i>${P.i}</i><b>${hid?(p.k==='storm'?'عاصفة مفاجئة':'ساعة مضاربة مفاجئة'):P.n}</b><span>${hid?'؟؟:؟؟':hhmm(p.s)+' – '+hhmm(p.e)}</span><small>${hid?'الوقت يُكشف قبل '+(p.k==='storm'?'١٥':'١٠')+' دقيقة':P.d}</small></div>`;}).join('');
+  modal(`<h2>جدول السوق اليوم</h2><p>بتوقيت بغداد، ونفسه لكل التجار. خارج هذه الأوقات السوق عادي.</p><div class="sch">${rows}</div>`,[['فهمت']]);}
+$('#phSch').onclick=showSchedule;$('#phase').onclick=e=>{if(e.target.id!=='phSch')showSchedule();};
+
 /* ---------- Tabs & toggles ---------- */
 function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===t));
   ['shop','ex','mkt','task','comp','me'].forEach(p=>$('#p-'+p).hidden=p!==t);meSig='';citySig=travelSig=tasksSig=mkSig=bankSig=socSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
@@ -1226,6 +1321,7 @@ function render(force){
   $('#cash').innerHTML=fmt(S.cash)+' <small>دينار</small>';
   $('#rate').textContent=fmt(incomeRate());$('#worth').textContent=fmt(worth());
   $('#taskBadge').hidden=!taskAlert();
+  renderPhase();
   {const need=MON.borr.some(l=>l.status==='offered'||(l.status==='active'&&Date.now()>l.due))||MON.lend.some(l=>l.status==='requested');$('#statsBtn').style.boxShadow=need?'0 0 0 3px var(--bad)':'';}
   $('#mktBadge').hidden=!auLive();
   if(tab==='task'){renderInvite();renderPush();}
@@ -1252,6 +1348,7 @@ function render(force){
     const stg=shopStage(b.n);if(stg!==c.stage){c.stage=stg;c.art.innerHTML=shopArt(i,stg);}
     const sk=b.mgr&&b.staff?b.staff.name+b.staff.t:'';if(sk!==c.staffK){c.staffK=sk;c.staff.hidden=!sk;if(sk){const T=TRAITS[b.staff.t];c.staff.innerHTML='المدير: <b></b> · <span class="tr'+(T.steal?' bad':'')+'"></span>';c.staff.querySelector('b').textContent=b.staff.name;c.staff.querySelector('.tr').textContent=T.n;}}});
   if(tab==='ex'){
+    {const k=curPhase().k,W=$('#exWarn'),msg={storm:'⛈️ عاصفة السوق! الأسعار تنهار وكل صفقة تخسر ٦٪. اشترِ في القاع إذا تجرأت',closed:'🌙 البورصة مغلقة من ٢ إلى ٧ فجرًا. تقدر تشوف الأسعار فقط',spec:'🔥 ساعة المضاربة! تقلبات ×٣ وبدون عمولة',gold:'☀️ ساعات الذروة: عمولة ٠٫٢٪ فقط'}[k];W.hidden=!msg;if(msg){W.className='ex-warn '+k;W.textContent=msg;}}
     drawSparks();renderTravel();let pv=0,un=0;const st=stepNow();
     ASSETS.forEach((a,k)=>{const c=acards[k],p=price(a),old=priceAt(a,st-30)*cityPx(a),chg=(p/old-1)*100,h=S.h[a.id]||{q:0,avg:0};
       if(S.cities.length>1){const ps=S.cities.map(id=>({id,p:price(a,id)})).sort((x,y)=>x.p-y.p),lo=ps[0],hi=ps[ps.length-1];
@@ -1263,7 +1360,7 @@ function render(force){
         c.hold.innerHTML=`<span>تملك <b class="num">${nf.format(h.q)}</b></span><span>متوسط الشراء <b class="num">${fmt(h.avg)}</b></span><span class="num ${pl>=0?'up':'down'}">${sfmt(pl)} (${pct((sp/h.avg-1)*100)})</span>`;}
       else c.hold.innerHTML='<span>لا تملك شيئًا من هذا الأصل</span>';
       const kb=exQty==='max'?Math.floor(S.cash/bp):+exQty;c.bq.textContent=`شراء ${nf.format(Math.max(kb,0))}`;c.bc.textContent=fmt(Math.max(kb,1)*bp);c.buy.disabled=kb<1||S.cash<kb*bp;
-      const ks=exQty==='max'?h.q:Math.min(h.q,+exQty);c.sq.textContent=`بيع ${nf.format(ks)}`;c.sc.textContent=fmt(ks*sp);c.sell.disabled=!ks;});
+      const ks=exQty==='max'?h.q:Math.min(h.q,+exQty);c.sq.textContent=`بيع ${nf.format(ks)}`;c.sc.textContent=fmt(ks*sp);c.sell.disabled=!ks;if(PHS[curPhase().k].closed){c.buy.disabled=c.sell.disabled=true;c.bq.textContent=c.sq.textContent='مغلق';}});
     $('#pVal').textContent=fmt(pv);const pu=$('#pUn');pu.textContent=sfmt(un);pu.className='num '+(un>=0?'up':'down');
     const pr=$('#pRe');pr.textContent=sfmt(S.real);pr.className='num '+(S.real>=0?'up':'down');
   }
@@ -1286,9 +1383,9 @@ function tick(dt){
   else if(S.earned>0){evNext-=dt;if(evNext<=0){const e=EVENTS[Math.floor(Math.random()*EVENTS.length)];ev={e,left:30};lastStep=-1;sfx.alert();toast('خبر عاجل: '+e.title);}}
 }
 let last=performance.now(),saveAcc=0,seasonAcc=0;
-function frame(now){const dt=Math.min(1,(now-last)/1000);last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
+function frame(now){const dt=Math.min(1,(now-last)/1000);FEE=Math.max(0,.005+(PHS[curPhase().k].fee||0));last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
   if(seasonAcc>5){seasonAcc=0;const before=S.season.id;ensureSeason();if(S.season.id!==before){toast('بدأ موسم جديد! النقاط عادت للصفر');subBoard();subChamp();}}
-  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();histTick();profTick();loanDue();}
+  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();histTick();profTick();loanDue();phaseWatch();}
   staffTick(dt);decTick(dt);duelTick();
   musMood();
   if(saveAcc>5){saveAcc=0;save();}render();requestAnimationFrame(frame);}
@@ -1672,7 +1769,7 @@ const DUEL_LEN=5*6e4,DUEL_CASH=1e6,DUEL_AS=['usd','oil','tel'];
 let DU={code:null,doc:null,un:null,cash:DUEL_CASH,h:{},role:null,lastPush:0,busy:false,ended:false};
 const duelSeed=c=>hashStr('duel'+c)%997;
 function duelPrice(a,t){const st=Math.floor((t||Date.now())/2000),sd=a.seed+duelSeed(DU.code||'');const n=.6*sm(st/30,sd)+.3*sm(st/8,sd+1)+.1*sm(st/2,sd+2);return Math.round(a.base*Math.exp(a.vol*3.2*n));}
-const duelVal=()=>DU.cash+DUEL_AS.reduce((v,id)=>v+(DU.h[id]||0)*duelPrice(ASSETS.find(a=>a.id===id))*(1-FEE),0);
+const duelVal=()=>DU.cash+DUEL_AS.reduce((v,id)=>v+(DU.h[id]||0)*duelPrice(ASSETS.find(a=>a.id===id))*0.995,0);
 function duelWatch(code){if(!FB)return;const {doc,onSnapshot}=FB.F;if(DU.un)DU.un();DU.code=code;socSig='';
   DU.un=onSnapshot(doc(FB.db,'duels',code),s=>{const was=DU.doc&&DU.doc.status;DU.doc=s.exists()?s.data():null;if(DU.doc){DU.role=DU.doc.a===C.uid?'a':DU.doc.b===C.uid?'b':null;if(was==='open'&&DU.doc.status==='live'){sfx.alert();toast('بدأ التحدي! عندك ٥ دقائق');}}socSig='';},()=>{});}
 function duelReset(){if(DU.un)DU.un();DU={code:null,doc:null,un:null,cash:DUEL_CASH,h:{},role:null,lastPush:0,busy:false,ended:false};socSig='';}
@@ -1684,8 +1781,8 @@ async function duelJoin(code){code=String(code||'').replace(/\D/g,'');if(code.le
 function duelFromLink(){let c=null;try{c=localStorage.getItem('souq-duel');localStorage.removeItem('souq-duel');}catch(e){}if(c){setTab('comp');setSoc('duel');duelJoin(c);}}
 try{const dq=new URLSearchParams(location.search).get('duel');if(dq&&/^\d{6}$/.test(dq)){localStorage.setItem('souq-duel',dq);history.replaceState(null,'',location.pathname);}}catch(e){}
 function duelTrade(id,buy){const d=DU.doc;if(!d||d.status!=='live'||Date.now()<d.start||Date.now()>=d.end)return;const a=ASSETS.find(x=>x.id===id),p=duelPrice(a);
-  if(buy){const q=Math.floor(DU.cash*.25/(p*(1+FEE)));if(q<1)return;DU.cash-=q*p*(1+FEE);DU.h[id]=(DU.h[id]||0)+q;sfx.buy();}
-  else{const q=DU.h[id]||0;if(!q)return;DU.cash+=q*p*(1-FEE);DU.h[id]=0;sfx.coin();}socSig='';render(true);}
+  if(buy){const q=Math.floor(DU.cash*.25/(p*1.005));if(q<1)return;DU.cash-=q*p*1.005;DU.h[id]=(DU.h[id]||0)+q;sfx.buy();}
+  else{const q=DU.h[id]||0;if(!q)return;DU.cash+=q*p*0.995;DU.h[id]=0;sfx.coin();}socSig='';render(true);}
 async function duelPush(final){const d=DU.doc;if(!d||!DU.role||!FB)return;const v=Math.min(1e8,Math.max(0,Math.round(duelVal())));const {doc,updateDoc}=FB.F;
   try{await updateDoc(doc(FB.db,'duels',DU.code),{[DU.role+'Score']:v});}catch(e){}}
 function duelTick(){const d=DU.doc;if(!d||d.status!=='live'||!DU.role)return;const now=Date.now();
