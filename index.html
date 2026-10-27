@@ -32,6 +32,43 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
+.wev{display:flex;gap:10px;align-items:center;border:1px dashed var(--brass-dim);border-radius:14px;padding:10px 12px;background:var(--stall)}
+.wev.on{border-style:solid;border-color:var(--hot);background:radial-gradient(120% 120% at 100% 0,rgba(239,111,94,.18),transparent 60%),var(--stall)}
+.wev-i{font-size:30px;line-height:1} .wev>div{display:flex;flex-direction:column;gap:1px;min-width:0} .wev small{font-size:11.5px;color:var(--brass)} .wev b{font-size:14.5px} .wev span{font-size:12.5px;color:var(--muted)}
+
+.rooms-box{background:radial-gradient(120% 100% at 0 0,rgba(239,111,94,.14),transparent 60%),var(--stall)}
+.rm-new{padding:6px 14px;border-radius:9px}
+.rm-list{display:flex;flex-direction:column;gap:8px}
+.rm-card{display:flex;align-items:center;gap:10px;text-align:start;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--night);color:var(--ink)}
+.rm-ic{font-size:26px} .rm-cb{flex:1;min-width:0;display:flex;flex-direction:column} .rm-cb b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .rm-cb small{font-size:11.5px;color:var(--muted)}
+.rm-fee{font-size:12.5px;color:var(--brass);white-space:nowrap}
+.room{position:fixed;inset:0;z-index:35;display:flex;flex-direction:column;gap:8px;padding:max(10px,env(safe-area-inset-top,0px)) 12px max(10px,env(safe-area-inset-bottom,0px));background:radial-gradient(120% 60% at 50% 0,#3a2340,#0b1415 70%);color:var(--ink)}
+.rm-h{display:flex;align-items:center;gap:10px} .rm-h>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.rm-h b{font-family:var(--display);font-size:17px;color:var(--brass);overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .rm-h span{font-size:11.5px;color:var(--muted)}
+.rm-h button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);color:var(--ink);font-size:16px;flex:0 0 auto}
+.rm-stage{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;flex:0 0 auto}
+.rm-m{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto;width:62px;color:var(--ink)}
+.rm-m .av{width:50px;height:50px;font-size:20px;border:2px solid var(--line)} .rm-m.mic .av{border-color:var(--good);box-shadow:0 0 0 3px rgba(95,207,143,.25)}
+.rm-m small{font-size:10.5px;max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rm-game{border:1px solid var(--brass);border-radius:12px;padding:10px;background:rgba(224,169,59,.1);display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.rm-game p{margin:0;font-weight:700} .rg-h{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)} .rg-t{color:var(--brass);font-size:16px}
+.rg-o{display:grid;grid-template-columns:1fr;gap:6px} .rg-o button{border:1px solid var(--line);border-radius:9px;padding:8px;background:var(--night);color:var(--ink);text-align:start}
+.rg-o .sel{border-color:var(--brass)} .rg-o .ok{border-color:var(--good);background:rgba(95,207,143,.15)} .rg-o .bad{border-color:var(--bad)}
+.rg-sc{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px}
+.rm-log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;padding:4px 2px}
+.rm-msg{font-size:14px;line-height:1.5;background:rgba(255,255,255,.04);border-radius:10px;padding:5px 9px;align-self:flex-start;max-width:92%;word-break:break-word}
+.rm-msg b{color:var(--brass)} .rm-msg.me{background:rgba(224,169,59,.12);align-self:flex-end} .rm-msg.join,.rm-msg.sys{background:none;color:var(--muted);font-size:12.5px;align-self:center;text-align:center}
+.rm-msg.gift{background:linear-gradient(90deg,rgba(239,111,94,.25),rgba(224,169,59,.2));align-self:center;font-weight:700}
+.rm-form{flex:0 0 auto} .rm-form button[type=button]{border:1px solid var(--line);padding:0 11px;font-size:17px} .rm-form #rmMic[aria-pressed="true"]{background:var(--good);border-color:var(--good)}
+.gift-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.gfx{position:absolute;left:50%;bottom:20%;font-size:64px;transform:translateX(-50%);animation:gfly 2.6s ease-out forwards}
+.gfx.big{font-size:120px}
+@keyframes gfly{0%{opacity:0;transform:translate(-50%,40px) scale(.4)}15%{opacity:1;transform:translate(-50%,0) scale(1.15)}70%{opacity:1;transform:translate(-50%,-160px) scale(1)}100%{opacity:0;transform:translate(-50%,-260px) scale(.8)}}
+@media (prefers-reduced-motion:reduce){.gfx{animation-duration:.01s}}
+.gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gift{display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid var(--line);border-radius:12px;padding:8px 4px;background:var(--night);color:var(--ink)}
+.gift span{font-size:28px} .gift b{font-size:12.5px} .gift small{font-size:11px;color:var(--brass)} .gift:disabled{opacity:.4}
+
 .ctrs{display:flex;flex-direction:column;gap:8px}
 .ctr{display:flex;gap:10px;align-items:flex-start;text-align:start;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--night);color:var(--ink)}
 .ctr:active{border-color:var(--brass)} .ct-ic{font-size:26px;line-height:1}
@@ -220,10 +257,10 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .board li.empty{display:block;color:var(--muted);font-size:13px;border:0}
 .rules{font-size:12.5px;color:var(--muted);margin:0;padding-inline-start:18px;display:flex;flex-direction:column;gap:3px}
 
-.toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20;padding-inline:16px}
+.toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:45;padding-inline:16px}
 .toast div{background:var(--stall-2);border:1px solid var(--brass-dim);padding:10px 16px;border-radius:12px;font-size:14px;max-width:420px;text-align:center;transition:opacity .3s,transform .3s}
 .toast div.hide{opacity:0;transform:translateY(10px)}
-.modal{position:fixed;inset:0;background:rgba(5,12,13,.7);display:grid;place-items:center;z-index:30;padding:20px}
+.modal{position:fixed;inset:0;background:rgba(5,12,13,.7);display:grid;place-items:center;z-index:38;padding:20px}
 .modal .box{background:var(--stall);border:1px solid var(--line);border-radius:16px;padding:20px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center}
 .modal h2{font-family:var(--display);margin:0;font-size:22px;color:var(--brass)}
 .modal p{margin:0;color:var(--muted)}
@@ -319,7 +356,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .ach:not(.got) b{color:var(--muted)}
 .float{position:fixed;z-index:15;pointer-events:none;font-weight:800;color:var(--brass);font-size:15px;text-shadow:0 1px 3px rgba(0,0,0,.7);animation:floatUp .9s ease-out forwards;white-space:nowrap}
 @keyframes floatUp{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-46px);opacity:0}}
-.fx{position:fixed;inset:0;pointer-events:none;z-index:25}
+.fx{position:fixed;inset:0;pointer-events:none;z-index:44}
 .pop{animation:pop .25s ease-out}
 @keyframes pop{50%{transform:scale(.94)}}
 .mus .x{display:none}
@@ -601,6 +638,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
     <div class="ph-t"><strong id="phN">سوق عادي</strong><span id="phD"></span><small id="phNext"></small></div>
     <div class="ph-c"><b class="num" id="phT"></b><button id="phSch">الجدول</button></div>
   </section>
+  <section class="wev" id="wev" aria-live="polite" hidden></section>
 
   <section class="event" id="event" aria-live="polite">
     <span class="tag" id="evTag">أخبار السوق</span>
@@ -695,6 +733,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 
   <section class="pane" id="p-fr" role="tabpanel" hidden>
     <div id="frMain" class="soc">
+      <section class="card2 rooms-box"><div class="sec-h"><h2>🎉 السهرات</h2><button class="buy rm-new" id="newRoom">سوّ سهرة</button></div><p class="note">غرف دردشة وصوت ومسابقات وهدايا. الدخول برسوم يحددها صاحب السهرة وتروح له.</p><div class="rm-list" id="roomList"></div></section>
       <section class="card2"><h2>ابحث عن تاجر</h2>
         <form class="chat-form" id="frSearch"><input id="frQ" placeholder="الاسم أو رقم الحساب SQ-…" autocomplete="off" aria-label="بحث"><button class="buy">بحث</button></form>
         <div class="offers" id="frRes"></div></section>
@@ -782,6 +821,12 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 <div class="toast"><div id="toast" class="hide"></div></div>
 <div class="modal" id="modal" hidden><div class="box" id="mbox"></div></div>
 <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+<div class="room" id="roomUi" hidden role="dialog" aria-label="السهرة">
+  <header class="rm-h"><button id="rmLeave" aria-label="اطلع من السهرة">✕</button><div><b id="rmTitle"></b><span id="rmSub" class="num"></span></div><button id="rmMenu" aria-label="خيارات">⋯</button></header>
+  <div class="rm-stage" id="rmStage"></div><div class="rm-game" id="rmGame" hidden></div><div class="rm-log" id="rmLog" aria-live="polite"></div>
+  <form class="chat-form rm-form" id="rmForm"><button type="button" id="rmMic" aria-label="المايك" aria-pressed="false">🎙️</button><button type="button" id="rmGift" aria-label="هدية">🎁</button><input id="rmIn" maxlength="200" placeholder="اكتب رسالة…" autocomplete="off" aria-label="رسالة"><button class="buy">إرسال</button></form>
+  <div id="rmAudio" hidden></div><div class="gift-fx" id="giftFx"></div>
+</div>
 <div class="call" id="callUi" hidden>
   <span class="av" id="callAv"></span><h2 id="callName"></h2><p id="callSt"></p><p class="num" id="callT"></p>
   <div class="cbtns"><button class="cb-dec" id="callDec" aria-label="رفض">✖</button><button class="cb-acc" id="callAcc" aria-label="رد">📞</button><button class="cb-mute" id="callMute" aria-label="كتم الميكروفون" aria-pressed="false">🎙️</button><button class="cb-end" id="callEnd" aria-label="إنهاء المكالمة">✖</button></div>
@@ -902,9 +947,36 @@ function curPhase(){const n=Date.now();if(n-PHC.t>1000)PHC={t:n,p:phaseAt(n)};re
 function stormMul(t){const p=phaseAt(t);if(p.k!=='storm')return 1;const pr=(t-p.s)/(p.e-p.s);return 1-.2*Math.sin(Math.PI*.9*pr);}
 const hhmm=t=>new Date(t).toLocaleTimeString('ar-IQ',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Baghdad'});
 
+/* ---------- Shared world events: same for every player, derived from the date (no server needed) ---------- */
+const WEVS=[
+ {id:'oil',ic:'🛢️',n:'اكتشاف حقل نفط جديد بالبصرة',d:'النفط ينزل ١٥٪، وإيجار عقارات البصرة ×٢',px:{oil:-.15},rent:{bsr:2}},
+ {id:'usd',ic:'💵',n:'أزمة دولار',d:'الدولار يرتفع ١٢٪ والذهب ٨٪، ومحلات الاستيراد دخلها ×٠٫٧',px:{usd:.12,gold:.08},tag:{dollar:.7}},
+ {id:'power',ic:'⚡',n:'انقطاع الكهرباء بالموصل',d:'محلات الكهرباء والصناعة دخلها ×٠٫٥، والإسمنت يرتفع ١٠٪',px:{cement:.1},tag:{power:.5}},
+ {id:'zyara',ic:'🕌',n:'موسم الزيارة بالنجف',d:'المطاعم دخلها ×٢، والحنطة ترتفع ١٠٪، وإيجار النجف ×٢',px:{wheat:.1},tag:{food:2},rent:{njf:2}},
+ {id:'fest',ic:'🎆',n:'مهرجان التسوق ببغداد',d:'محلات التجزئة دخلها ×٢، وإيجار بغداد ×١٫٥',tag:{retail:2},rent:{bgd:1.5}},
+ {id:'tour',ic:'🏔️',n:'موسم السياحة بأربيل',d:'إيجار أربيل ×٢، والذهب ينزل ٥٪',px:{gold:-.05},rent:{erb:2}},
+ {id:'net',ic:'📡',n:'إطلاق شبكة الجيل الخامس',d:'أسهم الاتصالات ترتفع ٢٠٪، ومحلات الموبايلات دخلها ×١٫٥',px:{tel:.2},tag:{power:1.5}},
+ {id:'flood',ic:'🌊',n:'فيضان بنهر دجلة',d:'الحنطة ترتفع ٢٠٪ والإسمنت ١٥٪، والمطاعم دخلها ×٠٫٧',px:{wheat:.2,cement:.15},tag:{food:.7}}];
+const WEV_MS=36e5,wevCache=new Map();
+function wevDay(d0){if(wevCache.has(d0))return wevCache.get(d0);let h=hashStr('souq-wev-'+d0);const nx=()=>(h=(Math.imul(h,1664525)+1013904223)>>>0);
+  const a=nx()%WEVS.length;let b=nx()%WEVS.length;if(b===a)b=(a+1)%WEVS.length;
+  const t1=d0+(540+nx()%240)*6e4,t2=d0+(960+nx()%300)*6e4,L=[{e:WEVS[a],s:t1,end:t1+WEV_MS},{e:WEVS[b],s:t2,end:t2+WEV_MS}];
+  wevCache.set(d0,L);if(wevCache.size>6)wevCache.delete(wevCache.keys().next().value);return L;}
+function wevAt(t){const d=dayStart(t);for(const x of wevDay(d))if(t>=x.s&&t<x.end)return x;return null;}
+function wevNext(t){const d=dayStart(t);return [...wevDay(d),...wevDay(d+864e5)].find(x=>x.s>t)||null;}
+let WEVC={t:0,x:null};function wevNow(){const n=Date.now();if(n-WEVC.t>1000)WEVC={t:n,x:wevAt(n)};return WEVC.x;}
+function wevPx(id,t){const x=wevAt(t);if(!x||!x.e.px||!x.e.px[id])return 0;return x.e.px[id]*Math.max(0,Math.min(1,(t-x.s)/6e5,(x.end-t)/6e5));}
+function wevTag(d){const x=wevNow();if(!x||!x.e.tag)return 1;let m=1;d.tags.forEach(g=>{if(x.e.tag[g])m*=x.e.tag[g];});return m;}
+function wevRent(c){const x=wevNow();return x&&x.e.rent&&x.e.rent[c]||1;}
+let wevSig='',wevTold='';
+function renderWev(){const el=$('#wev');if(!el)return;const now=Date.now(),x=wevNow(),nx=x?null:wevNext(now),soon=nx&&nx.s-now<18e5?nx:null;
+  const sig=(x?'on'+x.s:soon?'soon'+soon.s:'')+'|'+Math.floor(now/6e4);if(sig===wevSig)return;wevSig=sig;
+  if(!x&&!soon){el.hidden=true;return;}const y=x||soon;el.hidden=false;el.className='wev'+(x?' on':'');
+  el.innerHTML=`<span class="wev-i">${y.e.ic}</span><div><small>${x?'🌍 حدث عالمي الآن · ينتهي بعد '+fmtDur((x.end-now)/1000):'🌍 حدث عالمي بعد '+fmtDur((soon.s-now)/1000)}</small><b>${y.e.n}</b><span>${y.e.d}</span></div>`;
+  const tk=(x?'on':'soon')+y.s;if(wevTold!==tk){wevTold=tk;if(x){sfx.alert();toast('🌍 بدأ حدث عالمي: '+y.e.n);}else toast('🌍 بعد قليل: '+y.e.n+'. استعد!');}}
 function priceAt(a,st){const n=.5*sm(st/360,a.seed)+.3*sm(st/40,a.seed+1)+.15*sm(st/9,a.seed+2)+.05*sm(st/2,a.seed+3);
   const t=st*STEP*1000,ph=phaseAt(t);const n2=ph.k==='spec'?n+.45*sm(st/1.5,a.seed+9)+.25*sm(st/.6,a.seed+11):n;
-  return Math.round(a.base*Math.exp(a.vol*2.2*n2)*(1+(evShock(a.id)))*stormMul(t));}
+  return Math.round(a.base*Math.exp(a.vol*2.2*n2)*(1+(evShock(a.id)))*(1+wevPx(a.id,t))*stormMul(t));}
 function evShock(id){return ev&&ev.e.mk&&ev.e.mk[id]||0;}
 const cityPx=(a,cid)=>1+(cityById(cid||S.city).px[a.id]||0);
 const price=(a,cid)=>Math.round(priceAt(a,stepNow())*cityPx(a,cid));
@@ -926,7 +998,7 @@ const staffSp=b=>{const m=onDuty(b);return m?(TRAITS[m.t]?TRAITS[m.t].sp:1)*(1+.
 const cycT=i=>DEF[i].t/speedMult(S.b[i])/staffSp(S.b[i]);
 function cityMult(d){let m=1;S.cities.forEach(id=>{const c=cityById(id);if(c.cost){m*=1.25;if(d.tags.includes(c.tag))m*=1.5;}});
   (S.rare||[]).forEach(k=>{const r=RARE[k];if(!r)return;if(r.all)m*=r.all;else if(d.tags.includes(r.tag))m*=r.m;});
-  m*=1+.05*(S.rank||0);if(S.boost&&Date.now()<S.boost.until)m*=S.boost.m;m*=PHS[curPhase().k].inc;return m;}
+  m*=1+.05*(S.rank||0);if(S.boost&&Date.now()<S.boost.until)m*=S.boost.m;m*=PHS[curPhase().k].inc;m*=wevTag(d);return m;}
 const cycRev=i=>DEF[i].rev*S.b[i].n*evMult(DEF[i])*cityMult(DEF[i]);
 function costOf(i,k){const d=DEF[i],o=S.b[i].n;return d.cost*Math.pow(GROW,o)*(Math.pow(GROW,k)-1)/(GROW-1);}
 function maxAff(i){const d=DEF[i],o=S.b[i].n;return Math.max(0,Math.floor(Math.log(S.cash*(GROW-1)/(d.cost*Math.pow(GROW,o))+1)/Math.log(GROW)));}
@@ -1353,7 +1425,7 @@ document.querySelectorAll('#segSoc button').forEach(b=>b.onclick=()=>setSoc(b.da
 function renderSocial(){if(socTab==='elec')renderElec();else if(socTab==='chat')renderChat();else if(socTab==='ally')renderAlly();else if(socTab==='duel')renderDuel();}
 
 /* ---------- Wallet ledger & stats ---------- */
-const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],land:['🏠','شراء عقار'],build:['🏗️','بناء'],edu:['🎓','تعلّم'],landS:['🏚️','بيع عقار'],rent:['🏠','إيجار'],share:['📈','شراء أسهم'],divIn:['💵','أرباح أسهم'],divOut:['💵','توزيع أرباح'],fire:['📄','فصل مدير'],bonus:['🎁','مكافأة مدير'],strike:['✊','إضراب'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
+const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],land:['🏠','شراء عقار'],room:['🎉','سهرة'],gift2:['🎁','هدية بالسهرة'],build:['🏗️','بناء'],edu:['🎓','تعلّم'],landS:['🏚️','بيع عقار'],rent:['🏠','إيجار'],share:['📈','شراء أسهم'],divIn:['💵','أرباح أسهم'],divOut:['💵','توزيع أرباح'],fire:['📄','فصل مدير'],bonus:['🎁','مكافأة مدير'],strike:['✊','إضراب'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
 function led(k,a,n){if(!S||!Array.isArray(S.led))return;S.led.unshift({t:Date.now(),k,a:Math.round(a),n:String(n||'').slice(0,60)});if(S.led.length>80)S.led.length=80;meSig='';}
 function tradeStat(pl,vol){S.tr.vol+=vol;if(pl>0)S.tr.w++;else if(pl<0)S.tr.l++;S.tr.best=Math.max(S.tr.best,pl);S.tr.worst=Math.min(S.tr.worst,pl);}
 function histTick(){const h=S.hist,now=Date.now();if(!h.length||now-h[h.length-1][0]>=5*6e4){h.push([now,Math.round(worth())]);if(h.length>288)h.splice(0,h.length-288);}}
@@ -1484,7 +1556,7 @@ function renderWheel(){const ready=S.wheel!==todayStr(),sig=ready+'|'+wheelBusy;
 
 /* ---------- Market hours UI ---------- */
 let lastPhK=null,phSig='';const phWarned=new Set();
-function renderPhase(){const p=curPhase(),P=PHS[p.k],now=Date.now(),nx=upcoming(now).find(revealed);
+function renderPhase(){renderWev();const p=curPhase(),P=PHS[p.k],now=Date.now(),nx=upcoming(now).find(revealed);
   const bar=$('#phase'),soon=nx&&(nx.k==='storm'||nx.k==='spec')&&p.k==='normal';
   const cls='phase '+p.k+(soon&&nx.k==='storm'?' warn':'');if(bar.className!==cls)bar.className=cls;
   const bc=['m-storm','m-gold','m-spec'];bc.forEach(c=>document.body.classList.toggle(c,c==='m-'+p.k));
@@ -1526,7 +1598,7 @@ function renderIns(){const on=insured(),c=insCost(),sig=on+'|'+Math.floor(((S.in
   $('#insBuy').onclick=()=>{const k=insCost();if(S.cash<k)return;S.cash-=k;S.ins=Math.max(Date.now(),S.ins||0)+864e5;led('ins',-k,'تأمين المحلات ٢٤ ساعة');sfx.buy();toast('🛡️ محلاتك مؤمّنة ٢٤ ساعة');insSig='';render(true);};
   $('#rulesBtn').onclick=showRules;}
 function showRules(){modal(`<h2>📜 قوانين السوق</h2><div class="rules">
-  <h3>🏠 العقارات</h3><p>٤٠ عقارًا فقط في كل العراق، ٨ في كل مدينة، وعقاران كحد أقصى لكل تاجر في المدينة. الإيجار ٠٫٦٪ من سعر العقار الحكومي كل ساعة، ويستمر وأنت غائب حتى ٢٤ ساعة. البيع للحكومة بـ ٧٠٪ فقط، يعني تخسر ٣٠٪.</p><h3>🏗️ البناء</h3><p>تبني على أرضك عبر شركة مقاولات على ٤ مراحل، وتدفع كلفة كل مرحلة قبل بدايتها. قراراتك أثناء البناء تحدد الجودة (⭐ إلى ⭐⭐⭐)، والجودة تضاعف الإيجار من ×٢ إلى ×٣٫٢. البناية تنتقل مع الأرض إذا بعتها، لكن البيع للحكومة يهدمها.</p><h3>🏢 الأسهم</h3><p>صاحب الشركة يبيع حتى ٤٩٪ من أسهمها ويقبض ثمنها فورًا، وبالمقابل يدفع نسبة من دخل محلاته للمساهمين ما دام يشتغل. السهم لا يُسترد ثمنه: إذا قلّ نشاط الشركة قلّت أرباحك. اختر شركة تاجر نشيط.</p><h3>🗳️ انتخابات الغرفة</h3><p>كل أسبوع (من الإثنين للأحد) يترشح التجار ويصوّت كل تاجر مرة واحدة. الفائز يحدد ضريبة السوق اليومية لكل اللاعبين من ٠٪ إلى ٤٪ طوال الأسبوع التالي.</p><h3>💸 ضريبة يومية</h3><p>عند منتصف الليل تُخصم نسبة يحددها رئيس غرفة التجارة (٢٪ إذا لا يوجد رئيس) من النقد الذي يزيد على مليون دينار. الفلوس المكدّسة تخسر، والمستثمرة تربح.</p>
+  <h3>🏠 العقارات</h3><p>٤٠ عقارًا فقط في كل العراق، ٨ في كل مدينة، وعقاران كحد أقصى لكل تاجر في المدينة. الإيجار ٠٫٦٪ من سعر العقار الحكومي كل ساعة، ويستمر وأنت غائب حتى ٢٤ ساعة. البيع للحكومة بـ ٧٠٪ فقط، يعني تخسر ٣٠٪.</p><h3>🌍 الأحداث العالمية</h3><p>كل يوم يصير حدثان عالميان لكل اللاعبين بنفس اللحظة، كل حدث ساعة: يغيّر أسعار البورصة ودخل بعض المحلات وإيجارات بعض المدن. يُعلن عن الحدث قبل ٣٠ دقيقة، فاستعد وخطّط.</p><h3>🏗️ البناء</h3><p>تبني على أرضك عبر شركة مقاولات على ٤ مراحل، وتدفع كلفة كل مرحلة قبل بدايتها. قراراتك أثناء البناء تحدد الجودة (⭐ إلى ⭐⭐⭐)، والجودة تضاعف الإيجار من ×٢ إلى ×٣٫٢. البناية تنتقل مع الأرض إذا بعتها، لكن البيع للحكومة يهدمها.</p><h3>🏢 الأسهم</h3><p>صاحب الشركة يبيع حتى ٤٩٪ من أسهمها ويقبض ثمنها فورًا، وبالمقابل يدفع نسبة من دخل محلاته للمساهمين ما دام يشتغل. السهم لا يُسترد ثمنه: إذا قلّ نشاط الشركة قلّت أرباحك. اختر شركة تاجر نشيط.</p><h3>🗳️ انتخابات الغرفة</h3><p>كل أسبوع (من الإثنين للأحد) يترشح التجار ويصوّت كل تاجر مرة واحدة. الفائز يحدد ضريبة السوق اليومية لكل اللاعبين من ٠٪ إلى ٤٪ طوال الأسبوع التالي.</p><h3>💸 ضريبة يومية</h3><p>عند منتصف الليل تُخصم نسبة يحددها رئيس غرفة التجارة (٢٪ إذا لا يوجد رئيس) من النقد الذي يزيد على مليون دينار. الفلوس المكدّسة تخسر، والمستثمرة تربح.</p>
   <h3>👔 رواتب المديرين</h3><p>كل دقيقة يأخذ المديرون ٨٪ من دخل محلاتهم. إذا ما كفى رصيدك مرتين متتاليتين، يستقيل أغلى مدير.</p>
   <h3>🌾 بضاعة تتلف</h3><p>الحنطة تخسر ٢٪ من كميتها كل ساعة، والإسمنت ٠٫٥٪. الذهب والدولار والنفط والأسهم لا تتلف.</p>
   <h3>🏚️ الإهمال</h3><p>إذا غبت أكثر من يوم، تخسر ٣٪ من فروع كل محل عن كل يوم غياب، حتى ٥ أيام. أرباح الغياب تُحسب لـ٣ ساعات فقط.</p>
@@ -1716,7 +1788,7 @@ function render(force){
   if(tab==='task'){renderInvite();renderPush();}
   if(tab==='shop')renderCities();
   if(tab==='task'){renderTasks();renderEdu();}
-  if(tab==='mkt'){renderAuction();renderMarket();renderMkSub();}paperDot();
+  if(tab==='mkt'){renderAuction();renderMarket();renderMkSub();}paperDot();if(tab==='fr')renderRooms();
   if(tab==='shop'){renderBank();renderIns();}
   if(tab==='comp')renderSocial();
   if(tab==='me')renderMe();
@@ -1862,10 +1934,10 @@ async function onLogin(u){
     S.owner=C.uid;save();render(true);
     setAcct(C.name);await cloudSave(true);
   }catch(e){setAcct(C.name,'تعذّر الوصول للحساب، يُحفظ محليًا');}
-  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();pushSilent();subMoney();ensurePid();subFriends();subCalls();presLast=0;presTick();subWorld();tasksSig='';socSig='';
+  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();pushSilent();subMoney();ensurePid();subFriends();subCalls();presLast=0;presTick();subWorld();subRooms();roomFromLink();tasksSig='';socSig='';
 }
 function onLogout(){
-  const wasIn=!!C;C=null;PROF=null;renderMeAv();unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();unsubMoney();endCall(true);unsubFriends();unsubWorld();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
+  const wasIn=!!C;C=null;PROF=null;renderMeAv();unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();unsubMoney();endCall(true);unsubFriends();unsubWorld();unsubRooms();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
   if(wasIn){S=fix(fresh());ensureSeason();save();render(true);}
   $('#board').innerHTML='<li class="empty">سجّل دخولك بحساب Google لتظهر في لوحة الصدارة.</li>';
   setAcct(null);
@@ -1922,11 +1994,11 @@ const lotOf=id=>LOT[(+String(id).split('-')[1]||1)-1]||LOT[0];
 const landName=id=>lotOf(id)[1]+' في '+cityById(String(id).split('-')[0]).name;
 function landValue(){return (S&&S.lands||[]).reduce((a,id)=>a+landGp(id)*(1+BVAL[bldOf(id)]),0);}
 function stakeValue(){let v=0;const st=S&&S.stakes||{};for(const k in st)v+=(st[k].q||0)*(st[k].p||0);return v;}
-const rentRate=()=>(S&&S.lands||[]).reduce((a,id)=>a+landGp(id)*RENT_H*BMUL[bldOf(id)],0)/3600;
+const rentRate=()=>(S&&S.lands||[]).reduce((a,id)=>a+landGp(id)*RENT_H*BMUL[bldOf(id)]*wevRent(id.split('-')[0]),0)/3600;
 const WK=7*864e5,wkNow=(t=Date.now())=>Math.floor((t+BGD-4*864e5)/WK),wkEnd=w=>(w+1)*WK+4*864e5-BGD;
 const clampTax=t=>Math.min(4,Math.max(0,Math.round((+t||0)*2)/2));
 function taxRate(){return S&&S.pres&&S.pres.w===wkNow()-1&&S.pres.uid?S.pres.tax:2;}
-const NEWSI={auc:'🔨',seize:'⛔',duel:'⚔️',land:'🏠',landSale:'🏷️',landGov:'🏚️',ipo:'🏢',share:'📈',cand:'🗳️',pres:'👑',rank:'🏅',trade:'💹',strike:'✊',build:'🏗️',cert:'🎓'};
+const NEWSI={auc:'🔨',seize:'⛔',duel:'⚔️',land:'🏠',landSale:'🏷️',landGov:'🏚️',ipo:'🏢',share:'📈',cand:'🗳️',pres:'👑',rank:'🏅',trade:'💹',strike:'✊',build:'🏗️',cert:'🎓',room:'🎉',gift:'🎁',roomWin:'🏆'};
 let WD={lands:new Map(),landReady:false,city:'bgd',cos:[],coReady:false,el:{w:-1,cands:[],votes:new Map(),un:[]},news:[],newsReady:false,un:[],busy:false,
   mk:'goods',lsig:'',csig:'',esig:'',coT:0,coBusy:false,stT:0,stBusy:false,presBusy:false,nl:{},skip:new Set()};
 
@@ -2163,6 +2235,7 @@ async function openPaper(){S.paper=todayStr();paperDot();save();sfx.tap();const 
     <section><h4>💰 أغنى التجار</h4>${top.length?'<ol>'+top.map(t=>`<li><b>${eh(String(t.name||'تاجر').slice(0,24))}</b> · <span class="num">${fmt(t.worth||0)}</span></li>`).join('')+'</ol>':'<p>سجّل دخولك لتشوف الأغنى.</p>'}</section>
     <section><h4>📊 البورصة خلال ٢٤ ساعة</h4><div class="pp-mv">${mv.map(m=>`<div><span>${m.a.name}</span><b class="num ${m.c>=0?'up':'down'}">${m.c>=0?'▲':'▼'} ${ad(Math.abs(m.c).toFixed(1))}٪</b></div>`).join('')}</div></section>
     <section><h4>🌦️ طقس السوق اليوم</h4><p>☀️ الذروة: ${gold.map(g=>hhmm(g.s)+' – '+hhmm(g.e)).join(' و ')}. ${cl?'🌙 الإغلاق: '+hhmm(cl.s)+' – '+hhmm(cl.e)+'. ':''}${left?`⛈️ متوقع ${ad(left)} ${left>1?'عواصف':'عاصفة'} اليوم، أوقاتها تنكشف قبل ١٥ دقيقة.`:'لا عواصف متبقية اليوم.'}</p></section>
+    <section><h4>🌍 أحداث اليوم العالمية</h4><p>${(()=>{const L=wevDay(dayStart(now)),past=L.filter(x=>x.end<=now),cur=L.find(x=>x.s<=now&&now<x.end),left=L.filter(x=>x.s>now).length;return [past.length?'صار اليوم: '+past.map(x=>x.e.ic+' '+x.e.n).join('، ')+'.':'',cur?'يحدث الآن: '+cur.e.ic+' '+cur.e.n+'.':'',left?`متوقع ${ad(left)} ${left>1?'حدثين':'حدث'} بعد، يُعلن قبل ٣٠ دقيقة.`:''].filter(Boolean).join(' ')||'لا أحداث بعد.';})()}</p></section>
     <section><h4>🏠 العقارات</h4><p>${free>0?`بقي ${ad(free)} عقارًا فقط بيد الحكومة من أصل ٤٠.`:'كل العقارات صارت ملك التجار! الشراء الآن من التجار فقط.'}</p></section>
     <section><h4>⛔ المفلسون</h4>${bust.length?'<ul>'+bust.slice(0,5).map(n=>`<li>${eh(n.txt)}</li>`).join('')+'</ul>':'<p>لم يُحجز على أحد خلال يومين. السوق بخير!</p>'}</section>
     <section><h4>🗞️ آخر الأخبار</h4>${items.length?'<ul class="pp-news">'+items.slice(0,15).map(n=>`<li><span class="num">${hhmm(n.t)}</span> ${NEWSI[n.k]||'•'} ${eh(n.txt)}</li>`).join('')+'</ul>':'<p>لا أخبار بعد. اصنع أنت الخبر!</p>'}</section>
@@ -2320,6 +2393,183 @@ function renderEdu(){const box=$('#eduBox');if(!box)return;const p=S.edu.path;
     <div class="edu-l">${P.L.map((l,i)=>{const ok=dn.includes(i),ready=!ok&&l.k[1]()&&(S.edu.quiz[p]||[]).includes(i);return `<button class="edu-i${ok?' done':''}${ready?' ready':''}" data-i="${i}"><span class="num">${ok?'✓':ad(i+1)}</span><b>${l.t}</b><small>${ok?'مكتمل':ready?'🎁 استلم جائزتك':l.k[0]}</small></button>`;}).join('')}</div>
     ${S.edu.cert.includes(p)?`<p class="up">🎓 حصلت على شهادة «${P.cert}». جرّب مسارًا ثانيًا!</p>`:''}`;
   box.querySelectorAll('.edu-i').forEach(b=>b.onclick=()=>lessonModal(+b.dataset.i));$('#eduSw').onclick=pathModal;}
+
+/* ---------- Party rooms (سهرات): paid entry, group chat, group voice, gifts, quiz games ---------- */
+const RTHEME=[['🎉','سهرة'],['☕','قعدة جاي'],['🎵','طرب'],['💼','صفقات'],['🎮','ألعاب']];
+const GIFTS=[['🌹','وردة',1e5],['☕','استكان جاي',3e5],['🍰','كيكة',1e6],['💍','خاتم',1e7],['👑','تاج',1e8],['🚗','سيارة',1e9]];
+const RQX=[['شنو عاصمة العراق؟',['البصرة','بغداد','أربيل'],1],['أي مدينة عراقية مشهورة بالنفط والميناء؟',['البصرة','النجف','الموصل'],0],['كم يوم بالأسبوع؟',['٥','٦','٧'],2],
+  ['أي نهر يمر ببغداد؟',['الفرات','دجلة','النيل'],1],['العملة العراقية هي؟',['الدينار','الريال','الليرة'],0],['أي معدن يعتبر ملاذًا آمنًا وقت الأزمات؟',['الحديد','الذهب','النحاس'],1],
+  ['إذا زاد الطلب وقل العرض، السعر؟',['يرتفع','ينزل','يبقى'],0],['كم دقيقة بالساعة؟',['٦٠','١٠٠','٣٦'],0],['شنو أكبر قارة بالعالم؟',['أفريقيا','آسيا','أوروبا'],1],['المقام العراقي نوع من؟',['الطبخ','الغناء','البناء'],1]];
+const RQB=()=>RQX.concat(Object.values(EDU).flatMap(p=>p.L.flatMap(l=>l.q)));
+const RG_N=5,RG_Q=15e3,RG_R=2e4;
+let RMS={list:[],unL:null,id:null,room:null,mem:[],msgs:[],un:[],pcs:new Map(),stream:null,hb:null,ans:[],seenG:new Set(),sig:'',lsig:'',lastJoin:{},paidG:new Set()};
+function subRooms(){if(!C||!FB)return;if(RMS.unL)RMS.unL();const {collection,query,where,orderBy,limit,onSnapshot}=FB.F;
+  RMS.unL=onSnapshot(query(collection(FB.db,'rooms'),where('until','>',Date.now()),orderBy('until','asc'),limit(30)),s=>{RMS.list=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.status==='open');RMS.lsig='';renderRooms();},()=>{});}
+function unsubRooms(){if(RMS.unL)RMS.unL();RMS.unL=null;RMS.list=[];leaveRoom(true);}
+function renderRooms(){const box=$('#roomList');if(!box)return;const now=Date.now(),L=RMS.list.filter(r=>r.until>now);
+  const sig=JSON.stringify([!!C,L.map(r=>[r.id,r.title,r.fee,r.n||0,Math.floor((r.until-now)/6e4)])]);if(sig===RMS.lsig)return;RMS.lsig=sig;
+  if(!C){box.innerHTML='<p class="note">سجّل دخولك حتى تدخل السهرات.</p>';return;}
+  box.innerHTML=L.length?L.map(r=>{const th=RTHEME[r.theme|0]||RTHEME[0];return `<button class="rm-card" data-r="${r.id}"><span class="rm-ic">${th[0]}</span><span class="rm-cb"><b>${eh(String(r.title||th[1]).slice(0,40))}</b><small>${eh(String(r.hostName||'تاجر').slice(0,24))} · تخلص بعد ${fmtDur((r.until-now)/1000)}</small></span><span class="rm-fee num">${r.fee?fmt(r.fee):'مجاني'}</span></button>`;}).join('')
+    :'<p class="note">ماكو سهرات هسه. سوّ أول سهرة واعزم أصدقاءك!</p>';
+  box.querySelectorAll('.rm-card').forEach(b=>b.onclick=()=>joinRoom(b.dataset.r));}
+function newRoomModal(){if(!C){toast('سجّل دخولك أولًا');return;}
+  modal(`<h2>🎉 سوّ سهرة</h2><p class="note">أنت صاحب السهرة: رسوم الدخول تجيك أنت، وتقدر تكتم وتطرد، وتشغّل مسابقات.</p>
+    <label class="wf">اسم السهرة<input id="nrT" maxlength="40" placeholder="مثلًا: سهرة تجار بغداد"></label>
+    <label class="wf">النوع<select id="nrTh">${RTHEME.map((t,i)=>`<option value="${i}">${t[0]} ${t[1]}</option>`).join('')}</select></label>
+    <label class="wf">رسوم الدخول<select id="nrF">${[0,1e5,1e6,1e7,1e8,1e9].map(f=>`<option value="${f}"${f===1e6?' selected':''}>${f?fmt(f)+' دينار':'مجانية'}</option>`).join('')}</select></label>
+    <label class="wf">عدد الضيوف<select id="nrC">${[6,10,20].map(n=>`<option value="${n}"${n===10?' selected':''}>لحد ${ad(n)}</option>`).join('')}</select></label>
+    <label class="wf">المدة<select id="nrD">${[1,2,3].map(h=>`<option value="${h}"${h===2?' selected':''}>${ad(h)} ساعة</option>`).join('')}</select></label>`,
+    [['افتح السهرة',()=>createRoom(clean(($('#nrT').value||'').trim().slice(0,40))||RTHEME[+$('#nrTh').value][1]+' '+myN(),+$('#nrTh').value,+$('#nrF').value,+$('#nrC').value,+$('#nrD').value)],['إلغاء',null,1]]);}
+async function createRoom(title,theme,fee,cap,hrs){if(!C||!FB)return;const {doc,collection,setDoc}=FB.F,ref=doc(collection(FB.db,'rooms')),now=Date.now();
+  try{await setDoc(ref,{host:C.uid,hostName:myN(),title:String(title).slice(0,40),theme,fee,cap,ts:now,until:now+hrs*36e5,status:'open',game:null});
+    await setDoc(doc(FB.db,'rooms',ref.id,'members',C.uid),{name:myN(),ts:now,here:true,mic:false});bump('rooms');sfx.win();
+    news('room',myN()+' فتح سهرة «'+String(title).slice(0,30)+'»'+(fee?' والدخول بـ '+fmt(fee):''),fee);enterRoom(ref.id);}
+  catch(e){toast('تعذّر فتح السهرة');}}
+async function joinRoom(rid){if(!C||!FB)return;if(RMS.id===rid){$('#roomUi').hidden=false;return;}const {doc,getDoc}=FB.F;
+  try{const [r,m,bn]=await Promise.all([getDoc(doc(FB.db,'rooms',rid)),getDoc(doc(FB.db,'rooms',rid,'members',C.uid)),getDoc(doc(FB.db,'rooms',rid,'bans',C.uid))]);
+    if(!r.exists()||r.data().status!=='open'||r.data().until<Date.now()){toast('السهرة خلصت');return;}
+    if(bn.exists()){toast('صاحب السهرة طردك منها');return;}
+    if(m.exists()){enterRoom(rid);return;}const R=r.data();
+    if(!R.fee){payJoin(rid,R);return;}
+    modal(`<h2>${(RTHEME[R.theme|0]||RTHEME[0])[0]} ${eh(R.title)}</h2><p>صاحب السهرة: <b>${eh(R.hostName)}</b></p><div class="kv"><span>رسوم الدخول</span><b class="num">${fmt(R.fee)}</b></div><p class="note">تدفع مرة وحدة وتقدر تطلع وترجع طول السهرة. الرسوم تروح لصاحب السهرة.</p>`,
+      [['ادفع وادخل',()=>payJoin(rid,R)],['إلغاء',null,1]]);}
+  catch(e){toast('تعذّر الدخول، تأكد من الاتصال');}}
+async function payJoin(rid,R){if(R.fee>S.cash){toast('رصيدك لا يكفي للدخول');sfx.loss();return;}await cloudSave(true);
+  const {doc,collection,runTransaction}=FB.F,rref=doc(FB.db,'rooms',rid),mref=doc(FB.db,'rooms',rid,'members',C.uid);
+  try{const ok=await runTransaction(FB.db,async tx=>{const r=await tx.get(rref);if(!r.exists())return false;const x=r.data();if(x.status!=='open'||x.until<Date.now()||x.fee!==R.fee)return false;const now=Date.now(),m={name:myN(),ts:now,here:true,mic:false};
+      if(x.fee&&x.host!==C.uid){const tref=doc(collection(FB.db,'transfers'));tx.set(tref,{from:C.uid,fromName:myN(),to:x.host,toName:String(x.hostName||'تاجر').slice(0,24),amt:x.fee,note:('دخول سهرة: '+x.title).slice(0,60),ts:now,status:'sent',lock:true});m.pay=tref.id;}
+      tx.set(mref,m);return true;});
+    if(!ok){toast('السهرة خلصت أو تغيّرت رسومها');return;}
+    if(R.fee){S.cash-=R.fee;led('room',-R.fee,'دخول سهرة '+String(R.title).slice(0,30));save();}sfx.coin();enterRoom(rid);}
+  catch(e){toast(e&&e.code==='permission-denied'?'ما تقدر تدخل هذه السهرة':'تعذّر الدخول، تأكد من الاتصال');}}
+function enterRoom(rid){leaveRoom(true);if(!C||!FB)return;RMS.id=rid;RMS.sig='';RMS.msgs=[];RMS.mem=[];RMS.room=null;RMS.ans=[];const {doc,collection,query,where,orderBy,limit,onSnapshot,updateDoc}=FB.F;
+  $('#roomUi').hidden=false;$('#rmLog').textContent='';if(MUS.on)musStop();
+  RMS.un.push(onSnapshot(doc(FB.db,'rooms',rid),s=>{if(!s.exists()){toast('السهرة انحذفت');leaveRoom();return;}RMS.room={id:s.id,...s.data()};
+    if(RMS.room.status!=='open'||RMS.room.until<Date.now()){toast('🌙 السهرة خلصت. تصبحون على خير');leaveRoom();return;}RMS.sig='';roomGameSub();renderRoom();},()=>{}));
+  RMS.un.push(onSnapshot(collection(FB.db,'rooms',rid,'members'),s=>{RMS.mem=s.docs.map(d=>({id:d.id,...d.data()}));
+    if(!RMS.mem.some(m=>m.id===C.uid)&&RMS.room){toast('⛔ صاحب السهرة طلّعك');leaveRoom();return;}RMS.sig='';renderRoom();voiceSync();},()=>{}));
+  RMS.un.push(onSnapshot(query(collection(FB.db,'rooms',rid,'msgs'),orderBy('ts','desc'),limit(60)),s=>{const was=new Set(RMS.msgs.map(m=>m.id)),first=!RMS.msgs.length;
+    RMS.msgs=s.docs.map(d=>({id:d.id,...d.data()})).reverse();
+    RMS.msgs.forEach(m=>{if(!first&&!was.has(m.id)){if(m.k==='gift')giftFx(m);else if(m.uid!==C.uid&&m.k==='msg')sfx.tap();}});renderRoomLog();},()=>{}));
+  RMS.un.push(onSnapshot(query(collection(FB.db,'rooms',rid,'sig'),where('t','==',C.uid)),s=>{s.docChanges().forEach(ch=>{if(ch.type==='added')onSig(ch.doc);});},()=>{}));
+  const beat=()=>updateDoc(doc(FB.db,'rooms',rid,'members',C.uid),{here:true,ts:Date.now()}).catch(()=>{});beat();RMS.hb=setInterval(()=>{beat();renderRoom();roomGameTick();},3e4);
+  if(!RMS.lastJoin[rid]||Date.now()-RMS.lastJoin[rid]>6e5){RMS.lastJoin[rid]=Date.now();roomMsg('دخل السهرة 👋','join');}}
+function leaveRoom(silent){const rid=RMS.id;if(!rid)return;RMS.un.forEach(f=>f());RMS.un=[];clearInterval(RMS.hb);RMS.hb=null;RMS.pcs.forEach(p=>{try{p.pc.close();}catch(e){}});RMS.pcs.clear();
+  if(RMS.stream){RMS.stream.getTracks().forEach(t=>t.stop());RMS.stream=null;}$('#rmAudio').textContent='';
+  if(C&&FB){const {doc,updateDoc}=FB.F;updateDoc(doc(FB.db,'rooms',rid,'members',C.uid),{here:false,mic:false,ts:Date.now()}).catch(()=>{});}
+  if(S.gHeld){const p=S.gHeld.prize;S.gHeld=null;S.cash+=p;led('room',p,'إلغاء جائزة المسابقة');save();if(C&&FB){const {collection,addDoc}=FB.F;addDoc(collection(FB.db,'rooms',rid,'msgs'),{uid:C.uid,name:myN(),txt:'صاحب السهرة طلع، فانلغت جائزة المسابقة',ts:Date.now(),k:'sys'}).catch(()=>{});}}
+  RMS.id=null;RMS.room=null;RMS.mem=[];RMS.msgs=[];$('#roomUi').hidden=true;if(MUS.on&&gestured)musStart();}
+const isHere=m=>m.here&&Date.now()-(m.ts||0)<9e4;
+function roomMsg(txt,k){if(!RMS.id||!C||!FB)return;const {collection,addDoc}=FB.F;txt=clean(String(txt||'').trim()).slice(0,200);if(!txt)return;
+  addDoc(collection(FB.db,'rooms',RMS.id,'msgs'),{uid:C.uid,name:myN(),txt,ts:Date.now(),k:k||'msg'}).catch(()=>toast('ما تقدر ترسل هنا'));}
+function renderRoom(){const R=RMS.room;if(!R||!C)return;const live=RMS.mem.filter(isHere),isHost=R.host===C.uid,me=RMS.mem.find(m=>m.id===C.uid);
+  const sig=JSON.stringify([R.title,R.until,R.game&&R.game.seed,live.map(m=>[m.id,m.mic]),Math.floor((R.until-Date.now())/6e4)]);if(sig===RMS.sig)return;RMS.sig=sig;
+  const th=RTHEME[R.theme|0]||RTHEME[0];$('#rmTitle').textContent=th[0]+' '+String(R.title||'').slice(0,40);
+  $('#rmSub').textContent=`${ad(live.length)} موجود · ${R.fee?'الدخول '+fmt(R.fee):'مجانية'} · تخلص بعد ${fmtDur((R.until-Date.now())/1000)}`;
+  const st=$('#rmStage');st.textContent='';live.sort((a,b)=>(b.id===R.host)-(a.id===R.host)||(b.mic-a.mic)).forEach(m=>{const el=document.createElement('button');el.className='rm-m'+(m.mic?' mic':'');
+    const av=document.createElement('span');av.className='av';paintAv(av,null,m.name||'');getProf(m.id).then(p=>{if(p)paintAv(av,p.avatar,p.name||m.name);});
+    const n=document.createElement('small');n.textContent=(m.id===R.host?'👑 ':'')+(m.mic?'🎙️ ':'')+String(m.name||'تاجر').slice(0,12);el.append(av,n);el.onclick=()=>memberModal(m);st.appendChild(el);});
+  $('#rmMic').setAttribute('aria-pressed',!!(me&&me.mic));$('#rmMenu').hidden=false;}
+function renderRoomLog(){const L=$('#rmLog');if(!L)return;const atB=L.scrollHeight-L.scrollTop-L.clientHeight<60;L.textContent='';
+  RMS.msgs.forEach(m=>{const d=document.createElement('div');d.className='rm-msg '+(m.k||'msg')+(m.uid===C.uid?' me':'');
+    if(m.k==='gift'){const g=GIFTS[m.g|0]||GIFTS[0];d.textContent=`${g[0]} ${String(m.name).slice(0,24)} أهدى ${String(m.toName||'').slice(0,24)} ${g[1]} (${fmt(m.amt)})`;}
+    else if(m.k==='join'||m.k==='sys'){d.textContent=(m.k==='join'?String(m.name).slice(0,24)+' ':'')+String(m.txt);}
+    else{const b=document.createElement('b');b.textContent=String(m.name).slice(0,24)+': ';d.append(b,String(m.txt));}L.appendChild(d);});
+  if(atB)L.scrollTop=L.scrollHeight;}
+function memberModal(m){const R=RMS.room,isHost=R&&R.host===C.uid,self=m.id===C.uid;
+  modal(`<h2>${m.id===R.host?'👑 ':''}${eh(String(m.name||'تاجر').slice(0,24))}</h2>${m.mic?'<p class="note">🎙️ على المايك</p>':''}`,
+    [...(!self?[['🎁 أرسل هدية',()=>giftModal(m)]]:[]),['الملف الشخصي',()=>showPublic(m.id),1],...(isHost&&!self&&m.mic?[['🔇 نزّله من المايك',()=>hostAct(m,'mute'),1]]:[]),...(isHost&&!self?[['⛔ اطرده',()=>hostAct(m,'kick'),1]]:[]),['إغلاق',null,1]]);}
+async function hostAct(m,a){const {doc,updateDoc,deleteDoc,setDoc}=FB.F,rid=RMS.id;
+  try{if(a==='mute')await updateDoc(doc(FB.db,'rooms',rid,'members',m.id),{mic:false});
+    else{await setDoc(doc(FB.db,'rooms',rid,'bans',m.id),{ts:Date.now()});await deleteDoc(doc(FB.db,'rooms',rid,'members',m.id));roomMsg('طرد '+String(m.name).slice(0,24)+' من السهرة','sys');}}
+  catch(e){toast('تعذّر التنفيذ');}}
+function giftModal(to){const others=RMS.mem.filter(m=>isHere(m)&&m.id!==C.uid);let target=to||others.find(m=>m.id===RMS.room.host)||others[0];
+  if(!target){toast('ماكو أحد بالسهرة تهديه');return;}
+  modal(`<h2>🎁 هدية لـ ${eh(String(target.name).slice(0,24))}</h2>${to?'':`<label class="wf">لمن؟<select id="gTo">${others.map(m=>`<option value="${m.id}"${m.id===target.id?' selected':''}>${eh(String(m.name).slice(0,24))}</option>`).join('')}</select></label>`}
+    <div class="gifts">${GIFTS.map((g,i)=>`<button class="gift" data-g="${i}"${g[2]>S.cash?' disabled':''}><span>${g[0]}</span><b>${g[1]}</b><small class="num">${fmt(g[2])}</small></button>`).join('')}</div><p class="note">قيمة الهدية تنتقل لرصيده فعلًا، ويشوفها كل اللي بالسهرة.</p>`,[['إلغاء',null,1]]);
+  {const sl=$('#gTo');if(sl)sl.onchange=()=>{const t=others.find(m=>m.id===sl.value);$('#mbox h2').textContent='🎁 هدية لـ '+String(t&&t.name||'').slice(0,24);};}$('#mbox').querySelectorAll('.gift').forEach(b=>b.onclick=()=>{const sel=$('#gTo'),t=sel?others.find(m=>m.id===sel.value)||target:target;$('#modal').hidden=true;sendGift(t,+b.dataset.g);});}
+async function sendGift(t,gi){const g=GIFTS[gi];if(!g||g[2]>S.cash){toast('رصيدك لا يكفي');return;}await cloudSave(true);const {doc,collection,writeBatch}=FB.F,now=Date.now(),tref=doc(collection(FB.db,'transfers'));
+  try{const b=writeBatch(FB.db);b.set(tref,{from:C.uid,fromName:myN(),to:t.id,toName:String(t.name||'تاجر').slice(0,24),amt:g[2],note:('هدية '+g[1]+' بالسهرة').slice(0,60),ts:now,status:'sent',lock:true});
+    b.set(doc(collection(FB.db,'rooms',RMS.id,'msgs')),{uid:C.uid,name:myN(),txt:'',ts:now,k:'gift',g:gi,to:t.id,toName:String(t.name||'تاجر').slice(0,24),amt:g[2],pay:tref.id});await b.commit();
+    S.cash-=g[2];led('gift2',-g[2],'هدية '+g[1]+' إلى '+String(t.name).slice(0,24));bump('gifts');save();if(g[2]>=1e8)news('gift',myN()+' يهدي '+String(t.name).slice(0,24)+' '+g[0]+' '+g[1]+' بالسهرة',g[2]);}
+  catch(e){toast(e&&e.code==='permission-denied'?'المبلغ أكبر من المسموح لحسابك حاليًا':'تعذّر إرسال الهدية');}}
+function giftFx(m){const g=GIFTS[m.g|0]||GIFTS[0],fx=$('#giftFx');const el=document.createElement('div');el.className='gfx'+((m.g|0)>=4?' big':'');el.textContent=g[0];fx.appendChild(el);setTimeout(()=>el.remove(),2600);
+  if(m.to===C.uid){sfx.win();confetti();toast(`🎁 ${String(m.name).slice(0,24)} أهداك ${g[1]}!`);}else sfx.coin();}
+
+/* --- Group voice: every present member links to every member on the mic (mesh, up to 6 mics) --- */
+async function toggleMic(){const me=RMS.mem.find(m=>m.id===C.uid);if(!me)return;const {doc,updateDoc}=FB.F;
+  if(me.mic){if(RMS.stream){RMS.stream.getTracks().forEach(t=>t.stop());RMS.stream=null;}await updateDoc(doc(FB.db,'rooms',RMS.id,'members',C.uid),{mic:false}).catch(()=>{});return;}
+  if(RMS.mem.filter(m=>isHere(m)&&m.mic).length>=6){toast('المايكات مليانة (٦). انتظر أحد ينزل');return;}
+  const s=await getMic();if(!s)return;RMS.stream=s;await updateDoc(doc(FB.db,'rooms',RMS.id,'members',C.uid),{mic:true}).catch(()=>{toast('تعذّر');});sfx.tap();}
+function voiceSync(){if(!RMS.id||!window.RTCPeerConnection)return;const me=RMS.mem.find(m=>m.id===C.uid);if(!me)return;const myMic=!!(me.mic&&RMS.stream);
+  if(me.mic&&!RMS.stream){const {doc,updateDoc}=FB.F;updateDoc(doc(FB.db,'rooms',RMS.id,'members',C.uid),{mic:false}).catch(()=>{});}
+  const live=new Set();RMS.mem.filter(m=>m.id!==C.uid&&isHere(m)).forEach(x=>{const want=myMic||x.mic,key=(myMic?1:0)+''+(x.mic?1:0),e=RMS.pcs.get(x.id);live.add(x.id);
+    if(!want){if(e)dropPc(x.id);return;}
+    if(e&&e.key===key&&!['failed','closed'].includes(e.pc.connectionState))return;
+    if(C.uid<x.id){dropPc(x.id);offerTo(x.id,key);}});
+  [...RMS.pcs.keys()].forEach(id=>{if(!live.has(id))dropPc(id);});}
+function dropPc(id){const e=RMS.pcs.get(id);if(e){try{e.pc.close();}catch(x){}const a=document.getElementById('ra-'+id);if(a)a.remove();RMS.pcs.delete(id);}}
+async function mkPc(id,key,s){const pc=new RTCPeerConnection({iceServers:await iceServers()}),e={pc,key,s,q:[]};RMS.pcs.set(id,e);const {collection,addDoc}=FB.F,rid=RMS.id;
+  pc.onicecandidate=ev=>{if(ev.candidate)addDoc(collection(FB.db,'rooms',rid,'sig'),{f:C.uid,t:id,k:'c',s,d:JSON.stringify(ev.candidate.toJSON()),ts:Date.now()}).catch(()=>{});};
+  pc.ontrack=ev=>{let a=document.getElementById('ra-'+id);if(!a){a=document.createElement('audio');a.id='ra-'+id;a.autoplay=true;a.setAttribute('playsinline','');$('#rmAudio').appendChild(a);}a.srcObject=ev.streams[0]||new MediaStream([ev.track]);a.play().catch(()=>{});};
+  return e;}
+async function offerTo(id,key){const s=Math.random().toString(36).slice(2,10),e=await mkPc(id,key,s),pc=e.pc;
+  if(RMS.stream&&key[0]==='1')RMS.stream.getTracks().forEach(t=>pc.addTrack(t,RMS.stream));else pc.addTransceiver('audio',{direction:'recvonly'});
+  const o=await pc.createOffer();await pc.setLocalDescription(o);const {collection,addDoc}=FB.F;
+  addDoc(collection(FB.db,'rooms',RMS.id,'sig'),{f:C.uid,t:id,k:'o',s,d:JSON.stringify(o),ts:Date.now()}).catch(()=>{});}
+async function onSig(d){const x=d.data(),{deleteDoc,collection,addDoc}=FB.F;deleteDoc(d.ref).catch(()=>{});if(Date.now()-(x.ts||0)>6e4)return;
+  try{if(x.k==='o'){dropPc(x.f);const me=RMS.mem.find(m=>m.id===C.uid),xm=RMS.mem.find(m=>m.id===x.f),key=(xm&&xm.mic?1:0)+''+(me&&me.mic&&RMS.stream?1:0);
+      const e=await mkPc(x.f,key.split('').reverse().join(''),x.s),pc=e.pc;await pc.setRemoteDescription(JSON.parse(x.d));
+      if(RMS.stream&&me&&me.mic)RMS.stream.getTracks().forEach(t=>pc.addTrack(t,RMS.stream));
+      const a=await pc.createAnswer();await pc.setLocalDescription(a);e.ready=true;e.q.forEach(c=>pc.addIceCandidate(c).catch(()=>{}));e.q=[];
+      addDoc(collection(FB.db,'rooms',RMS.id,'sig'),{f:C.uid,t:x.f,k:'a',s:x.s,d:JSON.stringify(a),ts:Date.now()}).catch(()=>{});}
+    else{const e=RMS.pcs.get(x.f);if(!e||e.s!==x.s)return;
+      if(x.k==='a'){await e.pc.setRemoteDescription(JSON.parse(x.d));e.ready=true;e.q.forEach(c=>e.pc.addIceCandidate(c).catch(()=>{}));e.q=[];}
+      else if(x.k==='c'){const c=JSON.parse(x.d);if(e.ready)e.pc.addIceCandidate(c).catch(()=>{});else e.q.push(c);}}}
+  catch(err){}}
+
+/* --- Room quiz game: host funds a prize, 5 questions, fastest correct answers win --- */
+function startGameModal(){const R=RMS.room;if(!R||R.host!==C.uid)return;
+  modal(`<h2>🎮 مسابقة السهرة</h2><p class="note">${ad(RG_N)} أسئلة، لكل سؤال ${ad(RG_Q/1000)} ثانية. الأسرع بالجواب الصح ياخذ نقاط أكثر، والفائز ياخذ الجائزة من رصيدك.</p>
+    <label class="wf">الجائزة<select id="gP">${[0,1e5,1e6,1e7,1e8].map(p=>`<option value="${p}"${p===1e6?' selected':''}${p>S.cash?' disabled':''}>${p?fmt(p)+' دينار':'بدون جائزة (للمتعة)'}</option>`).join('')}</select></label>`,
+    [['ابدأ المسابقة',()=>startGame(+$('#gP').value)],['إلغاء',null,1]]);}
+async function startGame(prize){if(prize>S.cash){toast('رصيدك لا يكفي للجائزة');return;}const {doc,updateDoc}=FB.F,seed=Math.floor(Math.random()*1e9),t0=Date.now()+5e3;
+  try{await updateDoc(doc(FB.db,'rooms',RMS.id),{game:{seed,t0,prize,n:RG_N}});if(prize){S.cash-=prize;S.gHeld={seed,prize};led('room',-prize,'جائزة مسابقة السهرة');save();}roomMsg('🎮 بدأت مسابقة! الجائزة '+(prize?fmt(prize):'شرف الفوز'),'sys');}
+  catch(e){toast('تعذّر بدء المسابقة');}}
+function gameQs(seed){const B=RQB(),out=[];let h=seed>>>0;const used=new Set();while(out.length<RG_N&&used.size<B.length){h=(Math.imul(h,1664525)+1013904223)>>>0;const i=h%B.length;if(!used.has(i)){used.add(i);out.push(B[i]);}}return out;}
+let RGU=null,RGT=null;
+function roomGameSub(){const g=RMS.room&&RMS.room.game;if(RGU&&(!g||RGU.seed!==g.seed)){RGU.un();RGU=null;}
+  if(g&&!RGU&&Date.now()<g.t0+RG_N*RG_R+6e4){const {collection,query,where,onSnapshot}=FB.F;RGU={seed:g.seed,un:onSnapshot(query(collection(FB.db,'rooms',RMS.id,'ans'),where('g','==',g.seed)),s=>{RMS.ans=s.docs.map(d=>d.data());},()=>{})};
+    clearInterval(RGT);RGT=setInterval(roomGameTick,500);}
+  roomGameTick();}
+function gameScores(g){const Q=gameQs(g.seed),sc=new Map();RMS.ans.forEach(a=>{const q=Q[a.k];if(!q||a.a!==q[2])return;const t=(a.ts-(g.t0+a.k*RG_R))/1000;if(t<0||t>RG_Q/1000+2)return;
+    const e=sc.get(a.uid)||{uid:a.uid,name:a.name,p:0};e.p+=10+Math.max(0,Math.round(15-t));sc.set(a.uid,e);});return [...sc.values()].sort((a,b)=>b.p-a.p);}
+function roomGameTick(){const box=$('#rmGame'),g=RMS.room&&RMS.room.game,now=Date.now();if(!box)return;
+  if(!g||now>g.t0+RG_N*RG_R+6e4){box.hidden=true;clearInterval(RGT);return;}box.hidden=false;
+  const k=Math.floor((now-g.t0)/RG_R),Q=gameQs(g.seed);
+  if(now<g.t0){box.innerHTML=`<b>🎮 المسابقة تبدأ بعد ${ad(Math.ceil((g.t0-now)/1000))}…</b>`;return;}
+  if(k>=RG_N){const sc=gameScores(g),w=sc[0];const key='end'+g.seed;if(box.dataset.k!==key){box.dataset.k=key;
+      box.innerHTML=`<b>🏆 ${w?eh(String(w.name).slice(0,24))+' فاز بالمسابقة!':'ما أحد جاوب صح'}</b>${g.prize&&w?`<small class="num">الجائزة ${fmt(g.prize)}</small>`:''}<div class="rg-sc">${sc.slice(0,5).map((s,i)=>`<span>${ad(i+1)}. ${eh(String(s.name).slice(0,16))} <b class="num">${ad(s.p)}</b></span>`).join('')}</div>`;
+      if(w&&w.uid===C.uid){sfx.win();confetti();}}
+    if(RMS.room.host===C.uid&&!RMS.paidG.has(g.seed)&&now>g.t0+RG_N*RG_R+3e3){RMS.paidG.add(g.seed);payPrize(g,w);}return;}
+  const q=Q[k],tl=Math.max(0,Math.ceil((g.t0+k*RG_R+RG_Q-now)/1000)),mine=RMS.ans.find(a=>a.uid===C.uid&&a.k===k),reveal=tl===0,key=g.seed+'_'+k+'_'+(mine?mine.a:'-')+'_'+reveal;
+  if(box.dataset.k===key){const t=box.querySelector('.rg-t');if(t)t.textContent=reveal?'':ad(tl);return;}box.dataset.k=key;
+  box.innerHTML=`<div class="rg-h"><span>سؤال ${ad(k+1)} من ${ad(RG_N)}</span><b class="rg-t num">${reveal?'':ad(tl)}</b></div><p>${q[0]}</p><div class="rg-o">${q[1].map((o,j)=>`<button data-j="${j}" class="${reveal&&j===q[2]?'ok':mine&&mine.a===j?(reveal?'bad':'sel'):''}"${mine||reveal?' disabled':''}>${o}</button>`).join('')}</div>`;
+  box.querySelectorAll('.rg-o button').forEach(b=>b.onclick=()=>answer(g,k,+b.dataset.j));}
+async function answer(g,k,a){const {doc,setDoc}=FB.F,now=Date.now();RMS.ans.push({g:g.seed,k,a,uid:C.uid,name:myN(),ts:now});roomGameTick();
+  setDoc(doc(FB.db,'rooms',RMS.id,'ans',g.seed+'_'+k+'_'+C.uid),{g:g.seed,k,a,uid:C.uid,name:myN(),ts:now}).catch(()=>{});}
+async function payPrize(g,w){if(!S.gHeld||S.gHeld.seed!==g.seed)return;const p=S.gHeld.prize;S.gHeld=null;
+  if(!w||w.uid===C.uid){S.cash+=p;if(p)led('room',p,'استرجاع جائزة المسابقة');save();if(p)roomMsg('ما أحد فاز، والجائزة رجعت لصاحب السهرة','sys');return;}
+  const {collection,addDoc}=FB.F;try{await addDoc(collection(FB.db,'transfers'),{from:C.uid,fromName:myN(),to:w.uid,toName:String(w.name).slice(0,24),amt:p,note:'جائزة مسابقة السهرة',ts:Date.now(),status:'sent',lock:true});
+    roomMsg('🏆 '+String(w.name).slice(0,24)+' فاز وقبض '+fmt(p),'sys');news('roomWin',String(w.name).slice(0,24)+' يفوز بمسابقة سهرة '+String(RMS.room.title).slice(0,30),p);}
+  catch(e){S.cash+=p;led('room',p,'استرجاع جائزة المسابقة');toast('تعذّر إرسال الجائزة فرجعت لرصيدك');}save();}
+function roomMenu(){const R=RMS.room;if(!R)return;const isHost=R.host===C.uid;
+  modal(`<h2>${eh(R.title)}</h2><p class="note">صاحب السهرة: ${eh(R.hostName)}</p>`,[...(isHost?[['🎮 ابدأ مسابقة',startGameModal],['⏹️ أنهِ السهرة',()=>modal('<h2>تنهي السهرة للكل؟</h2>',[['أنهِها',endRoom],['لا',null,1]]),1]]:[]),['🔗 ادعُ صديقًا',()=>{const u=location.origin+location.pathname+'?room='+R.id;(navigator.share?navigator.share({title:R.title,text:'تعال لسهرتي بإمبراطورية السوق',url:u}):navigator.clipboard.writeText(u).then(()=>toast('نسخت الرابط'))).catch(()=>{});},1],['إغلاق',null,1]]);}
+async function endRoom(){const {doc,updateDoc}=FB.F;try{await updateDoc(doc(FB.db,'rooms',RMS.id),{status:'closed',until:Date.now()});}catch(e){toast('تعذّر');}}
+$('#rmLeave').onclick=()=>leaveRoom();$('#rmMenu').onclick=roomMenu;$('#rmMic').onclick=toggleMic;$('#rmGift').onclick=()=>giftModal(null);
+$('#rmForm').onsubmit=e=>{e.preventDefault();const i=$('#rmIn');if(!i.value.trim())return;roomMsg(i.value,'msg');i.value='';};
+$('#newRoom').onclick=newRoomModal;
+function roomFromLink(){try{const r=new URLSearchParams(location.search).get('room');if(r&&/^[A-Za-z0-9]{10,40}$/.test(r)){history.replaceState(null,'',location.pathname);setTimeout(()=>joinRoom(r),1500);}}catch(e){}}
 
 /* ---------- Player market (Firestore listings, settled with transactions) ---------- */
 let MK={open:[],mine:[]},unMk=null,unMine=null,mkBusy=false,mkSig='';const settling=new Set();
