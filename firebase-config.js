@@ -13,3 +13,7 @@ export const firebaseConfig = {
 
 // رقم تطبيق OneSignal للإشعارات المجانية (App ID). من onesignal.com ← Settings ← Keys & IDs.
 export const oneSignalAppId = "9ddc0f53-bb77-412c-ae36-359412d8beb9";
+
+// خوادم TURN للمكالمات الصوتية على شبكات الموبايل (اختياري). اتركها فارغة إذا ما عندك.
+// مثال: [{ urls: "turn:...", username: "...", credential: "..." }]
+export const turnServers = [];

@@ -170,8 +170,8 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .snd .x{display:none}
 .snd[aria-pressed="false"] .w1,.snd[aria-pressed="false"] .w2{display:none}
 .snd[aria-pressed="false"] .x{display:inline}
-.tabs{grid-template-columns:repeat(5,1fr)}
-.tabs button{font-size:13px;padding:9px 2px;position:relative}
+.tabs{grid-template-columns:repeat(6,1fr)}
+.tabs button{font-size:12px;padding:9px 1px;position:relative}
 .badge{position:absolute;top:5px;inset-inline-end:6px;width:8px;height:8px;border-radius:50%;background:var(--bad)}
 .sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .sec-h h2,.mkt-sec h2,.sell-box h2{font-family:var(--display);font-size:16px;margin:0;color:var(--brass);font-weight:700}
@@ -317,7 +317,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .msg .hide{font-size:11px;color:var(--muted);text-decoration:underline;padding:0}
 .chat-form{display:flex;gap:8px}
 .chat-form input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:10px;padding:9px 10px}
-.chat-form button{border-radius:10px;padding:0 16px;flex:0 0 auto}
+.chat-form button{border-radius:10px;padding:0 16px;flex:0 0 auto;display:grid;place-items:center;align-content:center}
 .card2{background:var(--stall);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .card2 h2{font-family:var(--display);font-size:16px;margin:0;color:var(--brass)}
 .card2 input{font:inherit;font-size:14px;color:var(--ink);background:var(--night);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
@@ -453,6 +453,42 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 .sch-row.now{background:rgba(224,169,59,.08);border-radius:10px}
 .sch-row.past{opacity:.45}
 @media (prefers-reduced-motion:reduce){.phase.storm{animation:none}}
+.fr-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:9px}
+.fr-row:first-child{border-top:0;padding-top:0}
+.fr-row.click{cursor:pointer}
+.fr-row .avw{position:relative;line-height:0}
+.fr-row .od{position:absolute;bottom:0;inset-inline-end:-1px;width:11px;height:11px;border-radius:50%;background:var(--good);border:2px solid var(--stall)}
+.fr-t{min-width:0;display:flex;flex-direction:column}
+.fr-t b{font-size:14.5px}
+.fr-t small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-acts{display:flex;gap:6px;align-items:center}
+.ub{background:var(--bad);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;font-weight:700}
+.fr-btn{border-radius:9px;padding:7px 12px;font-weight:700;font-size:12.5px;background:var(--brass);color:var(--night)}
+.fr-btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.fr-btn:disabled{opacity:.5}
+.dm-head{display:flex;align-items:center;gap:10px}
+.dm-head .dm-n{flex:1;min-width:0;display:flex;flex-direction:column}
+.dm-head .dm-n small{font-size:11.5px;color:var(--muted)}
+.dm-head .back{font-size:20px;padding:2px 6px}
+.dm-quick{display:flex;gap:6px}
+.dm-quick button{flex:1;border:1px solid var(--line);border-radius:9px;padding:7px 4px;font-size:12.5px;font-weight:600}
+.call{position:fixed;inset:0;z-index:40;background:radial-gradient(120% 70% at 50% 20%,#24433f,#0b1415);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px max(16px,env(safe-area-inset-left,0px));text-align:center}
+.call .av{width:120px;height:120px;font-size:48px}
+.call.ring .av{animation:ringPulse 1.4s infinite}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(95,207,143,.55)}70%{box-shadow:0 0 0 26px rgba(95,207,143,0)}100%{box-shadow:0 0 0 0 rgba(95,207,143,0)}}
+.call h2{font-family:var(--display);font-size:28px;margin:0}
+.call p{margin:0;color:var(--muted)}
+.call .cbtns{display:flex;gap:28px;margin-top:22px}
+.call .cbtns button{width:68px;height:68px;border-radius:50%;font-size:26px;display:grid;place-items:center;color:#fff}
+.cb-acc{background:var(--good)}
+.cb-dec,.cb-end{background:var(--bad)}
+.cb-mute{background:var(--stall-2);border:1px solid var(--line)}
+.cb-mute[aria-pressed="true"]{background:var(--ink);color:var(--night)}
+.rules{text-align:start;max-height:62vh;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.rules h3{font-size:15px;margin:12px 0 2px;color:var(--brass)}
+.rules h3:first-child{margin-top:0}
+.rules p{color:var(--ink);font-size:13.5px;line-height:1.7;margin:0}
+@media (prefers-reduced-motion:reduce){.call.ring .av{animation:none}}
 @media (prefers-reduced-motion:reduce){.run.can,.prog i.fast{animation:none}.float,.pop{animation:none}.badge.live,.auction.hot{animation:none}}
 </style>
 </head>
@@ -486,6 +522,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
     <button role="tab" id="t-ex" aria-selected="false" data-p="ex">البورصة</button>
     <button role="tab" id="t-mkt" aria-selected="false" data-p="mkt">السوق<i class="badge live" id="mktBadge" hidden></i></button>
     <button role="tab" id="t-task" aria-selected="false" data-p="task">المهام<i class="badge" id="taskBadge" hidden></i></button>
+    <button role="tab" id="t-fr" aria-selected="false" data-p="fr">الأصدقاء<i class="badge" id="frBadge" hidden></i></button>
     <button role="tab" id="t-comp" aria-selected="false" data-p="comp">المنافسة</button>
   </nav>
 
@@ -496,6 +533,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
       <div class="city-row" id="cityRow"></div>
     </section>
     <section class="bank" id="bank"></section>
+    <section class="bank" id="insBox"></section>
     <div class="bar">
       <span class="lbl">كمية الشراء</span>
       <div class="seg" id="segShop" role="group" aria-label="كمية الشراء">
@@ -556,6 +594,24 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
     <section class="invite" id="pushBox"></section>
     <section class="mkt-sec"><div class="sec-h"><h2>مهام اليوم</h2><span class="sub num" id="taskReset"></span></div><div class="tasks" id="tasks"></div></section>
     <section class="mkt-sec"><div class="sec-h"><h2>الإنجازات</h2><span class="sub num" id="achCount"></span></div><div class="achs" id="achs"></div></section>
+  </section>
+
+  <section class="pane" id="p-fr" role="tabpanel" hidden>
+    <div id="frMain" class="soc">
+      <section class="card2"><h2>ابحث عن تاجر</h2>
+        <form class="chat-form" id="frSearch"><input id="frQ" placeholder="الاسم أو رقم الحساب SQ-…" autocomplete="off" aria-label="بحث"><button class="buy">بحث</button></form>
+        <div class="offers" id="frRes"></div></section>
+      <section class="card2" id="frReqBox" hidden><h2>طلبات الصداقة 👋</h2><div class="offers" id="frReqs"></div></section>
+      <section class="card2"><div class="sec-h"><h2>أصدقائي</h2><span class="sub num" id="frCount"></span></div><div class="offers" id="frList"></div></section>
+    </div>
+    <div id="frChat" class="soc" hidden>
+      <section class="chat">
+        <div class="dm-head"><button class="back" id="dmBack" aria-label="رجوع">→</button><span class="av sm" id="dmAv"></span><div class="dm-n"><b id="dmName"></b><small id="dmOn"></small></div><button class="icon-btn" id="dmCall" aria-label="مكالمة صوتية">📞</button><button class="icon-btn" id="dmMore" aria-label="المزيد">⋯</button></div>
+        <div class="chat-log" id="dmLog"></div>
+        <div class="dm-quick"><button id="dmMoney">💸 تحويل</button><button id="dmDuel">⚔️ تحدي</button><button id="dmLoan">🤝 قرض</button></div>
+        <form class="chat-form" id="dmForm"><input id="dmIn" maxlength="300" autocomplete="off" placeholder="اكتب رسالة…" aria-label="رسالة"><button class="buy">إرسال</button></form>
+      </section>
+    </div>
   </section>
 
   <section class="pane" id="p-me" role="tabpanel" hidden>
@@ -627,6 +683,12 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 <div class="toast"><div id="toast" class="hide"></div></div>
 <div class="modal" id="modal" hidden><div class="box" id="mbox"></div></div>
 <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+<div class="call" id="callUi" hidden>
+  <span class="av" id="callAv"></span><h2 id="callName"></h2><p id="callSt"></p><p class="num" id="callT"></p>
+  <div class="cbtns"><button class="cb-dec" id="callDec" aria-label="رفض">✖</button><button class="cb-acc" id="callAcc" aria-label="رد">📞</button><button class="cb-mute" id="callMute" aria-label="كتم الميكروفون" aria-pressed="false">🎙️</button><button class="cb-end" id="callEnd" aria-label="إنهاء المكالمة">✖</button></div>
+  <p style="font-size:11.5px">المكالمات تعمل أفضل على شبكة Wi-Fi</p>
+  <audio id="callAudio" autoplay playsinline></audio>
+</div>
 
 <script>
 (function(){
@@ -667,9 +729,9 @@ const EVENTS=[
 const ASSETS=[
  {id:'usd',   name:'الدولار الأمريكي',      unit:'لكل ١٠٠ دولار', base:1.5e5,  vol:.035,seed:11},
  {id:'gold',  name:'ذهب عيار ٢١',           unit:'لكل مثقال',     base:5.4e5,  vol:.07, seed:23},
- {id:'wheat', name:'حنطة',                 unit:'لكل طن',        base:7.2e5,  vol:.11, seed:37},
+ {id:'wheat', name:'حنطة',                 unit:'لكل طن · تتلف ٢٪ كل ساعة',        base:7.2e5,  vol:.11, seed:37},
  {id:'oil',   name:'نفط خام',              unit:'لكل برميل',     base:1.0e5,  vol:.16, seed:41},
- {id:'cement',name:'إسمنت',                unit:'لكل طن',        base:1.4e5,  vol:.09, seed:53},
+ {id:'cement',name:'إسمنت',                unit:'لكل طن · يتلف ٠٫٥٪ كل ساعة',        base:1.4e5,  vol:.09, seed:53},
  {id:'tel',   name:'سهم دجلة للاتصالات',    unit:'لكل سهم',       base:2.5e4,  vol:.24, seed:67}
 ];
 let FEE=.005;const STEP=10, MKT_FEE=.02;
@@ -749,9 +811,9 @@ const cityPx=(a,cid)=>1+(cityById(cid||S.city).px[a.id]||0);
 const price=(a,cid)=>Math.round(priceAt(a,stepNow())*cityPx(a,cid));
 
 function fresh(){return{cash:0,earned:0,ts:Date.now(),b:DEF.map((d,i)=>({n:i===0?1:0,p:0,run:false,mgr:false})),h:{},real:0,season:null,
-  cities:['bgd'],city:'bgd',travelAt:0,daily:{last:'',streak:0},dm:null,ach:{},st:{},rare:[],esc:null,rank:0,loan:null,boost:null,duels:{},led:[],hist:[],tr:{w:0,l:0,best:0,worst:0,vol:0},title:'',wheel:'',phone:'',joined:Date.now(),pid:'',lateLoans:0};}
+  cities:['bgd'],city:'bgd',travelAt:0,daily:{last:'',streak:0},dm:null,ach:{},st:{},rare:[],esc:null,rank:0,loan:null,boost:null,duels:{},led:[],hist:[],tr:{w:0,l:0,best:0,worst:0,vol:0},title:'',wheel:'',phone:'',joined:Date.now(),pid:'',lateLoans:0,tax:'',ins:0};}
 function fix(s){if(!s.h)s.h={};if(!isFinite(s.real))s.real=0;if(!Array.isArray(s.cities))s.cities=['bgd'];if(!s.city||!s.cities.includes(s.city))s.city='bgd';
-  if(!s.daily)s.daily={last:'',streak:0};if(!s.ach)s.ach={};if(!s.st)s.st={};if(!isFinite(s.travelAt))s.travelAt=0;if(!Array.isArray(s.rare))s.rare=[];if(s.esc===undefined)s.esc=null;if(!isFinite(s.rank))s.rank=0;if(s.loan===undefined)s.loan=null;if(s.boost===undefined)s.boost=null;if(!s.duels)s.duels={};if(!Array.isArray(s.led))s.led=[];if(!Array.isArray(s.hist))s.hist=[];if(!s.tr)s.tr={w:0,l:0,best:0,worst:0,vol:0};if(typeof s.title!=='string')s.title='';if(typeof s.wheel!=='string')s.wheel='';if(typeof s.phone!=='string')s.phone='';if(typeof s.pid!=='string')s.pid='';if(!isFinite(s.joined))s.joined=s.ts||Date.now();
+  if(!s.daily)s.daily={last:'',streak:0};if(!s.ach)s.ach={};if(!s.st)s.st={};if(!isFinite(s.travelAt))s.travelAt=0;if(!Array.isArray(s.rare))s.rare=[];if(s.esc===undefined)s.esc=null;if(!isFinite(s.rank))s.rank=0;if(s.loan===undefined)s.loan=null;if(s.boost===undefined)s.boost=null;if(!s.duels)s.duels={};if(!Array.isArray(s.led))s.led=[];if(!Array.isArray(s.hist))s.hist=[];if(!s.tr)s.tr={w:0,l:0,best:0,worst:0,vol:0};if(typeof s.title!=='string')s.title='';if(typeof s.wheel!=='string')s.wheel='';if(typeof s.phone!=='string')s.phone='';if(typeof s.pid!=='string')s.pid='';if(typeof s.tax!=='string')s.tax='';if(!isFinite(s.ins))s.ins=0;if(!isFinite(s.joined))s.joined=s.ts||Date.now();
   s.b.forEach(b=>{if(b.mgr&&!b.staff)b.staff={name:'مدير قديم',t:'steady'};});return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem('souq-save')||'null');if(valid(j))return fix(j);}catch(e){}return null;}
 function save(){S.ts=Date.now();try{localStorage.setItem('souq-save',JSON.stringify(S));}catch(e){}}
@@ -1015,7 +1077,8 @@ const ACH=[
   {id:'loan', n:'زبون موثوق',     d:'سدّد قرضًا للمصرف بوقته',           ok:()=>(S.st.loansPaid||0)>=1},
   {id:'duel', n:'بطل التحدي',     d:'اربح تحديًا مباشرًا',               ok:()=>(S.st.duelWins||0)>=1},
   {id:'ally', n:'رجل تحالفات',    d:'انضم إلى تحالف تجاري',              ok:()=>(S.st.allied||0)>=1},
-  {id:'storm',n:'صياد القاع',     d:'اشترِ وقت العاصفة وبِع بربح بعدها', ok:()=>(S.st.stormWin||0)>=1}
+  {id:'storm',n:'صياد القاع',     d:'اشترِ وقت العاصفة وبِع بربح بعدها', ok:()=>(S.st.stormWin||0)>=1},
+  {id:'social',n:'اجتماعي',        d:'كوّن ٥ أصدقاء في السوق',            ok:()=>(S.st.friends||0)>=5}
 ];
 const MEDAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l-2 6h-4z"/><circle cx="12" cy="15" r="6"/><path d="M12 12.2l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 14.3l2-.3z"/></svg>';
 function checkAch(silent){let got=0;ACH.forEach(a=>{if(!S.ach[a.id]&&a.ok()){S.ach[a.id]=Date.now();got++;if(!silent){sfx.win();confetti();toast('إنجاز جديد: '+a.n);}}});if(got)tasksSig='';}
@@ -1078,14 +1141,14 @@ function hireModal(i,replace){const d=DEF[i],cs=candidates();
   $('#mbox').querySelectorAll('.cand button').forEach(b=>b.onclick=()=>{const c=cs[+b.dataset.k],cost=d.mgr*TRAITS[c.t].cost;if(S.cash<cost)return;S.cash-=cost;const bb=S.b[i];bb.mgr=true;bb.run=true;bb.staff=c;$('#modal').hidden=true;sfx.win();toast(c.name+' صار يدير '+d.name);render(true);});}
 function staffModal(i){const b=S.b[i],T=TRAITS[b.staff.t];modal(`<h2>${b.staff.name}</h2><p>مدير ${DEF[i].name} · ${T.n}</p><p>${T.d}</p>`,[['رجوع',null,true],['استبدله',()=>hireModal(i,true)]]);}
 let stealAcc=0;
-function staffTick(dt){stealAcc+=dt;if(stealAcc<60)return;stealAcc=0;S.b.forEach((b,i)=>{if(b.mgr&&b.staff&&TRAITS[b.staff.t]&&TRAITS[b.staff.t].steal&&Math.random()<.08&&S.cash>1e4){const st=Math.round(S.cash*.03);S.cash-=st;led('theft',-st,'سرقة من '+b.staff.name);sfx.loss();toast(`${b.staff.name} مدير ${DEF[i].name} لعب بالحساب واختفى ${fmt(st)} دينار!`);}});}
+function staffTick(dt){stealAcc+=dt;if(stealAcc<60)return;stealAcc=0;S.b.forEach((b,i)=>{if(b.mgr&&b.staff&&TRAITS[b.staff.t]&&TRAITS[b.staff.t].steal&&Math.random()<.08&&S.cash>1e4){if(insured()){toast('🛡️ '+b.staff.name+' حاول يسرق من '+DEF[i].name+'، والتأمين كشفه');return;}const st=Math.round(S.cash*.03);S.cash-=st;led('theft',-st,'سرقة من '+b.staff.name);sfx.loss();toast(`${b.staff.name} مدير ${DEF[i].name} لعب بالحساب واختفى ${fmt(st)} دينار!`);}});}
 
 /* ---------- Decision events ---------- */
 let decLeft=150+Math.random()*120;
 function randShop(min){const own=S.b.map((b,i)=>[b,i]).filter(([b])=>b.n>=(min||2));return own.length?own[Math.floor(Math.random()*own.length)][1]:-1;}
 function burn(i){const b=S.b[i],lost=Math.max(1,Math.floor(b.n*.2));b.n=Math.max(1,b.n-lost);sfx.loss();toast('الحريق أكل '+ad(lost)+' فروع من '+DEF[i].name);}
 const DECS=[
- ()=>{const i=randShop();if(i<0)return null;const d=DEF[i],fee=Math.max(1e4,Math.round(S.cash*.05));
+ ()=>{const i=randShop();if(i<0)return null;const d=DEF[i];if(insured())return {t:'حريق في '+d.name+'!',x:'النار بدأت بالمخزن، لكن تأمينك 🛡️ غطّى كل الخسائر. محلك سالم.',o:[['الحمد لله',()=>{sfx.win();}]]};const fee=Math.max(1e4,Math.round(S.cash*.05));
    return {t:'حريق في '+d.name+'!',x:'النار بدأت بالمخزن. تتصل بالإطفاء الأهلي بـ '+fmt(fee)+' دينار، لو تجازف وتنتظر الدفاع المدني؟',
      o:[['انتظر الدفاع المدني',()=>{if(Math.random()<.5)burn(i);else{sfx.win();toast('الدفاع المدني وصل بالوقت، ما خسرت شي');}}],['ادفع للإطفاء',()=>{if(S.cash<fee){burn(i);return;}S.cash-=fee;sfx.buy();toast('انطفأ الحريق بسرعة، محلك سالم');}]]};},
  ()=>{const tax=Math.max(2e4,Math.round(S.cash*.08));
@@ -1148,7 +1211,7 @@ document.querySelectorAll('#segSoc button').forEach(b=>b.onclick=()=>setSoc(b.da
 function renderSocial(){if(socTab==='chat')renderChat();else if(socTab==='ally')renderAlly();else if(socTab==='duel')renderDuel();}
 
 /* ---------- Wallet ledger & stats ---------- */
-const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
+const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
 function led(k,a,n){if(!S||!Array.isArray(S.led))return;S.led.unshift({t:Date.now(),k,a:Math.round(a),n:String(n||'').slice(0,60)});if(S.led.length>80)S.led.length=80;meSig='';}
 function tradeStat(pl,vol){S.tr.vol+=vol;if(pl>0)S.tr.w++;else if(pl<0)S.tr.l++;S.tr.best=Math.max(S.tr.best,pl);S.tr.worst=Math.min(S.tr.worst,pl);}
 function histTick(){const h=S.hist,now=Date.now();if(!h.length||now-h[h.length-1][0]>=5*6e4){h.push([now,Math.round(worth())]);if(h.length>288)h.splice(0,h.length-288);}}
@@ -1295,12 +1358,176 @@ function phaseWatch(){const p=curPhase(),now=Date.now();
 function showSchedule(){const now=Date.now(),d=dayStart(now),L=[...schedule(d-864e5).filter(p=>p.e>d),...schedule(d)].filter(p=>p.s<d+864e5).sort((a,b)=>a.s-b.s);
   const rows=L.map(p=>{const P=PHS[p.k],hid=!revealed(p)&&p.s>now,cls=now>=p.s&&now<p.e?'now':p.e<=now?'past':'';
     return `<div class="sch-row ${cls}"><i>${P.i}</i><b>${hid?(p.k==='storm'?'عاصفة مفاجئة':'ساعة مضاربة مفاجئة'):P.n}</b><span>${hid?'؟؟:؟؟':hhmm(p.s)+' – '+hhmm(p.e)}</span><small>${hid?'الوقت يُكشف قبل '+(p.k==='storm'?'١٥':'١٠')+' دقيقة':P.d}</small></div>`;}).join('');
-  modal(`<h2>جدول السوق اليوم</h2><p>بتوقيت بغداد، ونفسه لكل التجار. خارج هذه الأوقات السوق عادي.</p><div class="sch">${rows}</div>`,[['فهمت']]);}
+  modal(`<h2>جدول السوق اليوم</h2><p>بتوقيت بغداد، ونفسه لكل التجار. خارج هذه الأوقات السوق عادي.</p><div class="sch">${rows}</div>`,[['📜 القوانين',showRules,true],['فهمت']]);}
 $('#phSch').onclick=showSchedule;$('#phase').onclick=e=>{if(e.target.id!=='phSch')showSchedule();};
+
+/* ---------- Market rules: taxes, salaries, spoilage, insurance ---------- */
+const SAL_RATE=.08,SPOIL={wheat:.02,cement:.005};
+function spoil(hours){const out=[];for(const id in SPOIL){const h=S.h[id];if(!h||!h.q)continue;const l=Math.min(h.q,Math.floor(h.q*(1-Math.pow(1-SPOIL[id],hours))+Math.random()));
+  if(l>0){h.q-=l;if(!h.q)h.avg=0;out.push(nf.format(l)+' '+ASSETS.find(a=>a.id===id).name);}}return out.join('، ');}
+let spoilAcc=0;function spoilTick(dt){spoilAcc+=dt;if(spoilAcc<600)return;spoilAcc=0;const r=spoil(1/6);if(r){led('spoil',0,'تلف: '+r);toast('🌾 تلفت بضاعة في المخزن: '+r);}}
+let salAcc=0,salMiss=0;
+function salTick(dt){salAcc+=dt;if(salAcc<60)return;salAcc=0;const m=[];let cost=0;
+  S.b.forEach((b,i)=>{if(b.n&&b.mgr){const c=cycRev(i)/cycT(i)*60*SAL_RATE;cost+=c;m.push([i,c]);}});if(!cost)return;
+  if(S.cash>=cost){S.cash-=cost;S.st.sal=(S.st.sal||0)+cost;salMiss=0;return;}
+  salMiss++;if(salMiss===1){sfx.alert();toast('⚠️ رصيدك ما يكفي لرواتب المديرين! إذا تكرر بعد دقيقة، يستقيل واحد');return;}
+  salMiss=0;m.sort((a,b)=>b[1]-a[1]);const qi=m[0][0],b=S.b[qi],nm=b.staff?b.staff.name:'المدير';b.mgr=false;b.run=false;b.p=0;b.staff=null;sfx.loss();vib(120);
+  led('quit',0,nm+' استقال من '+DEF[qi].name);modal(`<h2>🚪 ${nm} استقال!</h2><p>ما دفعت رواتب المديرين، فترك ${DEF[qi].name}. صار المحل يحتاج تشغيل يدوي، أو وظّف مديرًا جديدًا.</p>`,[['فهمت']]);render(true);}
+function taxCheck(){const d=todayStr();if(S.tax===d)return;if(!S.tax){S.tax=d;return;}S.tax=d;const t=Math.round(Math.max(0,S.cash-1e6)*.02);
+  if(t>0){S.cash-=t;led('tax',-t,'ضريبة السوق اليومية ٢٪');sfx.loss();toast('💸 خُصمت ضريبة السوق اليومية: '+fmt(t)+' دينار');}}
+const insured=()=>Date.now()<(S.ins||0),insCost=()=>Math.max(5e4,Math.round(shopValue()*.01));let insSig='';
+function renderIns(){const on=insured(),c=insCost(),sig=on+'|'+Math.floor(((S.ins||0)-Date.now())/6e4)+'|'+(S.cash>=c)+'|'+Math.round(c/1e3);if(sig===insSig)return;insSig=sig;const B=$('#insBox');
+  B.innerHTML=`<div class="sec-h"><h2>🛡️ تأمين المحلات</h2><span class="sub" style="${on?'color:var(--good)':''}">${on?'مؤمَّنة · تنتهي بعد '+fmtDur((S.ins-Date.now())/1000):'غير مؤمَّنة'}</span></div>
+    <p class="empty-s">يحميك ٢٤ ساعة من الحريق وسرقة الموظفين. بدون تأمين، الحريق ممكن ياكل خمس فروعك.</p>
+    <div class="bank-row"><button class="${on?'':'pay'}" id="insBuy" ${S.cash<c?'disabled':''}>${on?'مدّد ٢٤ ساعة':'أمّن محلاتك'}<small class="num">${fmt(c)}</small></button><button id="rulesBtn">📜 قوانين السوق<small>اعرف كيف تخسر</small></button></div>`;
+  $('#insBuy').onclick=()=>{const k=insCost();if(S.cash<k)return;S.cash-=k;S.ins=Math.max(Date.now(),S.ins||0)+864e5;led('ins',-k,'تأمين المحلات ٢٤ ساعة');sfx.buy();toast('🛡️ محلاتك مؤمّنة ٢٤ ساعة');insSig='';render(true);};
+  $('#rulesBtn').onclick=showRules;}
+function showRules(){modal(`<h2>📜 قوانين السوق</h2><div class="rules">
+  <h3>💸 ضريبة يومية</h3><p>عند منتصف الليل تُخصم ٢٪ من النقد الذي يزيد على مليون دينار. الفلوس المكدّسة تخسر، والمستثمرة تربح.</p>
+  <h3>👔 رواتب المديرين</h3><p>كل دقيقة يأخذ المديرون ٨٪ من دخل محلاتهم. إذا ما كفى رصيدك مرتين متتاليتين، يستقيل أغلى مدير.</p>
+  <h3>🌾 بضاعة تتلف</h3><p>الحنطة تخسر ٢٪ من كميتها كل ساعة، والإسمنت ٠٫٥٪. الذهب والدولار والنفط والأسهم لا تتلف.</p>
+  <h3>🏚️ الإهمال</h3><p>إذا غبت أكثر من يوم، تخسر ٣٪ من فروع كل محل عن كل يوم غياب، حتى ٥ أيام. أرباح الغياب تُحسب لـ٣ ساعات فقط.</p>
+  <h3>🔥 الحرائق والسرقات</h3><p>الحريق ممكن ياكل خمس فروع المحل، والمدير «الشاطر» يسرق ٣٪ من صندوقك أحيانًا. التأمين يحميك منها.</p>
+  <h3>⛈️ عواصف السوق</h3><p>مرتين كل يوم بوقت سري، الأسعار تنهار حتى ٢٠٪ وكل صفقة تخسر ٦٪. تُكشف قبل ١٥ دقيقة فقط.</p>
+  <h3>🏦 الديون</h3><p>قرض المصرف إذا تأخرت عنه يحجز رصيدك وفروعك مع غرامة. وقرض التاجر المتأخر يُسحب من رصيدك تلقائيًا مع ١٠٪، ويظهر تأخرك في ملفك أمام الجميع.</p>
+  <h3>⚖️ اللعب النظيف</h3><p>الغش أو التلاعب بالأرقام يُكشف ويُوقف في لوحة الصدارة. فلوس اللعبة افتراضية ولا تُباع بفلوس حقيقية.</p></div>`,[['فهمت، نلعب!']]);}
+
+/* ---------- Friends, presence, private chat ---------- */
+let FR={list:[],reqIn:[],reqOut:[],un:[],pres:{},open:null,dmUn:null,dmMsgs:[],sig:'',ready:false,lastSend:0};
+const pairId=(a,b)=>a<b?a+'_'+b:b+'_'+a,otherOf=f=>f.members.find(u=>u!==C.uid);
+const seenOf=id=>{try{return +localStorage.getItem('souq-seen-'+id)||0;}catch(e){return 0;}},markSeen=id=>{try{localStorage.setItem('souq-seen-'+id,String(Date.now()));}catch(e){}};
+function subFriends(){if(!C||!FB)return;unsubFriends();const {collection,query,where,onSnapshot}=FB.F,u=C.uid,map=r=>r.docs.map(d=>({id:d.id,...d.data()}));
+  FR.un.push(onSnapshot(query(collection(FB.db,'friends'),where('members','array-contains',u)),r=>{const prev=new Map(FR.list.map(f=>[f.id,f.lastTs]));FR.list=map(r);S.st.friends=FR.list.length;
+    FR.list.forEach(f=>{if(f.lastBy&&f.lastBy!==u&&prev.has(f.id)&&f.lastTs>prev.get(f.id)&&!(FR.open&&FR.open.id===f.id&&tab==='fr')){sfx.coin();toast('💬 '+String(f.names[otherOf(f)]||'صديقك').slice(0,24)+': '+String(f.last).slice(0,50));}});
+    if(FR.open){const o=FR.list.find(f=>f.id===FR.open.id);if(o)FR.open=o;else closeDm();}FR.sig='';presPoll();},()=>{}));
+  FR.un.push(onSnapshot(query(collection(FB.db,'friendReqs'),where('to','==',u)),r=>{const was=new Set(FR.reqIn.map(x=>x.id));FR.reqIn=map(r);
+    const nw=FR.reqIn.find(x=>!was.has(x.id));if(FR.ready&&nw){sfx.alert();toast('👋 طلب صداقة من '+String(nw.fromName).slice(0,24));}FR.ready=true;FR.sig='';},()=>{}));
+  FR.un.push(onSnapshot(query(collection(FB.db,'friendReqs'),where('from','==',u)),r=>{FR.reqOut=map(r);FR.sig='';},()=>{}));}
+function unsubFriends(){FR.un.forEach(f=>f());if(FR.dmUn)FR.dmUn();FR={list:[],reqIn:[],reqOut:[],un:[],pres:{},open:null,dmUn:null,dmMsgs:[],sig:'',ready:false,lastSend:0};$('#frChat').hidden=true;$('#frMain').hidden=false;}
+let presLast=0,presPollT=0;
+function presTick(){if(!C||!FB||document.hidden||Date.now()-presLast<60000)return;presLast=Date.now();const {doc,setDoc}=FB.F;setDoc(doc(FB.db,'presence',C.uid),{ts:Date.now()}).catch(()=>{});if(Date.now()-presPollT>60000)presPoll();}
+async function presPoll(){if(!C||!FB)return;presPollT=Date.now();const {doc,getDoc}=FB.F;
+  await Promise.all(FR.list.map(async f=>{const o=otherOf(f);try{const r=await getDoc(doc(FB.db,'presence',o));FR.pres[o]=r.exists()?r.data().ts:0;}catch(e){}}));FR.sig='';}
+const isOn=u=>Date.now()-(FR.pres[u]||0)<150000;
+const lastSeen=u=>FR.pres[u]?(isOn(u)?'🟢 متصل الآن':'آخر ظهور '+ago(FR.pres[u])):'غير متصل';
+async function frSearch(q){q=String(q||'').trim();const R=$('#frRes');if(!C){toast('سجّل دخولك أولًا');return;}if(q.length<2){toast('اكتب حرفين على الأقل');return;}
+  R.innerHTML='<p class="empty-s">أبحث…</p>';const out=[];
+  if(/^(sq)?[-\s]?[a-z0-9]{6}$/i.test(toLat(q).replace(/\s/g,''))){const r=await findPid(q);if(r)out.push({uid:r.uid,name:r.name,avatar:r.avatar});}
+  try{const {collection,query,where,orderBy,limit,getDocs}=FB.F;const r=await getDocs(query(collection(FB.db,'profiles'),where('name','>=',q),where('name','<=',q+''),orderBy('name'),limit(15)));
+    r.docs.forEach(d=>{if(!out.some(o=>o.uid===d.id))out.push({uid:d.id,name:d.data().name,avatar:d.data().avatar,title:d.data().title});});}catch(e){}
+  const list=out.filter(o=>o.uid!==C.uid);R.textContent='';if(!list.length){R.innerHTML='<p class="empty-s">ما لقيت تاجر بهذا الاسم أو الرقم.</p>';return;}
+  list.forEach(o=>R.appendChild(personRow(o)));}
+function personRow(o){const el=document.createElement('div');el.className='fr-row';
+  el.innerHTML='<span class="avw"><span class="av sm"></span></span><div class="fr-t"><b></b><small></small></div><div class="fr-acts"></div>';
+  paintAv(el.querySelector('.av'),o.avatar,o.name);el.querySelector('b').textContent=String(o.name||'تاجر').slice(0,24);el.querySelector('small').textContent=o.title?String(o.title).slice(0,40):'';
+  const A=el.querySelector('.fr-acts'),f=FR.list.find(x=>x.members.includes(o.uid)),out=FR.reqOut.find(x=>x.to===o.uid),inn=FR.reqIn.find(x=>x.from===o.uid),b=document.createElement('button');b.className='fr-btn';
+  if(f){b.textContent='💬 محادثة';b.onclick=()=>openDm(f);}else if(inn){b.textContent='اقبل';b.onclick=()=>acceptReq(inn);}
+  else if(out){b.textContent='تم الإرسال';b.className='fr-btn ghost';b.onclick=()=>cancelReq(out);b.title='اضغط للإلغاء';}else{b.textContent='➕ إضافة';b.onclick=()=>{b.disabled=true;sendReq(o);};}
+  A.appendChild(b);el.querySelector('.fr-t').onclick=()=>showPublic(o.uid);el.querySelector('.avw').onclick=()=>showPublic(o.uid);return el;}
+async function sendReq(o){if(!C||!FB)return;const inn=FR.reqIn.find(x=>x.from===o.uid);if(inn)return acceptReq(inn);
+  if(FR.list.some(f=>f.members.includes(o.uid))){toast('هذا صديقك بالفعل');return;}if(FR.list.length>=200){toast('وصلت الحد الأقصى ٢٠٠ صديق');return;}
+  const {doc,setDoc}=FB.F;try{await setDoc(doc(FB.db,'friendReqs',C.uid+'_'+o.uid),{from:C.uid,fromName:C.name.slice(0,24),to:o.uid,toName:String(o.name||'تاجر').slice(0,24),ts:Date.now()});
+    sfx.buy();toast('أرسلت طلب صداقة إلى '+String(o.name).slice(0,24));}catch(e){toast('سبق وأرسلت له طلبًا');}
+  const q=$('#frQ').value;if(q)frSearch(q);}
+async function cancelReq(r){const {doc,deleteDoc}=FB.F;try{await deleteDoc(doc(FB.db,'friendReqs',r.id));toast('ألغيت طلب الصداقة');}catch(e){}const q=$('#frQ').value;if(q)frSearch(q);}
+async function acceptReq(r){const {doc,setDoc,deleteDoc}=FB.F;
+  try{await setDoc(doc(FB.db,'friends',pairId(C.uid,r.from)),{members:[C.uid,r.from],names:{[C.uid]:C.name.slice(0,24),[r.from]:String(r.fromName).slice(0,24)},ts:Date.now(),last:'',lastTs:0,lastBy:''});
+    await deleteDoc(doc(FB.db,'friendReqs',r.id));sfx.win();confetti();toast('صرت صديق '+String(r.fromName).slice(0,24)+' 🤝');}catch(e){toast('تعذّر قبول الطلب');}}
+async function rejectReq(r){const {doc,deleteDoc}=FB.F;try{await deleteDoc(doc(FB.db,'friendReqs',r.id));toast('رفضت الطلب');}catch(e){}}
+function removeFriend(f){const nm=String(f.names[otherOf(f)]||'تاجر').slice(0,24);modal(`<h2>حذف ${nm}؟</h2><p>تنحذف الصداقة والمحادثة من قائمتك.</p>`,[['إلغاء',null,true],['احذف',async()=>{const {doc,deleteDoc}=FB.F;try{await deleteDoc(doc(FB.db,'friends',f.id));closeDm();toast('حذفت '+nm+' من أصدقائك');}catch(e){toast('تعذّر الحذف');}}]]);}
+function renderFriends(){const me=C&&C.uid,unread=C?FR.list.filter(f=>f.lastBy&&f.lastBy!==me&&f.lastTs>seenOf(f.id)).length:0;$('#frBadge').hidden=!(unread||FR.reqIn.length);
+  if(tab!=='fr')return;if(FR.open){renderDmHead();return;}
+  const sig=JSON.stringify([!!C,FR.list.map(f=>[f.id,f.lastTs,f.lastBy,f.lastTs>seenOf(f.id),C&&isOn(otherOf(f))]),FR.reqIn.map(r=>r.id),Math.floor(Date.now()/30000)]);if(sig===FR.sig)return;FR.sig=sig;
+  const L=$('#frList'),Q=$('#frReqs');
+  if(!C){L.innerHTML='<p class="empty-s">سجّل دخولك بحساب Google لتضيف أصدقاء وتتواصل معهم.</p>';$('#frReqBox').hidden=true;$('#frCount').textContent='';return;}
+  $('#frReqBox').hidden=!FR.reqIn.length;Q.textContent='';
+  FR.reqIn.forEach(r=>{const el=document.createElement('div');el.className='fr-row';el.innerHTML='<span class="avw"><span class="av sm"></span></span><div class="fr-t"><b></b><small>يريد يصير صديقك</small></div><div class="fr-acts"><button class="fr-btn">اقبل</button><button class="fr-btn ghost">ارفض</button></div>';
+    paintAv(el.querySelector('.av'),null,r.fromName);getProf(r.from).then(p=>{if(p)paintAv(el.querySelector('.av'),p.avatar,p.name);});el.querySelector('b').textContent=String(r.fromName).slice(0,24);
+    const bs=el.querySelectorAll('button');bs[0].onclick=()=>{bs[0].disabled=true;acceptReq(r);};bs[1].onclick=()=>{bs[1].disabled=true;rejectReq(r);};el.querySelector('.fr-t').onclick=()=>showPublic(r.from);Q.appendChild(el);});
+  $('#frCount').textContent=FR.list.length?ad(FR.list.filter(f=>isOn(otherOf(f))).length)+' متصل من '+ad(FR.list.length):'';
+  L.textContent='';if(!FR.list.length){L.innerHTML='<p class="empty-s">ما عندك أصدقاء بعد. ابحث عن تاجر بالاسم أو برقم حسابه وأرسل له طلب صداقة.</p>';return;}
+  FR.list.slice().sort((a,b)=>(isOn(otherOf(b))-isOn(otherOf(a)))||(b.lastTs-a.lastTs)).forEach(f=>{const o=otherOf(f),un=f.lastBy&&f.lastBy!==me&&f.lastTs>seenOf(f.id),el=document.createElement('div');el.className='fr-row click';
+    el.innerHTML='<span class="avw"><span class="av sm"></span>'+(isOn(o)?'<i class="od"></i>':'')+'</span><div class="fr-t"><b></b><small></small></div><div class="fr-acts">'+(un?'<span class="ub">جديد</span>':'')+'<span class="sub num"></span></div>';
+    const nm=String(f.names[o]||'تاجر').slice(0,24);paintAv(el.querySelector('.av'),null,nm);getProf(o).then(p=>{if(p)paintAv(el.querySelector('.av'),p.avatar,p.name);});
+    el.querySelector('b').textContent=nm;el.querySelector('small').textContent=f.last?(f.lastBy===me?'أنت: ':'')+f.last:lastSeen(o);el.querySelector('.sub').textContent=f.lastTs?ago(f.lastTs):'';
+    el.onclick=()=>openDm(f);L.appendChild(el);});}
+function openDm(f){if(tab!=='fr')setTab('fr');FR.open=f;const o=otherOf(f),nm=String(f.names[o]||'تاجر').slice(0,24);$('#frMain').hidden=true;$('#frChat').hidden=false;
+  paintAv($('#dmAv'),null,nm);getProf(o).then(p=>{if(p&&FR.open===f)paintAv($('#dmAv'),p.avatar,p.name);});$('#dmName').textContent=nm;renderDmHead();
+  if(FR.dmUn)FR.dmUn();FR.dmMsgs=[];$('#dmLog').innerHTML='<p class="empty-s">جارٍ التحميل…</p>';const {collection,query,orderBy,limit,onSnapshot}=FB.F;
+  FR.dmUn=onSnapshot(query(collection(FB.db,'dms',f.id,'msgs'),orderBy('ts','desc'),limit(80)),r=>{FR.dmMsgs=r.docs.map(d=>({id:d.id,...d.data()})).reverse();renderDm();markSeen(f.id);},()=>{$('#dmLog').innerHTML='<p class="empty-s">تعذّر تحميل المحادثة.</p>';});
+  markSeen(f.id);setTimeout(()=>$('#dmLog').scrollTop=1e9,60);}
+function closeDm(){if(FR.dmUn)FR.dmUn();FR.dmUn=null;FR.open=null;$('#frChat').hidden=true;$('#frMain').hidden=false;FR.sig='';render(true);}
+function renderDmHead(){const f=FR.open;if(f)$('#dmOn').textContent=lastSeen(otherOf(f));}
+function renderDm(){const L=$('#dmLog'),f=FR.open;if(!f)return;const atB=L.scrollHeight-L.scrollTop-L.clientHeight<90;L.textContent='';
+  if(!FR.dmMsgs.length)L.innerHTML='<p class="empty-s">ابدأ المحادثة. سلّم على صديقك 👋</p>';
+  FR.dmMsgs.forEach(m=>{const me=m.uid===C.uid,el=document.createElement('div');el.className='msg'+(me?' me':'');el.innerHTML='<div class="mt"></div><div class="mh"><span class="num"></span></div>';
+    el.querySelector('.mt').textContent=String(m.text||'').slice(0,300);el.querySelector('.num').textContent=hhmm(m.ts);
+    if(m.kind==='duel'&&!me&&/^\d{6}$/.test(m.ref||'')){const b=document.createElement('button');b.className='fr-btn';b.style.marginTop='6px';b.textContent='⚔️ ادخل التحدي';b.onclick=()=>{setTab('comp');setSoc('duel');duelJoin(m.ref);};el.appendChild(b);}
+    L.appendChild(el);});
+  if(atB||(FR.dmMsgs.length&&FR.dmMsgs[FR.dmMsgs.length-1].uid===C.uid))L.scrollTop=L.scrollHeight;}
+async function sendDm(text,kind,ref){const f=FR.open;if(!f||!C)return false;text=clean(String(text||'').trim().replace(/\s+/g,' ')).slice(0,300);if(!text)return false;
+  if(Date.now()-FR.lastSend<1000){toast('شوي شوي 😅');return false;}FR.lastSend=Date.now();const {collection,addDoc,doc,updateDoc}=FB.F,ts=Date.now();
+  try{await addDoc(collection(FB.db,'dms',f.id,'msgs'),{uid:C.uid,text,ts,kind:kind||'text',ref:String(ref||'')});updateDoc(doc(FB.db,'friends',f.id),{last:text.slice(0,80),lastTs:ts,lastBy:C.uid}).catch(()=>{});sfx.tap();return true;}
+  catch(e){toast('تعذّر الإرسال');return false;}}
+$('#frSearch').onsubmit=e=>{e.preventDefault();frSearch($('#frQ').value);};
+$('#dmBack').onclick=closeDm;
+$('#dmForm').onsubmit=async e=>{e.preventDefault();const i=$('#dmIn'),t=i.value;if(!t.trim())return;i.value='';if(!(await sendDm(t)))i.value=t;};
+async function friendPid(f){const p=await getProf(otherOf(f));if(!p||!p.pid){toast('صديقك ما فتح محفظته بعد');return null;}return p.pid;}
+$('#dmMoney').onclick=async()=>{const f=FR.open;if(!f)return;const pid=await friendPid(f);if(pid)moneyForm('send',{to:pid});};
+$('#dmLoan').onclick=async()=>{const f=FR.open;if(!f)return;const pid=await friendPid(f);if(pid)moneyForm('lend',{to:pid});};
+$('#dmDuel').onclick=async()=>{const f=FR.open;if(!f||DU.code){if(DU.code)toast('عندك تحدي مفتوح بالفعل');return;}await duelCreate();if(DU.code){await sendDm('⚔️ أتحداك بالبورصة! رمز التحدي '+DU.code,'duel',DU.code);setTab('comp');setSoc('duel');}};
+$('#dmMore').onclick=()=>{const f=FR.open;if(!f)return;const o=otherOf(f);modal('<h2>خيارات</h2>',[['👤 الملف الشخصي',()=>showPublic(o),true],['🗑️ حذف الصديق',()=>removeFriend(f),true],['رجوع']]);};
+$('#dmCall').onclick=()=>{if(FR.open)startCall(FR.open);};
+
+/* ---------- Voice calls between friends (WebRTC, signalled through Firestore) ---------- */
+let CALL=null,ringI=null,rbI=null;
+function ringtone(on){clearInterval(ringI);ringI=null;if(on){const f=()=>{if(!getAC())return;tone(880,.22,'sine',.16);tone(660,.3,'sine',.16,.28);};f();ringI=setInterval(f,1700);}}
+function ringback(on){clearInterval(rbI);rbI=null;if(on){const f=()=>{if(getAC())tone(425,.9,'sine',.05);};f();rbI=setInterval(f,3000);}}
+async function iceServers(){let extra=[];try{const m=await import('./firebase-config.js');extra=m.turnServers||[];}catch(e){}return [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}].concat(extra);}
+function callUi(st){if(!CALL)return;CALL.state=st;if(st==='live'&&!CALL.t0)CALL.t0=Date.now();const U=$('#callUi');U.hidden=false;U.classList.toggle('ring',st!=='live');
+  $('#callName').textContent=CALL.peer.name;paintAv($('#callAv'),null,CALL.peer.name);getProf(CALL.peer.uid).then(p=>{if(p&&CALL)paintAv($('#callAv'),p.avatar,p.name);});
+  $('#callSt').textContent={calling:'جارٍ الاتصال…',ringing:'📞 مكالمة صوتية واردة',live:'متصل'}[st]||'';$('#callT').textContent='';
+  $('#callAcc').hidden=st!=='ringing';$('#callDec').hidden=st!=='ringing';$('#callEnd').hidden=st==='ringing';$('#callMute').hidden=st!=='live';if(MUS.on)musStop();}
+async function newPc(){const pc=new RTCPeerConnection({iceServers:await iceServers()});CALL.pc=pc;
+  pc.ontrack=e=>{const a=$('#callAudio');a.srcObject=e.streams[0];a.play().catch(()=>{});};
+  pc.onconnectionstatechange=()=>{if(!CALL)return;const st=pc.connectionState;if(st==='connected'){callUi('live');ringback(false);}if(st==='failed'){toast('تعذّر وصل المكالمة. جرّبوا على شبكة Wi-Fi');endCall(true);}};return pc;}
+async function getMic(){if(!navigator.mediaDevices||!window.RTCPeerConnection){toast('متصفحك ما يدعم المكالمات الصوتية');return null;}
+  try{return await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});}catch(e){toast('اسمح للعبة باستخدام الميكروفون حتى تتصل');return null;}}
+async function startCall(f){if(CALL){toast('عندك مكالمة شغالة');return;}if(!C||!FB)return;const o=otherOf(f),name=String(f.names[o]||'تاجر').slice(0,24);
+  const stream=await getMic();if(!stream)return;const {collection,doc,setDoc,addDoc,onSnapshot}=FB.F,ref=doc(collection(FB.db,'calls'));
+  CALL={id:ref.id,role:'caller',stream,unsub:[],peer:{uid:o,name},ref};const pc=await newPc();stream.getTracks().forEach(t=>pc.addTrack(t,stream));
+  pc.onicecandidate=e=>{if(e.candidate)addDoc(collection(FB.db,'calls',ref.id,'cand'),{who:'a',c:JSON.stringify(e.candidate.toJSON()),ts:Date.now()}).catch(()=>{});};
+  const off=await pc.createOffer();await pc.setLocalDescription(off);
+  try{await setDoc(ref,{from:C.uid,fromName:C.name.slice(0,24),to:o,status:'ringing',offer:JSON.stringify({type:off.type,sdp:off.sdp}),answer:'',ts:Date.now()});}catch(e){endCall(false);toast('تعذّر الاتصال');return;}
+  callUi('calling');ringback(true);
+  CALL.unsub.push(onSnapshot(ref,async r=>{if(!CALL||CALL.id!==ref.id)return;const d=r.data();
+    if(!d||d.status==='ended'||d.status==='declined'){toast(d&&d.status==='declined'?name+' ما يقدر يرد الآن':'انتهت المكالمة');endCall(false);return;}
+    if(d.answer&&!pc.currentRemoteDescription){try{await pc.setRemoteDescription(JSON.parse(d.answer));}catch(e){}}}));
+  CALL.unsub.push(onSnapshot(collection(FB.db,'calls',ref.id,'cand'),r=>r.docChanges().forEach(ch=>{const x=ch.doc.data();if(ch.type==='added'&&x.who==='b')pc.addIceCandidate(JSON.parse(x.c)).catch(()=>{});})));
+  CALL.timer=setTimeout(()=>{if(CALL&&CALL.id===ref.id&&CALL.state!=='live'){toast(name+' ما رد');endCall(true);}},35000);}
+function subCalls(){if(!C||!FB)return;const {collection,query,where,onSnapshot,updateDoc}=FB.F;
+  FR.un.push(onSnapshot(query(collection(FB.db,'calls'),where('to','==',C.uid),where('status','==','ringing')),r=>r.docChanges().forEach(ch=>{
+    if(ch.type!=='added')return;const d=ch.doc.data();if(Date.now()-d.ts>40000)return;if(CALL){updateDoc(ch.doc.ref,{status:'declined'}).catch(()=>{});return;}
+    CALL={id:ch.doc.id,role:'callee',unsub:[],peer:{uid:d.from,name:String(d.fromName).slice(0,24)},ref:ch.doc.ref,offer:d.offer};callUi('ringing');ringtone(true);vib([400,200,400,200,400]);
+    const id=ch.doc.id;CALL.unsub.push(onSnapshot(ch.doc.ref,s=>{const x=s.data();if(CALL&&CALL.id===id&&(!x||x.status==='ended')){toast('انتهت المكالمة');endCall(false);}}));
+    CALL.timer=setTimeout(()=>{if(CALL&&CALL.id===id&&CALL.state==='ringing'){endCall(false);toast('📞 فاتتك مكالمة من '+d.fromName);}},40000);}),()=>{}));}
+async function acceptCall(){const c=CALL;if(!c||c.role!=='callee')return;ringtone(false);const stream=await getMic();if(!stream){declineCall();return;}
+  c.stream=stream;const pc=await newPc();stream.getTracks().forEach(t=>pc.addTrack(t,stream));const {collection,addDoc,onSnapshot,updateDoc}=FB.F;
+  pc.onicecandidate=e=>{if(e.candidate)addDoc(collection(FB.db,'calls',c.id,'cand'),{who:'b',c:JSON.stringify(e.candidate.toJSON()),ts:Date.now()}).catch(()=>{});};
+  try{await pc.setRemoteDescription(JSON.parse(c.offer));const ans=await pc.createAnswer();await pc.setLocalDescription(ans);
+    await updateDoc(c.ref,{status:'live',answer:JSON.stringify({type:ans.type,sdp:ans.sdp})});}catch(e){toast('تعذّر الرد على المكالمة');endCall(true);return;}
+  c.unsub.push(onSnapshot(collection(FB.db,'calls',c.id,'cand'),r=>r.docChanges().forEach(ch=>{const x=ch.doc.data();if(ch.type==='added'&&x.who==='a')pc.addIceCandidate(JSON.parse(x.c)).catch(()=>{});})));
+  callUi('live');}
+function declineCall(){const c=CALL;if(!c)return;FB.F.updateDoc(c.ref,{status:'declined'}).catch(()=>{});endCall(false);}
+function endCall(notify){const c=CALL;if(!c)return;CALL=null;clearTimeout(c.timer);ringtone(false);ringback(false);c.unsub.forEach(f=>f());
+  try{c.pc&&c.pc.close();}catch(e){}if(c.stream)c.stream.getTracks().forEach(t=>t.stop());const a=$('#callAudio');a.srcObject=null;$('#callUi').hidden=true;
+  if(notify!==false&&c.ref&&FB)FB.F.updateDoc(c.ref,{status:'ended'}).catch(()=>{});if(MUS.on&&gestured)musStart();}
+$('#callAcc').onclick=acceptCall;$('#callDec').onclick=declineCall;$('#callEnd').onclick=()=>endCall(true);
+$('#callMute').onclick=()=>{if(!CALL||!CALL.stream)return;const t=CALL.stream.getAudioTracks()[0];if(!t)return;t.enabled=!t.enabled;$('#callMute').setAttribute('aria-pressed',String(!t.enabled));toast(t.enabled?'الميكروفون يعمل':'كتمت الميكروفون');};
 
 /* ---------- Tabs & toggles ---------- */
 function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===t));
-  ['shop','ex','mkt','task','comp','me'].forEach(p=>$('#p-'+p).hidden=p!==t);meSig='';citySig=travelSig=tasksSig=mkSig=bankSig=socSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
+  ['shop','ex','mkt','task','fr','comp','me'].forEach(p=>$('#p-'+p).hidden=p!==t);FR.sig='';meSig='';citySig=travelSig=tasksSig=mkSig=bankSig=socSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.p));
 function seg(sel,fn){document.querySelectorAll(sel+' button').forEach(btn=>btn.onclick=()=>{document.querySelectorAll(sel+' button').forEach(x=>x.setAttribute('aria-pressed',x===btn));fn(btn.dataset.q);render(true);});}
 seg('#segShop',v=>qty=v);seg('#segEx',v=>exQty=v);seg('#segBoard',v=>{boardMode=v;subBoard();});
@@ -1321,6 +1548,7 @@ function render(force){
   $('#cash').innerHTML=fmt(S.cash)+' <small>دينار</small>';
   $('#rate').textContent=fmt(incomeRate());$('#worth').textContent=fmt(worth());
   $('#taskBadge').hidden=!taskAlert();
+  renderFriends();if(CALL&&CALL.state==='live'&&CALL.t0)$('#callT').textContent=fmtT((Date.now()-CALL.t0)/1000);
   renderPhase();
   {const need=MON.borr.some(l=>l.status==='offered'||(l.status==='active'&&Date.now()>l.due))||MON.lend.some(l=>l.status==='requested');$('#statsBtn').style.boxShadow=need?'0 0 0 3px var(--bad)':'';}
   $('#mktBadge').hidden=!auLive();
@@ -1328,7 +1556,7 @@ function render(force){
   if(tab==='shop')renderCities();
   if(tab==='task')renderTasks();
   if(tab==='mkt'){renderAuction();renderMarket();}
-  if(tab==='shop')renderBank();
+  if(tab==='shop'){renderBank();renderIns();}
   if(tab==='comp')renderSocial();
   if(tab==='me')renderMe();
   if(tab==='task')renderWheel();
@@ -1385,15 +1613,22 @@ function tick(dt){
 let last=performance.now(),saveAcc=0,seasonAcc=0;
 function frame(now){const dt=Math.min(1,(now-last)/1000);FEE=Math.max(0,.005+(PHS[curPhase().k].fee||0));last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
   if(seasonAcc>5){seasonAcc=0;const before=S.season.id;ensureSeason();if(S.season.id!==before){toast('بدأ موسم جديد! النقاط عادت للصفر');subBoard();subChamp();}}
-  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();histTick();profTick();loanDue();phaseWatch();}
-  staffTick(dt);decTick(dt);duelTick();
+  if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();histTick();profTick();loanDue();phaseWatch();taxCheck();presTick();}
+  staffTick(dt);decTick(dt);duelTick();salTick(dt);spoilTick(dt);
   musMood();
   if(saveAcc>5){saveAcc=0;save();}render();requestAnimationFrame(frame);}
 
 function applyAway(){
-  const away=Math.min(3*3600,(Date.now()-(S.ts||Date.now()))/1000);
-  if(away<=30)return;let g=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)g+=cycRev(i)/cycT(i)*away;});
-  if(g>0){S.cash+=g;S.earned+=g;S.ts=Date.now();modal(`<h2>أهلا بعودتك</h2><p>مديروك اشتغلوا ${fmtT(away)} في غيابك وربحوا</p><div class="big num">${fmt(g)} د.ع</div>`,[['استلم الأرباح']]);}
+  const full=(Date.now()-(S.ts||Date.now()))/1000;if(full<=30)return;const away=Math.min(3*3600,full),lines=[];
+  let g=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)g+=cycRev(i)/cycT(i)*away;});const sal=Math.round(g*SAL_RATE);g-=sal;
+  if(g>0){S.cash+=g;S.earned+=g;lines.push(`<div class="kv"><span>أرباح مديريك (${fmtT(away)})</span><b class="num up">+${fmt(g)}</b></div>`);
+    if(sal>0){lines.push(`<div class="kv"><span>رواتب المديرين</span><b class="num down">−${fmt(sal)}</b></div>`);S.st.sal=(S.st.sal||0)+sal;}}
+  const days=Math.min(5,Math.floor(full/86400)-1);
+  if(days>=1){let lost=0;S.b.forEach(b=>{if(b.n>1){const l=Math.min(b.n-1,Math.max(1,Math.floor(b.n*.03*days)));b.n-=l;lost+=l;}});
+    if(lost){led('neglect',0,'غياب '+ad(days+1)+' أيام: خسرت '+ad(lost)+' فرعًا');lines.push(`<div class="kv"><span>إهمال المحلات (${ad(days+1)} أيام غياب)</span><b class="num down">−${ad(lost)} فرع</b></div>`);}}
+  const sp=spoil(Math.min(full,86400)/3600);if(sp){led('spoil',0,'تلف: '+sp);lines.push(`<div class="kv"><span>بضاعة تلفت في المخزن</span><b class="down">${sp}</b></div>`);}
+  S.ts=Date.now();
+  if(lines.length)modal(`<h2>أهلا بعودتك</h2><p>هذا ما صار بغيابك</p><section class="card2" style="text-align:start">${lines.join('')}</section>`,[['تمام']]);
 }
 
 /* ---------- Account (Google via Firebase), cloud save, competition ---------- */
@@ -1460,10 +1695,10 @@ async function onLogin(u){
     S.owner=C.uid;save();render(true);
     setAcct(C.name);await cloudSave(true);
   }catch(e){setAcct(C.name,'تعذّر الوصول للحساب، يُحفظ محليًا');}
-  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();pushSilent();subMoney();ensurePid();tasksSig='';socSig='';
+  subBoard();subChamp();subMarket();subAuction();subRefs();applyReferral();subChat();subAlly();duelFromLink();pushSilent();subMoney();ensurePid();subFriends();subCalls();presLast=0;presTick();tasksSig='';socSig='';
 }
 function onLogout(){
-  const wasIn=!!C;C=null;PROF=null;renderMeAv();unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();unsubMoney();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
+  const wasIn=!!C;C=null;PROF=null;renderMeAv();unsubMarket();unsubAuction();if(unRefs){unRefs();unRefs=null;}unsubSocial();unsubMoney();endCall(true);unsubFriends();if(unBoard)unBoard();if(unChamp)unChamp();unBoard=unChamp=null;myRank=null;
   if(wasIn){S=fresh();ensureSeason();save();render(true);}
   $('#board').innerHTML='<li class="empty">سجّل دخولك بحساب Google لتظهر في لوحة الصدارة.</li>';
   setAcct(null);
@@ -1974,7 +2209,7 @@ function renderMoney(){const B=$('#monBox');if(!B)return;
 async function deleteAccount(){
   if(!C||!FB)return;const {doc,deleteDoc}=FB.F;const uid=C.uid;cloudBusy=true;
   try{
-    await deleteDoc(doc(FB.db,'saves',uid));await deleteDoc(doc(FB.db,'profiles',uid)).catch(()=>{});if(S.pid)await deleteDoc(doc(FB.db,'ids',S.pid)).catch(()=>{});await deleteDoc(doc(FB.db,'board',uid));
+    await deleteDoc(doc(FB.db,'saves',uid));await deleteDoc(doc(FB.db,'profiles',uid)).catch(()=>{});if(S.pid)await deleteDoc(doc(FB.db,'ids',S.pid)).catch(()=>{});await deleteDoc(doc(FB.db,'presence',uid)).catch(()=>{});await deleteDoc(doc(FB.db,'board',uid));
     await deleteDoc(doc(FB.db,'seasons',String(S.season.id),'players',uid));
     try{await FB.auth.currentUser.delete();}
     catch(e){if(e.code==='auth/requires-recent-login'){await FB.A.reauthenticateWithPopup(FB.auth.currentUser,new FB.A.GoogleAuthProvider());await FB.auth.currentUser.delete();}else throw e;}
@@ -1989,7 +2224,9 @@ function start(){
   ensureSeason();
   applyAway();
   let t0='shop';try{t0=localStorage.getItem('souq-tab')||'shop';}catch(e){}
-  setTab(['shop','ex','mkt','task','comp'].includes(t0)?t0:'shop');renderMeAv();
+  setTab(['shop','ex','mkt','task','fr','comp'].includes(t0)?t0:'shop');renderMeAv();
+  [6000,25000].forEach(ms=>setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem('souq-rules');}catch(e){}if(!seen&&$('#modal').hidden){try{localStorage.setItem('souq-rules','1');}catch(e){}showRules();}},ms));
+  taxCheck();
   checkAch(true);ensureDaily();
   setTimeout(()=>{if(dailyOpen()&&$('#modal').hidden)modal(`<h2>هدية اليوم ${ad(dailyDay())}</h2><p>ادخل كل يوم لتكبر هديتك حتى اليوم السابع.</p><div class="big num">${fmt(dailyReward(dailyDay()))} د.ع</div>`,[['لاحقًا',null,true],['استلم',()=>claimDaily(null)]]);},1800);
   requestAnimationFrame(frame);

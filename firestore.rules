@@ -22,6 +22,8 @@ service cloud.firestore {
     function boardWorth(u) {
       return exists(/databases/$(database)/documents/board/$(u)) ? get(/databases/$(database)/documents/board/$(u)).data.worth : 0;
     }
+    function pair(a, b) { return a < b ? a + '_' + b : b + '_' + a; }
+    function otherOf(m) { return m[0] == request.auth.uid ? m[1] : m[0]; }
     function dueOk(d) { return request.resource.data.due >= request.time.toMillis() + d - 120000 && request.resource.data.due <= request.time.toMillis() + d + 120000; }
 
     match /board/{uid} {
@@ -141,6 +143,87 @@ service cloud.firestore {
       allow delete: if request.auth != null && (
           (request.auth.uid == resource.data.lender && resource.data.status in ['offered', 'requested', 'repaid', 'declined'])
        || (request.auth.uid == resource.data.borrower && resource.data.status == 'requested'));
+    }
+
+    // Friend requests: id is "<from>_<to>".
+    match /friendReqs/{rid} {
+      allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'ts'])
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string && request.resource.data.to != request.auth.uid
+        && rid == request.resource.data.from + '_' + request.resource.data.to
+        && request.resource.data.fromName is string && request.resource.data.fromName.size() <= 24
+        && request.resource.data.toName is string && request.resource.data.toName.size() <= 24
+        && fresh(request.resource.data.ts);
+      allow delete: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+
+    // A friendship exists only after the other player sent a request that this player accepts.
+    match /friends/{fid} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.members;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['members', 'names', 'ts', 'last', 'lastTs', 'lastBy'])
+        && request.resource.data.members is list && request.resource.data.members.size() == 2
+        && request.auth.uid in request.resource.data.members
+        && fid == pair(request.resource.data.members[0], request.resource.data.members[1])
+        && exists(/databases/$(database)/documents/friendReqs/$(otherOf(request.resource.data.members) + '_' + request.auth.uid))
+        && request.resource.data.last == '' && request.resource.data.lastBy == '' && request.resource.data.lastTs == 0;
+      allow update: if request.auth != null && request.auth.uid in resource.data.members
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['last', 'lastTs', 'lastBy'])
+        && request.resource.data.lastBy == request.auth.uid
+        && request.resource.data.last is string && request.resource.data.last.size() <= 80;
+      allow delete: if request.auth != null && request.auth.uid in resource.data.members;
+    }
+
+    // Private messages, readable only by the two friends.
+    match /dms/{fid}/msgs/{mid} {
+      function isMember() { return request.auth != null && request.auth.uid in get(/databases/$(database)/documents/friends/$(fid)).data.members; }
+      allow read: if isMember();
+      allow create: if isMember()
+        && request.resource.data.keys().hasOnly(['uid', 'text', 'ts', 'kind', 'ref'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 300
+        && request.resource.data.kind in ['text', 'duel', 'money']
+        && request.resource.data.ref is string && request.resource.data.ref.size() <= 40
+        && fresh(request.resource.data.ts);
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    match /presence/{uid} {
+      allow read: if request.auth != null;
+      allow create, update: if signedIn(uid) && request.resource.data.keys().hasOnly(['ts']) && fresh(request.resource.data.ts);
+      allow delete: if signedIn(uid);
+    }
+
+    // Voice calls between friends (WebRTC signalling).
+    match /calls/{cid} {
+      allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'status', 'offer', 'answer', 'ts'])
+        && request.resource.data.from == request.auth.uid && request.resource.data.to is string
+        && request.resource.data.status == 'ringing'
+        && request.resource.data.offer is string && request.resource.data.offer.size() < 20000
+        && request.resource.data.answer == ''
+        && request.resource.data.fromName is string && request.resource.data.fromName.size() <= 24
+        && fresh(request.resource.data.ts)
+        && exists(/databases/$(database)/documents/friends/$(pair(request.auth.uid, request.resource.data.to)));
+      allow update: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'answer'])
+        && request.resource.data.status in ['ringing', 'live', 'declined', 'ended']
+        && request.resource.data.answer is string && request.resource.data.answer.size() < 20000;
+      allow delete: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      match /cand/{x} {
+        function party() {
+          let c = get(/databases/$(database)/documents/calls/$(cid)).data;
+          return request.auth != null && (c.from == request.auth.uid || c.to == request.auth.uid);
+        }
+        allow read: if party();
+        allow create: if party()
+          && request.resource.data.keys().hasOnly(['who', 'c', 'ts'])
+          && request.resource.data.who in ['a', 'b']
+          && request.resource.data.c is string && request.resource.data.c.size() < 3000;
+      }
     }
 
     match /market/{id} {
