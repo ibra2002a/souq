@@ -1,12 +1,12 @@
 name: Scheduled notifications
 
-# يرسل إشعارات OneSignal المجانية: قبل كل مزاد، وتذكير الهدية اليومية.
+# يرسل إشعارات OneSignal المجانية: تذكير الهدية اليومية، وبطولة اللودو الليلية ونتائجها.
 # يحتاج سرًّا واحدًا في GitHub: ONESIGNAL_REST_KEY. رقم التطبيق ليس سريًا ومكتوب هنا.
 on:
   schedule:
-    - cron: '50 2-23/3 * * *'   # 10 minutes before each auction (auctions start every 3 hours, UTC)
-    - cron: '0 7 * * *'         # 10:00 Baghdad, morning golden hours
-    - cron: '0 17 * * *'        # 20:00 Baghdad, evening golden hours + daily gift
+    - cron: '0 9 * * *'         # 12:00 Baghdad, daily gift reminder
+    - cron: '50 17 * * *'       # 20:50 Baghdad, ludo tournament starts in 10 minutes
+    - cron: '5 20 * * *'        # 23:05 Baghdad, tournament results
   workflow_dispatch:
     inputs:
       title:
@@ -29,16 +29,14 @@ jobs:
           IN_BODY: ${{ github.event.inputs.body }}
         run: |
           if [ -z "$REST_KEY" ]; then echo "::warning::The ONESIGNAL_REST_KEY secret is not set yet."; exit 0; fi
-          ITEMS=("فندق تراثي في أربيل" "حصة في ميناء أم قصر" "مخبز شهير في الكرادة" "دكان قديم في الشورجة" "مولّدة أهلية كبيرة" "خان تاريخي في الموصل")
           if [ -n "$IN_TITLE" ]; then
             TITLE="$IN_TITLE"; BODY="$IN_BODY"
-          elif [ "$EVENT_CRON" = "0 7 * * *" ]; then
-            TITLE="☀️ بدأت ساعات الذروة"; BODY="دخل محلاتك ×٢ حتى الساعة ١٢ ظهرًا، وعمولة البورصة شبه معدومة. لا تفوّتها!"
-          elif [ "$EVENT_CRON" = "0 17 * * *" ]; then
-            TITLE="☀️ ذروة المساء بدأت 🎁"; BODY="دخل محلاتك ×٢ حتى الساعة ١١ ليلًا، وهديتك اليومية تنتظرك."
+          elif [ "$EVENT_CRON" = "50 17 * * *" ]; then
+            TITLE="🏆 بطولة اللودو تبدأ بعد ١٠ دقائق"; BODY="من الساعة ٩ لحد ١١ بالليل. كل فوز يرفعك بالترتيب، والأول ياخذ لقب ملك اللودو و٥٠ مليون!"
+          elif [ "$EVENT_CRON" = "5 20 * * *" ]; then
+            TITLE="👑 انتهت بطولة الليلة"; BODY="ادخل وشوف منو صار ملك اللودو، واستلم جائزتك إذا كنت من الثلاثة الأوائل."
           else
-            SLOT=$(( ( $(date +%s) + 1200 ) / 10800 )); ITEM="${ITEMS[$(( SLOT % 6 ))]}"
-            TITLE="المزاد المباشر يبدأ بعد دقائق 🔨"; BODY="${ITEM} معروض للمزايدة لمدة ١٥ دقيقة. جهّز فلوسك!"
+            TITLE="🎁 هديتك اليومية تنتظرك"; BODY="ادخل استلمها، ولف عجلة الحظ، والعب لودو ودومينو وطاولي ويا أصدقائك."
           fi
           jq -n --arg app "$APP_ID" --arg t "$TITLE" --arg b "$BODY" \
             '{app_id:$app, target_channel:"push", included_segments:["Total Subscriptions"], headings:{en:$t, ar:$t}, contents:{en:$b, ar:$b}, url:"https://ibra2002a.github.io/souq/"}' > msg.json

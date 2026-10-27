@@ -32,6 +32,13 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
+.tour{border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:radial-gradient(120% 100% at 0 0,rgba(224,169,59,.16),transparent 60%),var(--stall);display:flex;flex-direction:column;gap:8px}
+.tour.live{border-color:var(--brass);box-shadow:0 0 0 2px rgba(224,169,59,.25),0 0 24px rgba(224,169,59,.2)}
+.tour-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.tour-l li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;font-size:13.5px;background:#ffffff08;border-radius:9px;padding:6px 8px}
+.tour-l li.me{outline:1px solid var(--brass)} .tour-l b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tour-king{font-size:13.5px;background:#e0a93b1f;border:1px solid #e0a93b55;border-radius:10px;padding:8px 10px}
+
 .tgui{gap:10px}
 .tg-pl{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .tg-pl .lu-cp{flex:none}
@@ -39,7 +46,7 @@
 .tg-board{display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:center;height:100%}
 .tg-act{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;min-height:70px}
 .mini-dom{display:inline-flex;flex-direction:column;gap:2px;background:#fffdf6;border-radius:4px;padding:2px;vertical-align:middle;box-shadow:0 1px 3px #0006}.mini-dom i{width:10px;height:10px;border-radius:2px;background:radial-gradient(circle,#111 26%,transparent 30%)}.mini-dom i+i{background:radial-gradient(circle at 30% 30%,#111 18%,transparent 22%),radial-gradient(circle at 70% 70%,#111 18%,transparent 22%);border-top:1px solid #999}
-.g-card .gi .mini-dom{transform:scale(2.6);transform-origin:top right;margin:6px}
+.g-card .gi .mini-dom{transform:scale(2.2);transform-origin:top left;margin:2px}
 .dom-table{background:radial-gradient(120% 120% at 50% 40%,#2f7a52,#123b28);border:6px solid #5a3416;border-radius:18px;padding:12px 8px;box-shadow:inset 0 0 30px #0007,0 10px 26px #0008;display:flex;flex-direction:column;gap:8px}
 .dom-chain{display:flex;flex-wrap:nowrap;gap:3px;overflow-x:auto;align-items:center;direction:ltr;padding:8px 4px;min-height:74px}
 .dom-ends{display:flex;justify-content:space-between;color:#e8ffe9;font-weight:700;font-size:13px;direction:ltr} .dom-ends .note{color:#bfe5c8}
@@ -68,7 +75,7 @@
 .g-cards{display:grid;grid-template-columns:1fr;gap:10px}
 .g-card{position:relative;overflow:hidden;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;color:#fff;border:1px solid #ffffff22;box-shadow:0 10px 26px #0006}
 .g-card.gl-ludo{background:radial-gradient(120% 120% at 100% 0,#3e63dd,#1b2a6b 70%)} .g-card.gl-dom{background:radial-gradient(120% 120% at 100% 0,#2f8f5f,#123b28 70%)} .g-card.gl-tawla{background:radial-gradient(120% 120% at 100% 0,#a0612b,#4a2a10 70%)}
-.g-card h3{margin:0;font-family:var(--display);font-size:22px} .g-card p{margin:0;font-size:13px;opacity:.85}
+.g-card h3{margin:0;font-family:var(--display);font-size:22px} .g-card p{margin:0;font-size:13px;opacity:.85;max-width:72%}
 .g-card .gi{position:absolute;inset-inline-end:14px;top:10px;font-size:58px;opacity:.9;filter:drop-shadow(0 6px 10px #0006)}
 .g-card .gb{display:flex;gap:8px;margin-top:4px} .g-card .gb button{flex:1;padding:11px;border-radius:12px;font-weight:700}
 .g-card .gb .alt{background:#ffffff1f;color:#fff;border:1px solid #ffffff33}
@@ -767,6 +774,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 
   <section class="pane" id="p-games" role="tabpanel">
     <section class="gh" id="gHome"></section>
+    <div id="gTour"></div>
     <div class="g-cards" id="gCards"></div>
     <section class="daily2" id="gDaily"></section>
     <div id="gWheelSlot"></div>
@@ -2774,7 +2782,7 @@ function ludoAuto(){const g=LU.g;if(!g||g.status!=='play'||LU.busy||Date.now()-(
   const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d).sort((a,b)=>b.to-a.to);ludoCommit(g,g.turn,d,(d===6&&(g.six||0)>=2)?null:mv[0]||null);}
 function ludoEnd(g){const st=g.stake||0,pot=st*g.uids.length,win=g.winner===C.uid,wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'لاعب').slice(0,24);
   if(g.uids.includes(C.uid))gxAward('ludo',win,g.uids.some(isBot),g.id);
-  if(win){sfx.win();confetti();bump(g.uids.some(isBot)?'botWins':'ludoHuman');toast('🏆 فزت باللودو!'+(pot?' تقبض '+fmt(pot):''));bump('ludoWins');if(pot>=1e8)news('ludo',myN()+' يفوز بلودو وقبض '+fmt(pot),pot);}
+  if(win){tourWin(g.uids.some(isBot));sfx.win();confetti();bump(g.uids.some(isBot)?'botWins':'ludoHuman');toast('🏆 فزت باللودو!'+(pot?' تقبض '+fmt(pot):''));bump('ludoWins');if(pot>=1e8)news('ludo',myN()+' يفوز بلودو وقبض '+fmt(pot),pot);}
   else if(g.uids.includes(C.uid))toast('🎲 '+wn+' فاز باللودو');ludoSettle(g);}
 async function ludoSettle(g){const h=S.ludoHeld[g.id];if(!h)return;
   if(g.status==='cancel'||!g.uids.includes(C.uid)||g.winner===C.uid){delete S.ludoHeld[g.id];const bots=g.winner===C.uid?g.uids.filter(isBot).length*(g.stake||0):0;S.cash+=h+bots;led('ludo',h+bots,g.winner===C.uid?(bots?'فوز لودو (رهانك + رهانات البوتات)':'استرجاع رهانك بعد الفوز'):'استرجاع رهان لودو');save();return;}
@@ -2917,6 +2925,29 @@ function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;con
 document.querySelectorAll('#luReact button').forEach(b=>b.onclick=()=>{if(!RMS.id)return;const now=Date.now();if(now-(LU.reT||0)<1500)return;LU.reT=now;roomMsg(b.textContent,'msg');luFloat({txt:b.textContent,name:myN()});});
 $('#luClose').onclick=closeLudo;$('#luNar').setAttribute('aria-pressed',NAR.on);$('#luNar').onclick=()=>{NAR.on=!NAR.on;try{localStorage.setItem('souq-nar',NAR.on?'1':'0');}catch(e){}$('#luNar').setAttribute('aria-pressed',NAR.on);if(NAR.on){narUnlock();say('المعلّق رجع وياكم!',{force:1});}else{try{speechSynthesis.cancel();}catch(e){}$('#luSay').hidden=true;}};document.querySelector('#ludoUi').addEventListener('pointerdown',narUnlock);$('#rmLudoBtn').onclick=()=>gamePicker();
 
+/* ---------- Nightly ludo tournament: 21:00–23:00 Baghdad; wins count, top 3 paid by the house ---------- */
+const TOUR_S=21,TOUR_E=23,TPRIZE=[5e7,2e7,1e7];
+const bgdH=(t=Date.now())=>((t+BGD)%864e5)/36e5;
+const tourDay=(t=Date.now())=>todayStr(t);
+const tourLive=()=>{const h=bgdH();return h>=TOUR_S&&h<TOUR_E;};
+let TR={rows:[],un:null,day:'',sig:'',prev:null,prevDay:''};
+function subTour(){if(!C||!FB)return;const d=tourDay();if(TR.un&&TR.day===d)return;if(TR.un)TR.un();TR.day=d;const {collection,query,orderBy,limit,onSnapshot}=FB.F;
+  TR.un=onSnapshot(query(collection(FB.db,'tour',d,'players'),orderBy('pts','desc'),limit(10)),s=>{TR.rows=s.docs.map(x=>({id:x.id,...x.data()}));TR.sig='';GM.sig='';},()=>{});}
+async function tourPrev(){if(!C||!FB)return;const y=todayStr(Date.now()-864e5),d=bgdH()>=TOUR_E?tourDay():y;if(TR.prevDay===d)return;TR.prevDay=d;const {collection,query,orderBy,limit,getDocs}=FB.F;
+  try{const s=await getDocs(query(collection(FB.db,'tour',d,'players'),orderBy('pts','desc'),limit(3)));TR.prev={day:d,rows:s.docs.map(x=>({id:x.id,...x.data()}))};GM.sig='';tourClaim();}catch(e){}}
+function tourClaim(){const P=TR.prev;if(!P||!C)return;S.tourPaid=S.tourPaid||{};if(S.tourPaid[P.day])return;const i=P.rows.findIndex(r=>r.id===C.uid);if(i<0||!(P.rows[i].pts>0))return;
+  S.tourPaid[P.day]=1;const v=TPRIZE[i];S.cash+=v;led('gift',v,'جائزة بطولة اللودو · المركز '+ad(i+1));save();cloudSave(true);
+  setTimeout(()=>{sfx.win();confetti();modal(`<h2>${i===0?'👑 ملك اللودو!':'🏆 مبروك!'}</h2><p>خلصت ببطولة الليلة بالمركز <b>${ad(i+1)}</b>${i===0?' وصرت ملك اللودو':''}.</p><p class="num">الجائزة: <b>${fmt(v)}</b> دينار</p>`,[['يا سلام!']]);
+    if(i===0)news('rank',myN()+' صار ملك اللودو لهالليلة',v);},1200);}
+async function tourWin(bots){if(!tourLive()||!C||!FB)return;const add=bots?1:3,d=tourDay(),{doc,getDoc,setDoc}=FB.F,ref=doc(FB.db,'tour',d,'players',C.uid);
+  try{const r=await getDoc(ref),pts=(r.exists()?r.data().pts:0)+add;await setDoc(ref,{name:myN(),pts,ts:Date.now()});toast(`🏆 +${ad(add)} نقطة بالبطولة`);}catch(e){}}
+function tourCard(){const h=bgdH(),live=tourLive(),now=Date.now();let html;
+  const toStart=((TOUR_S-h+24)%24)*36e5,toEnd=(TOUR_E-h)*36e5;
+  const list=rows=>rows.length?'<ol class="tour-l">'+rows.slice(0,5).map((r,i)=>`<li class="${C&&r.id===C.uid?'me':''}"><span>${i<3?['👑','🥈','🥉'][i]:ad(i+1)}</span><b>${eh(String(r.name||'لاعب').slice(0,20))}</b><span class="num">${ad(r.pts)} نقطة</span></li>`).join('')+'</ol>':'<p class="note">ماكو نقاط بعد. أول فوز يتصدّر!</p>';
+  if(live)html=`<div class="sec-h"><h2>🏆 بطولة اللودو · مباشر</h2><span class="sub num">تخلص بعد ${fmtDur(toEnd/1000)}</span></div><p class="note">كل فوز على لاعبين = ٣ نقاط، وعلى بوتات = نقطة. الجوائز: ٥٠ مليون، ٢٠ مليون، ١٠ ملايين.</p>${list(TR.rows)}<button class="buy wide" id="tourGo">العب لودو هسه</button>`;
+  else{const P=TR.prev,king=P&&P.rows[0];html=`<div class="sec-h"><h2>🏆 بطولة اللودو الليلية</h2><span class="sub num">تبدأ بعد ${fmtDur(toStart/1000)}</span></div><p class="note">كل ليلة من ٩ لحد ١١. الأول ياخذ لقب «ملك اللودو» و٥٠ مليون.</p>${king?`<div class="tour-king">👑 ملك اللودو آخر بطولة: <b>${eh(String(king.name||'').slice(0,20))}</b> · ${ad(king.pts)} نقطة</div>`:''}`;}
+  return `<section class="tour${live?' live':''}">${html}</section>`;}
+
 /* ---------- Games hub: levels, XP leaderboard, quick play, daily gift ---------- */
 const LVL=[['🥉','برونزي',0,1e6],['🥈','فضي',300,1e7],['🥇','ذهبي',1000,1e8],['💎','ماسي',3000,1e8],['👑','أسطوري',8000,1e8]];
 const gx=()=>S.gx||(S.gx={xp:0,w:0,p:0,seen:[],dirty:0});
@@ -2930,7 +2961,7 @@ function gxAward(type,win,bots,gid){const G=gx();if(gid){if(G.seen.includes(gid)
   save();gbSync();GM.sig='';}
 async function gbSync(){const G=gx();if(!C||!FB||!G.dirty)return;const {doc,setDoc}=FB.F;
   try{await setDoc(doc(FB.db,'gboard',C.uid),{name:myN(),xp:G.xp,w:G.w,p:G.p,ts:Date.now()});G.dirty=0;save();}catch(e){}}
-function gTick(){gbSync();if(C&&FB&&!GM.un)subTop();}
+function gTick(){gbSync();if(C&&FB&&!GM.un)subTop();subTour();tourPrev();}
 function subTop(){if(!C||!FB)return;if(GM.un)GM.un();const {collection,query,orderBy,limit,onSnapshot}=FB.F;
   GM.un=onSnapshot(query(collection(FB.db,'gboard'),orderBy('xp','desc'),limit(30)),s=>{GM.rows=s.docs.map(d=>({id:d.id,...d.data()}));GM.tsig='';if(tab==='top')renderTop();},()=>{});}
 function renderTop(){if(C&&FB&&!GM.un)subTop();const ol=$('#gBoard'),G=gx(),sig=JSON.stringify([GM.rows.map(r=>[r.id,r.xp]),G.xp,!!C]);if(sig===GM.tsig)return;GM.tsig=sig;
@@ -2945,7 +2976,8 @@ function renderTop(){if(C&&FB&&!GM.un)subTop();const ol=$('#gBoard'),G=gx(),sig=
 function renderLvl(){const G=gx(),k=lvlOf(G.xp),L=LVL[k],nx=LVL[k+1],pct=nx?Math.round((G.xp-L[2])/(nx[2]-L[2])*100):100,sig=k+'|'+pct;if(sig===GM.lsig)return;GM.lsig=sig;
   $('#lvlChip').innerHTML=`<span>${L[0]}</span><b>${L[1]}</b><span class="lb"><i style="width:${pct}%"></i></span><small class="num">${fmt(G.xp)}</small>`;}
 $('#lvlChip').onclick=()=>setTab('top');
-function renderGames(){const G=gx(),k=lvlOf(G.xp),sig=JSON.stringify([!!C,G.xp,G.w,G.p,dailyOpen(),Math.floor(S.cash),RMS.id]);if(sig===GM.sig)return;GM.sig=sig;
+function renderGames(){const G=gx(),k=lvlOf(G.xp),sig=JSON.stringify([!!C,G.xp,G.w,G.p,dailyOpen(),Math.floor(S.cash),RMS.id,TR.rows.map(r=>[r.id,r.pts]),Math.floor(Date.now()/6e4),TR.prev&&TR.prev.day]);if(sig===GM.sig)return;GM.sig=sig;
+  $('#gTour').innerHTML=tourCard();{const tg=$('#tourGo');if(tg)tg.onclick=()=>quickPlay('ludo');}
   $('#gHome').innerHTML=`<span class="big">${LVL[k][0]}</span><div><b>${C?eh(myN()):'هلا بيك!'}</b><span>${LVL[k][1]} · ${ad(G.w)} فوز من ${ad(G.p)} لعبة</span><span class="num">رصيدك ${fmt(S.cash)} دينار</span></div>`;
   $('#gCards').innerHTML=`
    <div class="g-card gl-ludo"><span class="gi">🎲</span><h3>لودو</h3><p>٢ إلى ٤ لاعبين، بوتات، ومعلّق صوتي يحجي وياك.</p><div class="gb"><button class="buy" id="qLudo">العب الآن</button><button class="alt" id="rLudo">العب بسهرة</button></div></div>

@@ -695,5 +695,22 @@ service cloud.firestore {
         && request.resource.data.ts > resource.data.ts + 30000
         && fresh(request.resource.data.ts);
     }
+
+    match /tour/{day}/players/{uid} {
+      function tourOpen() { return (request.time.toMillis() + 10800000) % 86400000 >= 75600000 && (request.time.toMillis() + 10800000) % 86400000 < 82800000; }
+      allow read: if request.auth != null;
+      allow create: if signedIn(uid) && tourOpen()
+        && request.resource.data.keys().hasOnly(['name', 'pts', 'ts'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.pts is int && request.resource.data.pts >= 1 && request.resource.data.pts <= 3
+        && fresh(request.resource.data.ts);
+      allow update: if signedIn(uid) && tourOpen()
+        && request.resource.data.keys().hasOnly(['name', 'pts', 'ts'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.pts is int && request.resource.data.pts > resource.data.pts
+        && request.resource.data.pts <= resource.data.pts + 3
+        && request.resource.data.ts > resource.data.ts + 60000
+        && fresh(request.resource.data.ts);
+    }
   }
 }
