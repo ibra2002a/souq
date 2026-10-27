@@ -489,6 +489,18 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 .rules h3:first-child{margin-top:0}
 .rules p{color:var(--ink);font-size:13.5px;line-height:1.7;margin:0}
 @media (prefers-reduced-motion:reduce){.call.ring .av{animation:none}}
+.mgr-chip.off{color:var(--muted);border-color:var(--line)}
+.team{display:flex;flex-direction:column;gap:8px;text-align:start;max-height:60vh;overflow-y:auto}
+.tm-row{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.tm-row.on{border-color:var(--good);background:rgba(95,207,143,.06)}
+.tm-row.empty{border-style:dashed}
+.tm-row>div:first-child{display:flex;flex-direction:column;gap:2px}
+.tm-row b{font-size:15px}
+.tm-row small{font-size:12px;color:var(--muted)}
+.tm-b{display:flex;gap:6px;flex-wrap:wrap}
+.tm-b .fr-btn{padding:6px 10px;font-size:12px}
+.fr-btn.red{color:var(--bad);border-color:rgba(239,111,94,.5)}
+.stars{color:var(--brass);font-size:12px;letter-spacing:1px}
 @media (prefers-reduced-motion:reduce){.run.can,.prog i.fast{animation:none}.float,.pop{animation:none}.badge.live,.auction.hot{animation:none}}
 </style>
 </head>
@@ -814,7 +826,8 @@ function fresh(){return{cash:0,earned:0,ts:Date.now(),b:DEF.map((d,i)=>({n:i===0
   cities:['bgd'],city:'bgd',travelAt:0,daily:{last:'',streak:0},dm:null,ach:{},st:{},rare:[],esc:null,rank:0,loan:null,boost:null,duels:{},led:[],hist:[],tr:{w:0,l:0,best:0,worst:0,vol:0},title:'',wheel:'',phone:'',joined:Date.now(),pid:'',lateLoans:0,tax:'',ins:0};}
 function fix(s){if(!s.h)s.h={};if(!isFinite(s.real))s.real=0;if(!Array.isArray(s.cities))s.cities=['bgd'];if(!s.city||!s.cities.includes(s.city))s.city='bgd';
   if(!s.daily)s.daily={last:'',streak:0};if(!s.ach)s.ach={};if(!s.st)s.st={};if(!isFinite(s.travelAt))s.travelAt=0;if(!Array.isArray(s.rare))s.rare=[];if(s.esc===undefined)s.esc=null;if(!isFinite(s.rank))s.rank=0;if(s.loan===undefined)s.loan=null;if(s.boost===undefined)s.boost=null;if(!s.duels)s.duels={};if(!Array.isArray(s.led))s.led=[];if(!Array.isArray(s.hist))s.hist=[];if(!s.tr)s.tr={w:0,l:0,best:0,worst:0,vol:0};if(typeof s.title!=='string')s.title='';if(typeof s.wheel!=='string')s.wheel='';if(typeof s.phone!=='string')s.phone='';if(typeof s.pid!=='string')s.pid='';if(typeof s.tax!=='string')s.tax='';if(!isFinite(s.ins))s.ins=0;if(!isFinite(s.joined))s.joined=s.ts||Date.now();
-  s.b.forEach(b=>{if(b.mgr&&!b.staff)b.staff={name:'مدير قديم',t:'steady'};});return s;}
+  s.b.forEach(b=>{if(!Array.isArray(b.team)){b.team=[];if(b.mgr)b.team.push({id:Math.random().toString(36).slice(2,8),name:(b.staff&&b.staff.name)||'مدير قديم',t:(b.staff&&TRAITS[b.staff.t])?b.staff.t:'steady',slot:curSlot(),hired:Date.now(),paid:0,xp:0,susp:false,cause:'',loyal:0});}delete b.staff;});
+  if(!isFinite(s.strike))s.strike=0;if(!s.fires)s.fires={d:'',n:0};return s;}
 function load(){try{const j=JSON.parse(localStorage.getItem('souq-save')||'null');if(valid(j))return fix(j);}catch(e){}return null;}
 function save(){S.ts=Date.now();try{localStorage.setItem('souq-save',JSON.stringify(S));}catch(e){}}
 function valid(s){return s&&Array.isArray(s.b)&&s.b.length===DEF.length&&isFinite(s.cash)&&isFinite(s.earned);}
@@ -822,7 +835,7 @@ function valid(s){return s&&Array.isArray(s.b)&&s.b.length===DEF.length&&isFinit
 const speedMult=b=>{let m=1;for(const x of MILES)if(b.n>=x)m*=2;return m;};
 const nextMile=b=>MILES.find(x=>b.n<x);
 function evMult(d){if(!ev)return 1;const e=ev.e;if(e.all||e.id===d.id||(e.tag&&d.tags.includes(e.tag)))return e.m;return 1;}
-const staffSp=b=>b.mgr&&b.staff&&TRAITS[b.staff.t]?TRAITS[b.staff.t].sp:1;
+const staffSp=b=>{const m=onDuty(b);return m?(TRAITS[m.t]?TRAITS[m.t].sp:1)*(1+.06*mlvl(m)):1;};
 const cycT=i=>DEF[i].t/speedMult(S.b[i])/staffSp(S.b[i]);
 function cityMult(d){let m=1;S.cities.forEach(id=>{const c=cityById(id);if(c.cost){m*=1.25;if(d.tags.includes(c.tag))m*=1.5;}});
   (S.rare||[]).forEach(k=>{const r=RARE[k];if(!r)return;if(r.all)m*=r.all;else if(d.tags.includes(r.tag))m*=r.m;});
@@ -833,7 +846,7 @@ function maxAff(i){const d=DEF[i],o=S.b[i].n;return Math.max(0,Math.floor(Math.l
 const qtyFor=i=>qty==='max'?Math.max(1,maxAff(i)):+qty;
 function incomeRate(){let r=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)r+=cycRev(i)/cycT(i);});return r;}
 /* Shops are valued at what was paid for them (the money sunk into them is still yours). */
-function shopValue(){let v=0;S.b.forEach((b,i)=>{if(b.n){const d=DEF[i];v+=d.cost*(Math.pow(GROW,b.n)-1)/(GROW-1)+(b.mgr?d.mgr:0);}});
+function shopValue(){let v=0;S.b.forEach((b,i)=>{if(b.n){const d=DEF[i];v+=d.cost*(Math.pow(GROW,b.n)-1)/(GROW-1)+(b.team||[]).length*d.mgr;}});
   S.cities.forEach(id=>v+=cityById(id).cost);return v-DEF[0].cost;}
 function portValue(){let v=0;ASSETS.forEach(a=>{const h=S.h[a.id];if(h&&h.q)v+=h.q*price(a)*(1-FEE);});return v;}
 const worth=()=>S.cash+shopValue()+portValue()+(S.esc?S.esc.amt:0)-(S.loan?S.loan.owe:0);
@@ -851,14 +864,14 @@ DEF.forEach((d,i)=>{
   <div class="acts"><button class="buy"><span class="bq">اشترِ</span><small class="num bc"></small></button><button class="hire"><span>وظّف مديرا</span><small class="num hc"></small></button></div>`;
   list.appendChild(el);
   const q=s=>el.querySelector(s);
-  const c={el,art:q('.art'),staff:q('.staff'),stage:-1,staffK:'',run:q('.run'),cnt:q('.cnt'),chips:q('.chips'),bar:q('.prog i'),rv:q('.rv'),tm:q('.tm'),next:q('.next'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),hire:q('.hire'),hc:q('.hc')};
+  const c={el,hs:q('.hire span'),art:q('.art'),staff:q('.staff'),stage:-1,staffK:'',run:q('.run'),cnt:q('.cnt'),chips:q('.chips'),bar:q('.prog i'),rv:q('.rv'),tm:q('.tm'),next:q('.next'),buy:q('.buy'),bq:q('.bq'),bc:q('.bc'),hire:q('.hire'),hc:q('.hc')};
   c.run.onclick=()=>{const b=S.b[i];if(b.n&&!b.run&&!b.mgr){b.run=true;sfx.tap();bump('taps');}};
   c.buy.onclick=()=>{const k=qtyFor(i),cost=costOf(i,k);if(S.cash>=cost&&k>0){const before=S.b[i].n;S.cash-=cost;S.b[i].n+=k;bump('buys',k);sfx.buy();popEl(c.buy);
     if(before===0)toast(`افتتحت ${d.name}! اضغط الدائرة لتشغيله.`);
     const hit=MILES.filter(x=>before<x&&S.b[i].n>=x);if(hit.length){toast(`${d.name} وصل ${nf.format(hit[hit.length-1])} فرع، السرعة تضاعفت`);sfx.win();confetti();}
     render(true);}};
-  c.hire.onclick=()=>{const b=S.b[i];if(!b.mgr&&b.n)hireModal(i);};
-  c.staff.onclick=()=>{if(S.b[i].mgr)staffModal(i);};
+  c.hire.onclick=()=>{const b=S.b[i];if(b.n)hireModal(i);};
+  c.staff.onclick=()=>teamModal(i);
   cards.push(c);
 });
 
@@ -1059,7 +1072,9 @@ function claimDaily(el){if(!dailyOpen())return;const day=dailyDay(),r=dailyRewar
   sfx.win();confetti();if(el)floatAt(el,'+'+fmt(r));toast(`هدية اليوم ${ad(day)}: ${fmt(r)} دينار`);tasksSig='';render(true);}
 function claimTask(j,el){const m=S.dm&&S.dm.m[j];if(!m||m.done||(S.dm.p[m.k]||0)<m.n)return;m.done=true;S.cash+=m.r;led('task',m.r,'مكافأة مهمة يومية');bump('tasksDone');sfx.win();floatAt(el,'+'+fmt(m.r));tasksSig='';render(true);}
 const ACH=[
-  {id:'mgr',  n:'أول مدير',       d:'وظّف أول مدير',                    ok:()=>S.b.some(b=>b.mgr)},
+  {id:'mgr',  n:'أول مدير',       d:'وظّف أول مدير',                    ok:()=>S.b.some(b=>b.team&&b.team.length)},
+  {id:'team', n:'فريق كامل',      d:'وظّف ٣ مديرين يغطون اليوم كله',     ok:()=>S.b.some(b=>b.team&&b.team.length>=3)},
+  {id:'vet',  n:'موظف خبير',      d:'رقِّ مديرًا إلى ٥ نجوم',             ok:()=>S.b.some(b=>(b.team||[]).some(m=>mlvl(m)>=5))},
   {id:'b100', n:'سلسلة محلات',    d:'امتلك ١٠٠ فرع',                    ok:()=>S.b.reduce((a,b)=>a+b.n,0)>=100},
   {id:'m1',   n:'مليونير',        d:'اربح مليون دينار',                 ok:()=>S.earned>=1e6},
   {id:'b1',   n:'ملياردير',       d:'اربح مليار دينار',                 ok:()=>S.earned>=1e9},
@@ -1136,12 +1151,46 @@ const NAMES=['أبو علي','أم حسين','جاسم','كرار','زهراء',
 const TRAITS={steady:{n:'أمين ومنتظم',d:'سرعة عادية، ما يخون',sp:1,cost:1},fast:{n:'سريع ونشيط',d:'أسرع ٣٠٪، راتبه أغلى',sp:1.3,cost:1.6},
   sly:{n:'شاطر بس يلعب بالحساب',d:'أسرع ٦٠٪، لكن أحيانًا يسرق من الصندوق',sp:1.6,cost:1,steal:true},lazy:{n:'كسول بس رخيص',d:'أبطأ ٢٥٪، بنص السعر',sp:.75,cost:.5}};
 function candidates(){const ks=Object.keys(TRAITS).sort(()=>Math.random()-.5).slice(0,3),names=NAMES.slice().sort(()=>Math.random()-.5);return ks.map((t,i)=>({name:names[i],t}));}
-function hireModal(i,replace){const d=DEF[i],cs=candidates();
-  modal(`<h2>${replace?'استبدل مدير':'وظّف مديرًا'} ${d.name}</h2><p>اختار من المتقدمين:</p><div class="cand">${cs.map((c,k)=>{const T=TRAITS[c.t],cost=d.mgr*T.cost;return `<button data-k="${k}" ${S.cash<cost?'disabled':''}><b>${c.name}</b><em class="num">${fmt(cost)}</em><span>${T.n}: ${T.d}</span></button>`;}).join('')}</div>`,[['إلغاء',null,true]]);
-  $('#mbox').querySelectorAll('.cand button').forEach(b=>b.onclick=()=>{const c=cs[+b.dataset.k],cost=d.mgr*TRAITS[c.t].cost;if(S.cash<cost)return;S.cash-=cost;const bb=S.b[i];bb.mgr=true;bb.run=true;bb.staff=c;$('#modal').hidden=true;sfx.win();toast(c.name+' صار يدير '+d.name);render(true);});}
-function staffModal(i){const b=S.b[i],T=TRAITS[b.staff.t];modal(`<h2>${b.staff.name}</h2><p>مدير ${DEF[i].name} · ${T.n}</p><p>${T.d}</p>`,[['رجوع',null,true],['استبدله',()=>hireModal(i,true)]]);}
+function hireModal(i,pref){const d=DEF[i],b=S.b[i];if(b.team.length>=3){teamModal(i);return;}
+  const free=[0,1,2].filter(k=>!b.team.some(m=>m.slot===k)),k0=curSlot(),pick=free.includes(pref)?pref:free.includes(k0)?k0:free[0],cs=candidates();
+  modal(`<h2>وظّف مديرًا لـ ${d.name}</h2><p>كل مدير يشتغل ساعتين ويرتاح ٤ ساعات. ٣ مديرين يغطون اليوم كامل.</p>
+    <div class="field"><label for="hSlot">الدوام</label><select id="hSlot">${free.map(k=>`<option value="${k}" ${k===pick?'selected':''}>${SLOTN[k]}: ${slotTxt(k)}${k===k0?' · يبدأ الآن':''}</option>`).join('')}</select></div>
+    <p>اختر من المتقدمين:</p><div class="cand">${cs.map((c,j)=>{const T=TRAITS[c.t],cost=d.mgr*T.cost;return `<button data-k="${j}" ${S.cash<cost?'disabled':''}><b>${c.name}</b><em class="num">${fmt(cost)}</em><span>${T.n}: ${T.d}</span></button>`;}).join('')}</div>`,[['إلغاء',null,true]]);
+  $('#mbox').querySelectorAll('.cand button').forEach(el=>el.onclick=()=>{const c=cs[+el.dataset.k],cost=d.mgr*TRAITS[c.t].cost,slot=+$('#hSlot').value;if(S.cash<cost||b.team.some(m=>m.slot===slot))return;
+    S.cash-=cost;b.team.push({id:Math.random().toString(36).slice(2,8),name:c.name,t:c.t,slot,hired:Date.now(),paid:0,xp:0,susp:false,cause:'',loyal:0});b.run=true;refreshDuty();
+    $('#modal').hidden=true;sfx.win();toast(c.name+' صار مدير '+d.name+' · '+SLOTN[slot]+(slot===curSlot()?' · بدأ الآن':''));render(true);});}
+function teamModal(i){const d=DEF[i],b=S.b[i],k=curSlot(),strike=Date.now()<(S.strike||0);
+  const rows=[0,1,2].map(sl=>{const m=b.team.find(x=>x.slot===sl);
+    if(!m)return `<div class="tm-row empty"><div><b>${SLOTN[sl]} · شاغر</b><small>${slotTxt(sl)}</small></div><div class="tm-b"><button class="fr-btn" data-h="${sl}">➕ وظّف</button></div></div>`;
+    const T=TRAITS[m.t]||TRAITS.steady,lv=mlvl(m),st=strike?'✊ مضرب':m.susp?'⏸ موقوف':sl===k?'🟢 يشتغل الآن':'😴 يستريح';
+    return `<div class="tm-row${sl===k&&!m.susp&&!strike?' on':''}"><div><b>${m.name} <span class="stars">${'★'.repeat(lv)}${'☆'.repeat(5-lv)}</span></b><small>${T.n} · ${st}${m.cause?' · <span style="color:var(--bad)">⚠️ '+m.cause+'</span>':''}${Date.now()<(m.loyal||0)?' · 🎁 مخلص':''}</small>
+      <small>${SLOTN[sl]}: ${slotTxt(sl)}</small><small>خدمته ${fmtDur((Date.now()-m.hired)/1000)} · رواتبه ${fmt(m.paid||0)}</small></div>
+      <div class="tm-b"><button class="fr-btn ghost" data-s="${m.id}">${m.susp?'▶ استئناف':'⏸ إيقاف'}</button><button class="fr-btn ghost" data-b="${m.id}">🎁 مكافأة</button><button class="fr-btn ghost red" data-f="${m.id}">فصل</button></div></div>`;}).join('');
+  modal(`<h2>فريق ${d.name}</h2><p>المحل يشتغل لوحده فقط في دوام مدير. ${strike?'<b style="color:var(--bad)">✊ المديرون مضربون حتى '+hhmm(S.strike)+'</b>':''}</p><div class="team">${rows}</div>`,[['تم']]);
+  const B=$('#mbox');
+  B.querySelectorAll('[data-h]').forEach(el=>el.onclick=()=>hireModal(i,+el.dataset.h));
+  B.querySelectorAll('[data-s]').forEach(el=>el.onclick=()=>{const m=b.team.find(x=>x.id===el.dataset.s);if(!m)return;m.susp=!m.susp;refreshDuty();toast(m.susp?'أوقفت '+m.name+'. ما يشتغل وما ياخذ راتب':'رجع '+m.name+' للشغل');render(true);teamModal(i);});
+  B.querySelectorAll('[data-b]').forEach(el=>el.onclick=()=>{const m=b.team.find(x=>x.id===el.dataset.b);if(m)bonusModal(i,m);});
+  B.querySelectorAll('[data-f]').forEach(el=>el.onclick=()=>fireModal(i,el.dataset.f));}
+function bonusModal(i,m){const amt=Math.max(1e4,Math.round(Math.max(m.paid||0,DEF[i].mgr)*.05));
+  modal(`<h2>🎁 مكافأة ${m.name}</h2><p>تزيد ولاءه فلا يسرق ٢٤ ساعة، ويكسب ساعة خبرة.${m.cause?' وتمسح مخالفته من السجل.':''}</p><div class="big num">${fmt(amt)} د.ع</div>`,
+    [['رجوع',()=>teamModal(i),true],['أعطه المكافأة',()=>{if(S.cash<amt){toast('رصيدك لا يكفي');return;}S.cash-=amt;m.loyal=Date.now()+864e5;m.xp=(m.xp||0)+1;m.cause='';
+      led('bonus',-amt,'مكافأة '+m.name);sfx.win();toast(m.name+' فرحان بالمكافأة 🎁');render(true);teamModal(i);}]]);}
+function fireModal(i,id){const b=S.b[i],m=b.team.find(x=>x.id===id);if(!m)return;const pen=m.cause?0:Math.round((m.paid||0)*.45);
+  modal(`<h2>فصل ${m.name}؟</h2>${m.cause?`<p>عليه مخالفة مسجّلة (${m.cause})، فالفصل بسبب وبدون غرامة.</p>`:(pen?`<p>الفصل بدون سبب يلزمك بدفع <b>ضمان اجتماعي ٤٥٪</b> من مجموع رواتب خدمته.</p><div class="big num">${fmt(pen)} د.ع</div>`:`<p>ما استلم راتبًا بعد، فما عليك ضمان اجتماعي.</p>`)+`<p class="small">انتبه: إذا فصلت ٣ مديرين بدون سبب بنفس اليوم، يضرب كل مديريك ساعة.</p>`}`,
+    [['تراجع',()=>teamModal(i),true],['افصله',()=>{if(S.cash<pen){toast('رصيدك لا يكفي لدفع الضمان الاجتماعي');teamModal(i);return;}
+      S.cash-=pen;b.team=b.team.filter(x=>x.id!==id);if(pen){led('fire',-pen,'ضمان اجتماعي: فصل '+m.name);S.st.ss=(S.st.ss||0)+pen;}else led('fire',0,'فصل '+m.name+' بسبب '+m.cause);
+      sfx.loss();toast('فصلت '+m.name+(pen?' ودفعت '+fmt(pen)+' ضمان اجتماعي':''));
+      if(!m.cause){const d=todayStr();if(S.fires.d!==d)S.fires={d,n:0};S.fires.n++;
+        if(S.fires.n>=3){S.fires.n=0;S.strike=Date.now()+36e5;led('strike',0,'إضراب المديرين ساعة');sfx.alert();vib([200,100,200]);
+          modal('<h2>✊ إضراب العمال!</h2><p>فصلت ٣ مديرين بدون سبب اليوم، فأضرب كل مديريك احتجاجًا. محلاتك تشتغل يدويًا فقط لمدة ساعة.</p>',[['فهمت']]);refreshDuty();render(true);return;}}
+      refreshDuty();render(true);teamModal(i);}]]);}
 let stealAcc=0;
-function staffTick(dt){stealAcc+=dt;if(stealAcc<60)return;stealAcc=0;S.b.forEach((b,i)=>{if(b.mgr&&b.staff&&TRAITS[b.staff.t]&&TRAITS[b.staff.t].steal&&Math.random()<.08&&S.cash>1e4){if(insured()){toast('🛡️ '+b.staff.name+' حاول يسرق من '+DEF[i].name+'، والتأمين كشفه');return;}const st=Math.round(S.cash*.03);S.cash-=st;led('theft',-st,'سرقة من '+b.staff.name);sfx.loss();toast(`${b.staff.name} مدير ${DEF[i].name} لعب بالحساب واختفى ${fmt(st)} دينار!`);}});}
+function staffTick(dt){stealAcc+=dt;if(stealAcc<60)return;stealAcc=0;S.b.forEach((b,i)=>{const m=onDuty(b);
+  if(!m||!TRAITS[m.t]||!TRAITS[m.t].steal||Date.now()<(m.loyal||0)||Math.random()>=.08||S.cash<=1e4)return;
+  m.cause='سرقة من الصندوق';
+  if(insured()){toast('🛡️ '+m.name+' حاول يسرق من '+DEF[i].name+'، والتأمين كشفه. تقدر تفصله بدون غرامة');return;}
+  const st=Math.round(S.cash*.03);S.cash-=st;led('theft',-st,'سرقة من '+m.name);sfx.loss();toast(`${m.name} مدير ${DEF[i].name} لعب بالحساب واختفى ${fmt(st)} دينار! تقدر تفصله بدون غرامة`);});}
 
 /* ---------- Decision events ---------- */
 let decLeft=150+Math.random()*120;
@@ -1211,7 +1260,7 @@ document.querySelectorAll('#segSoc button').forEach(b=>b.onclick=()=>setSoc(b.da
 function renderSocial(){if(socTab==='chat')renderChat();else if(socTab==='ally')renderAlly();else if(socTab==='duel')renderDuel();}
 
 /* ---------- Wallet ledger & stats ---------- */
-const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
+const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],fire:['📄','فصل مدير'],bonus:['🎁','مكافأة مدير'],strike:['✊','إضراب'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
 function led(k,a,n){if(!S||!Array.isArray(S.led))return;S.led.unshift({t:Date.now(),k,a:Math.round(a),n:String(n||'').slice(0,60)});if(S.led.length>80)S.led.length=80;meSig='';}
 function tradeStat(pl,vol){S.tr.vol+=vol;if(pl>0)S.tr.w++;else if(pl<0)S.tr.l++;S.tr.best=Math.max(S.tr.best,pl);S.tr.worst=Math.min(S.tr.worst,pl);}
 function histTick(){const h=S.hist,now=Date.now();if(!h.length||now-h[h.length-1][0]>=5*6e4){h.push([now,Math.round(worth())]);if(h.length>288)h.splice(0,h.length-288);}}
@@ -1368,11 +1417,12 @@ function spoil(hours){const out=[];for(const id in SPOIL){const h=S.h[id];if(!h|
 let spoilAcc=0;function spoilTick(dt){spoilAcc+=dt;if(spoilAcc<600)return;spoilAcc=0;const r=spoil(1/6);if(r){led('spoil',0,'تلف: '+r);toast('🌾 تلفت بضاعة في المخزن: '+r);}}
 let salAcc=0,salMiss=0;
 function salTick(dt){salAcc+=dt;if(salAcc<60)return;salAcc=0;const m=[];let cost=0;
-  S.b.forEach((b,i)=>{if(b.n&&b.mgr){const c=cycRev(i)/cycT(i)*60*SAL_RATE;cost+=c;m.push([i,c]);}});if(!cost)return;
-  if(S.cash>=cost){S.cash-=cost;S.st.sal=(S.st.sal||0)+cost;salMiss=0;return;}
+  S.b.forEach((b,i)=>{const w=onDuty(b);if(b.n&&w){const c=cycRev(i)/cycT(i)*60*SAL_RATE;cost+=c;m.push([i,c,w]);}});if(!cost)return;
+  if(S.cash>=cost){S.cash-=cost;S.st.sal=(S.st.sal||0)+cost;salMiss=0;
+    m.forEach(([i,c,w])=>{w.paid=(w.paid||0)+c;const lv=mlvl(w);w.xp=(w.xp||0)+1/60;if(mlvl(w)>lv){sfx.win();toast('⭐ '+w.name+' ترقّى إلى '+ad(mlvl(w))+' نجوم في '+DEF[i].name+' وصار أسرع');}});return;}
   salMiss++;if(salMiss===1){sfx.alert();toast('⚠️ رصيدك ما يكفي لرواتب المديرين! إذا تكرر بعد دقيقة، يستقيل واحد');return;}
-  salMiss=0;m.sort((a,b)=>b[1]-a[1]);const qi=m[0][0],b=S.b[qi],nm=b.staff?b.staff.name:'المدير';b.mgr=false;b.run=false;b.p=0;b.staff=null;sfx.loss();vib(120);
-  led('quit',0,nm+' استقال من '+DEF[qi].name);modal(`<h2>🚪 ${nm} استقال!</h2><p>ما دفعت رواتب المديرين، فترك ${DEF[qi].name}. صار المحل يحتاج تشغيل يدوي، أو وظّف مديرًا جديدًا.</p>`,[['فهمت']]);render(true);}
+  salMiss=0;m.sort((a,b)=>b[1]-a[1]);const [qi,,w]=m[0],b=S.b[qi];b.team=b.team.filter(x=>x.id!==w.id);b.run=false;b.p=0;refreshDuty();sfx.loss();vib(120);
+  led('quit',0,w.name+' استقال من '+DEF[qi].name);modal(`<h2>🚪 ${w.name} استقال!</h2><p>ما دفعت رواتب المديرين، فترك ${DEF[qi].name}. وظّف مديرًا جديدًا لدوامه.</p>`,[['فهمت']]);render(true);}
 function taxCheck(){const d=todayStr();if(S.tax===d)return;if(!S.tax){S.tax=d;return;}S.tax=d;const t=Math.round(Math.max(0,S.cash-1e6)*.02);
   if(t>0){S.cash-=t;led('tax',-t,'ضريبة السوق اليومية ٢٪');sfx.loss();toast('💸 خُصمت ضريبة السوق اليومية: '+fmt(t)+' دينار');}}
 const insured=()=>Date.now()<(S.ins||0),insCost=()=>Math.max(5e4,Math.round(shopValue()*.01));let insSig='';
@@ -1390,6 +1440,9 @@ function showRules(){modal(`<h2>📜 قوانين السوق</h2><div class="rul
   <h3>🔥 الحرائق والسرقات</h3><p>الحريق ممكن ياكل خمس فروع المحل، والمدير «الشاطر» يسرق ٣٪ من صندوقك أحيانًا. التأمين يحميك منها.</p>
   <h3>⛈️ عواصف السوق</h3><p>مرتين كل يوم بوقت سري، الأسعار تنهار حتى ٢٠٪ وكل صفقة تخسر ٦٪. تُكشف قبل ١٥ دقيقة فقط.</p>
   <h3>🏦 الديون</h3><p>قرض المصرف إذا تأخرت عنه يحجز رصيدك وفروعك مع غرامة. وقرض التاجر المتأخر يُسحب من رصيدك تلقائيًا مع ١٠٪، ويظهر تأخرك في ملفك أمام الجميع.</p>
+  <h3>👔 دوام المديرين</h3><p>كل مدير يشتغل ساعتين ويرتاح ٤ ساعات. اليوم ٣ دوامات، فتحتاج ٣ مديرين للمحل حتى يشتغل ٢٤ ساعة. الراتب يُدفع فقط وقت الدوام.</p>
+  <h3>📄 الفصل والضمان الاجتماعي</h3><p>تقدر توقف المدير (بدون راتب) أو تفصله. الفصل بدون سبب يكلّفك ٤٥٪ من مجموع رواتب خدمته. إذا عليه مخالفة مثل السرقة، تفصله بدون غرامة. وإذا فصلت ٣ مديرين بدون سبب بيوم واحد، يضرب كل مديريك ساعة.</p>
+  <h3>⭐ الخبرة</h3><p>كل ٤ ساعات شغل يكسب المدير نجمة، حتى ٥ نجوم، وكل نجمة تزيد سرعته ٦٪. المكافأة تزيد ولاءه وتمسح مخالفاته.</p>
   <h3>⚖️ اللعب النظيف</h3><p>الغش أو التلاعب بالأرقام يُكشف ويُوقف في لوحة الصدارة. فلوس اللعبة افتراضية ولا تُباع بفلوس حقيقية.</p></div>`,[['فهمت، نلعب!']]);}
 
 /* ---------- Friends, presence, private chat ---------- */
@@ -1525,6 +1578,21 @@ function endCall(notify){const c=CALL;if(!c)return;CALL=null;clearTimeout(c.time
 $('#callAcc').onclick=acceptCall;$('#callDec').onclick=declineCall;$('#callEnd').onclick=()=>endCall(true);
 $('#callMute').onclick=()=>{if(!CALL||!CALL.stream)return;const t=CALL.stream.getAudioTracks()[0];if(!t)return;t.enabled=!t.enabled;$('#callMute').setAttribute('aria-pressed',String(!t.enabled));toast(t.enabled?'الميكروفون يعمل':'كتمت الميكروفون');};
 
+/* ---------- Manager shifts: the day has three 2-hour shifts that repeat every 6 hours (Baghdad time) ---------- */
+const SLOT_MS=72e5,SLOTN=['الدوام الأول','الدوام الثاني','الدوام الثالث'];
+function curSlot(t){t=t||Date.now();return Math.floor(((t+3*36e5)%864e5)/SLOT_MS)%3;}
+const hh2=h=>ad(String(h%24).padStart(2,'0'));
+function slotTxt(k){return [0,6,12,18].map(h=>hh2(h+2*k)+'–'+hh2(h+2*k+2)).join(' · ');}
+const mlvl=m=>Math.min(5,Math.floor((m.xp||0)/4));
+function onDuty(b){if(!b||!b.team||Date.now()<(S.strike||0))return null;const k=curSlot();return b.team.find(m=>!m.susp&&m.slot===k)||null;}
+function refreshDuty(){S.b.forEach(b=>{b.mgr=!!onDuty(b);});}
+function nextDutyIn(b){if(!b.team||!b.team.length)return 0;const t=(Date.now()+3*36e5)%864e5,into=t%SLOT_MS,k=curSlot();
+  for(let d=1;d<=3;d++){const sl=(k+d)%3;if(b.team.some(m=>!m.susp&&m.slot===sl))return SLOT_MS-into+(d-1)*SLOT_MS;}return 0;}
+let dutyT=0,lastSlot=-1,lastStrike=false;
+function dutyTick(){const n=Date.now();if(n-dutyT<1000)return;dutyT=n;refreshDuty();const k=curSlot(),strike=n<(S.strike||0);
+  if(lastSlot>=0&&k!==lastSlot){const empty=S.b.filter(b=>b.n&&b.team.length&&!b.mgr).length;sfx.tap();toast('⏰ تبديل الدوام إلى '+SLOTN[k]+(empty?' · '+ad(empty)+' محلات بدون مدير الآن':' · كل محلاتك مغطّاة'));}
+  if(lastStrike&&!strike)toast('✊ انتهى الإضراب، المديرون رجعوا للشغل');lastSlot=k;lastStrike=strike;}
+
 /* ---------- Tabs & toggles ---------- */
 function setTab(t){tab=t;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===t));
   ['shop','ex','mkt','task','fr','comp','me'].forEach(p=>$('#p-'+p).hidden=p!==t);FR.sig='';meSig='';citySig=travelSig=tasksSig=mkSig=bankSig=socSig='';if(t==='ex')lastStep=-1;try{localStorage.setItem('souq-tab',t);}catch(e){}render(true);}
@@ -1566,15 +1634,19 @@ function render(force){
     const locked=b.n===0;c.el.classList.toggle('locked',locked&&S.cash<d.cost);
     c.run.classList.toggle('can',b.n>0&&!b.run&&!b.mgr);c.cnt.textContent=nf.format(b.n);
     const em=evMult(d);
-    c.chips.innerHTML=(em!==1?`<span class="mult-chip num">×${nf1.format(em)}</span> `:'')+(b.mgr?'<span class="mgr-chip">مدير</span>':'');
+    c.chips.innerHTML=(em!==1?`<span class="mult-chip num">×${nf1.format(em)}</span> `:'')+(b.mgr?'<span class="mgr-chip">🟢 مدير</span>':b.team.length?'<span class="mgr-chip off">😴 بلا مدير</span>':'');
     c.rv.textContent=locked?'مغلق':fmt(d.rev*Math.max(1,b.n)*em);
     c.tm.textContent=locked?fmtT(d.t):fmtT(b.run||b.mgr?T*(1-b.p):T);
     const nm=nextMile(b);c.next.textContent=nm?`عند ${nf.format(nm)} فرع تتضاعف السرعة`:'أقصى سرعة';
     const k=qtyFor(i),cost=costOf(i,k);
     c.bq.textContent=locked?'افتتح المحل':`اشترِ ${nf.format(k)}`;c.bc.textContent=fmt(cost)+' د.ع';c.buy.disabled=S.cash<cost;
-    c.hire.hidden=b.mgr;c.hc.textContent='من '+fmt(d.mgr*.5)+' د.ع';c.hire.disabled=b.n===0||S.cash<d.mgr*.5;
+    c.hire.hidden=b.team.length>=3;c.hs.textContent=b.team.length?'مدير للدوام '+['الأول','الثاني','الثالث'][[0,1,2].find(k=>!b.team.some(m=>m.slot===k))]:'وظّف مديرًا';c.hc.textContent='من '+fmt(d.mgr*.5)+' د.ع';c.hire.disabled=b.n===0||S.cash<d.mgr*.5;
     const stg=shopStage(b.n);if(stg!==c.stage){c.stage=stg;c.art.innerHTML=shopArt(i,stg);}
-    const sk=b.mgr&&b.staff?b.staff.name+b.staff.t:'';if(sk!==c.staffK){c.staffK=sk;c.staff.hidden=!sk;if(sk){const T=TRAITS[b.staff.t];c.staff.innerHTML='المدير: <b></b> · <span class="tr'+(T.steal?' bad':'')+'"></span>';c.staff.querySelector('b').textContent=b.staff.name;c.staff.querySelector('.tr').textContent=T.n;}}});
+    {const w=onDuty(b),strike=Date.now()<(S.strike||0),nx=nextDutyIn(b),sk=b.team.length?[b.team.length,w&&w.id,w&&mlvl(w),strike,Math.floor(nx/6e4)].join():'';
+      if(sk!==c.staffK){c.staffK=sk;c.staff.hidden=!sk;if(sk){c.staff.innerHTML='<span class="tr"></span> <b></b> <span class="sub"></span>';
+        c.staff.querySelector('.tr').textContent='👥 '+ad(b.team.length)+'/٣';
+        c.staff.querySelector('b').textContent=strike?'✊ إضراب':w?'الآن: '+w.name+' '+'★'.repeat(mlvl(w)):'بدون مدير الآن';
+        c.staff.querySelector('.sub').textContent=strike?'حتى '+hhmm(S.strike):w?'':nx?'· يرجع مدير بعد '+fmtDur(nx/1000):'';}}}});
   if(tab==='ex'){
     {const k=curPhase().k,W=$('#exWarn'),msg={storm:'⛈️ عاصفة السوق! الأسعار تنهار وكل صفقة تخسر ٦٪. اشترِ في القاع إذا تجرأت',closed:'🌙 البورصة مغلقة من ٢ إلى ٧ فجرًا. تقدر تشوف الأسعار فقط',spec:'🔥 ساعة المضاربة! تقلبات ×٣ وبدون عمولة',gold:'☀️ ساعات الذروة: عمولة ٠٫٢٪ فقط'}[k];W.hidden=!msg;if(msg){W.className='ex-warn '+k;W.textContent=msg;}}
     drawSparks();renderTravel();let pv=0,un=0;const st=stepNow();
@@ -1611,7 +1683,7 @@ function tick(dt){
   else if(S.earned>0){evNext-=dt;if(evNext<=0){const e=EVENTS[Math.floor(Math.random()*EVENTS.length)];ev={e,left:30};lastStep=-1;sfx.alert();toast('خبر عاجل: '+e.title);}}
 }
 let last=performance.now(),saveAcc=0,seasonAcc=0;
-function frame(now){const dt=Math.min(1,(now-last)/1000);FEE=Math.max(0,.005+(PHS[curPhase().k].fee||0));last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
+function frame(now){const dt=Math.min(1,(now-last)/1000);dutyTick();FEE=Math.max(0,.005+(PHS[curPhase().k].fee||0));last=now;tick(dt);saveAcc+=dt;seasonAcc+=dt;
   if(seasonAcc>5){seasonAcc=0;const before=S.season.id;ensureSeason();if(S.season.id!==before){toast('بدأ موسم جديد! النقاط عادت للصفر');subBoard();subChamp();}}
   if(seasonAcc===0){checkAch(false);ensureDaily();auWatch();rankCheck();loanCheck();histTick();profTick();loanDue();phaseWatch();taxCheck();presTick();}
   staffTick(dt);decTick(dt);duelTick();salTick(dt);spoilTick(dt);
@@ -1620,7 +1692,7 @@ function frame(now){const dt=Math.min(1,(now-last)/1000);FEE=Math.max(0,.005+(PH
 
 function applyAway(){
   const full=(Date.now()-(S.ts||Date.now()))/1000;if(full<=30)return;const away=Math.min(3*3600,full),lines=[];
-  let g=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)g+=cycRev(i)/cycT(i)*away;});const sal=Math.round(g*SAL_RATE);g-=sal;
+  let g=0;S.b.forEach((b,i)=>{const cov=Date.now()<(S.strike||0)?0:new Set((b.team||[]).filter(m=>!m.susp).map(m=>m.slot)).size/3;if(b.n&&cov)g+=cycRev(i)*speedMult(b)/DEF[i].t*away*cov;});const sal=Math.round(g*SAL_RATE);g-=sal;
   if(g>0){S.cash+=g;S.earned+=g;lines.push(`<div class="kv"><span>أرباح مديريك (${fmtT(away)})</span><b class="num up">+${fmt(g)}</b></div>`);
     if(sal>0){lines.push(`<div class="kv"><span>رواتب المديرين</span><b class="num down">−${fmt(sal)}</b></div>`);S.st.sal=(S.st.sal||0)+sal;}}
   const days=Math.min(5,Math.floor(full/86400)-1);
