@@ -86,7 +86,8 @@ service cloud.firestore {
     match /transfers/{id} {
       allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
       allow create: if request.auth != null
-        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'note', 'ts', 'status', 'lock'])
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'note', 'ts', 'status', 'lock', 'cur'])
+        && request.resource.data.get('cur', 'gold') in ['gold', 'gem']
         && request.resource.data.get('lock', true) == true
         && request.resource.data.from == request.auth.uid
         && request.resource.data.to is string && request.resource.data.to != request.auth.uid
@@ -714,6 +715,58 @@ service cloud.firestore {
         && request.resource.data.pts <= resource.data.pts + 3
         && request.resource.data.ts > resource.data.ts + 60000
         && fresh(request.resource.data.ts);
+    }
+
+    function isAdmin() { return request.auth != null && request.auth.token.email in ['alshmria657@gmail.com'] && request.auth.token.email_verified == true; }
+
+    match /topups/{id} {
+      allow read: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'pid', 'gems', 'price', 'method', 'phone', 'ref', 'status', 'ts'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.gems in [100, 550, 1200, 3200, 7000]
+        && request.resource.data.price is int && request.resource.data.price > 0
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.pid is string && request.resource.data.pid.size() <= 12
+        && request.resource.data.method is string && request.resource.data.method.size() <= 30
+        && request.resource.data.phone is string && request.resource.data.phone.size() <= 20
+        && request.resource.data.ref is string && request.resource.data.ref.size() <= 40
+        && fresh(request.resource.data.ts);
+      allow update: if isAdmin() && resource.data.status == 'pending'
+        && changed().hasOnly(['status', 'by', 'at'])
+        && request.resource.data.status in ['approved', 'rejected'];
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid && resource.data.status == 'pending';
+    }
+
+    match /grants/{id} {
+      allow read: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['uid', 'gems', 'gold', 'note', 'ts', 'claimed', 'ref'])
+        && request.resource.data.uid is string && request.resource.data.claimed == false
+        && request.resource.data.gems is int && request.resource.data.gems >= 0 && request.resource.data.gems <= 100000
+        && request.resource.data.gold is int && request.resource.data.gold >= 0 && request.resource.data.gold <= 10000000
+        && request.resource.data.note is string && request.resource.data.note.size() <= 60;
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid
+        && resource.data.claimed == false && request.resource.data.claimed == true && changed().hasOnly(['claimed']);
+    }
+
+    match /payreq/{id} {
+      allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'cur', 'note', 'status', 'ts'])
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string && request.resource.data.to != request.auth.uid
+        && request.resource.data.amt is int && request.resource.data.amt >= 1 && request.resource.data.amt <= 10000000
+        && request.resource.data.cur in ['gold', 'gem'] && request.resource.data.status == 'open'
+        && request.resource.data.fromName is string && request.resource.data.fromName.size() <= 24
+        && request.resource.data.toName is string && request.resource.data.toName.size() <= 24
+        && request.resource.data.note is string && request.resource.data.note.size() <= 60
+        && fresh(request.resource.data.ts);
+      allow update: if request.auth != null && resource.data.status == 'open' && changed().hasOnly(['status'])
+        && ((request.auth.uid == resource.data.to && request.resource.data.status in ['paid', 'declined'])
+         || (request.auth.uid == resource.data.from && request.resource.data.status == 'cancelled'));
+      allow delete: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid) && resource.data.status != 'open';
     }
   }
 }
