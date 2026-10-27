@@ -390,9 +390,11 @@ service cloud.firestore {
         && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 24
         && fresh(request.resource.data.ts);
       allow update: if request.auth != null && (
-          (resource.data.owner == request.auth.uid && changed().hasOnly(['price'])
+          (resource.data.owner == request.auth.uid && changed().hasOnly(['price', 'bld'])
             && request.resource.data.price is int && request.resource.data.price >= 0
-            && request.resource.data.price <= resource.data.gp * 10)
+            && request.resource.data.price <= resource.data.gp * 10
+            && (!changed().hasAny(['bld']) || (request.resource.data.bld is int && request.resource.data.bld >= 1 && request.resource.data.bld <= 3
+                && request.resource.data.bld >= resource.data.get('bld', 0))))
         || (resource.data.owner != request.auth.uid && resource.data.price > 0
             && changed().hasOnly(['owner', 'ownerName', 'price', 'ts', 'pay'])
             && request.resource.data.owner == request.auth.uid
@@ -487,7 +489,7 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(['t', 'k', 'uid', 'name', 'txt', 'amt'])
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.k in ['auc', 'seize', 'duel', 'land', 'landSale', 'landGov', 'ipo', 'share', 'cand', 'pres', 'rank', 'trade', 'strike']
+        && request.resource.data.k in ['auc', 'seize', 'duel', 'land', 'landSale', 'landGov', 'ipo', 'share', 'cand', 'pres', 'rank', 'trade', 'strike', 'build', 'cert']
         && request.resource.data.txt is string && request.resource.data.txt.size() <= 100
         && request.resource.data.name is string && request.resource.data.name.size() <= 24
         && request.resource.data.amt is number && request.resource.data.amt >= 0
