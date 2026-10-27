@@ -86,7 +86,8 @@ service cloud.firestore {
     match /transfers/{id} {
       allow read: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
       allow create: if request.auth != null
-        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'note', 'ts', 'status'])
+        && request.resource.data.keys().hasOnly(['from', 'fromName', 'to', 'toName', 'amt', 'note', 'ts', 'status', 'lock'])
+        && request.resource.data.get('lock', true) == true
         && request.resource.data.from == request.auth.uid
         && request.resource.data.to is string && request.resource.data.to != request.auth.uid
         && request.resource.data.status == 'sent'
@@ -98,7 +99,7 @@ service cloud.firestore {
         && fresh(request.resource.data.ts);
       allow update: if request.auth != null && resource.data.status == 'sent' && changed().hasOnly(['status'])
         && ((request.auth.uid == resource.data.to && request.resource.data.status == 'claimed')
-         || (request.auth.uid == resource.data.from && request.resource.data.status == 'cancelled'));
+         || (request.auth.uid == resource.data.from && request.resource.data.status == 'cancelled' && resource.data.get('lock', false) == false));
       allow delete: if request.auth != null && (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid)
         && resource.data.status in ['claimed', 'cancelled'];
     }
@@ -363,6 +364,136 @@ service cloud.firestore {
       allow update: if request.auth != null && resource.data.by == request.auth.uid
         && resource.data.paid == false && request.resource.data.paid == true
         && changed().hasOnly(['paid']);
+    }
+
+    // ---------- World: lands, companies, elections, news ----------
+    function T(p) { return /databases/$(database)/documents/transfers/$(p); }
+    function paidBy(p, to, amt) {
+      return !exists(T(p)) && existsAfter(T(p))
+        && getAfter(T(p)).data.from == request.auth.uid
+        && getAfter(T(p)).data.to == to
+        && getAfter(T(p)).data.amt == amt
+        && getAfter(T(p)).data.get('lock', false) == true;
+    }
+    function wkNow() { return math.floor((request.time.toMillis() + 10800000 - 345600000) / 604800000); }
+
+    match /lands/{id} {
+      function landBase(c) { return {'bgd': 3000000, 'bsr': 30000000, 'erb': 300000000, 'njf': 3000000000, 'msl': 30000000000}[c]; }
+      function gpOf() { return landBase(id.split('-')[0]) * (3 + int(id.split('-')[1])); }
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && id.matches('^(bgd|bsr|erb|njf|msl)-[1-8]$')
+        && request.resource.data.keys().hasOnly(['owner', 'ownerName', 'gp', 'price', 'ts'])
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.price == 0
+        && request.resource.data.gp == gpOf()
+        && gpOf() <= boardWorth(request.auth.uid)
+        && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 24
+        && fresh(request.resource.data.ts);
+      allow update: if request.auth != null && (
+          (resource.data.owner == request.auth.uid && changed().hasOnly(['price'])
+            && request.resource.data.price is int && request.resource.data.price >= 0
+            && request.resource.data.price <= resource.data.gp * 10)
+        || (resource.data.owner != request.auth.uid && resource.data.price > 0
+            && changed().hasOnly(['owner', 'ownerName', 'price', 'ts', 'pay'])
+            && request.resource.data.owner == request.auth.uid
+            && request.resource.data.price == 0
+            && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 24
+            && fresh(request.resource.data.ts)
+            && paidBy(request.resource.data.pay, resource.data.owner, resource.data.price)));
+      allow delete: if request.auth != null && resource.data.owner == request.auth.uid;
+    }
+
+    match /companies/{cid} {
+      allow read: if request.auth != null;
+      allow create: if signedIn(cid)
+        && request.resource.data.keys().hasOnly(['owner', 'ownerName', 'name', 'price', 'float', 'sold', 'div', 'dps', 'rate', 'ts'])
+        && request.resource.data.owner == cid
+        && request.resource.data.sold == 0 && request.resource.data.dps == 0
+        && request.resource.data.price is int && request.resource.data.price >= 1
+        && request.resource.data.price * 500 <= boardWorth(cid)
+        && request.resource.data.float is int && request.resource.data.float >= 100 && request.resource.data.float <= 490
+        && request.resource.data.div is number && request.resource.data.div >= 10 && request.resource.data.div <= 50
+        && request.resource.data.rate is number && request.resource.data.rate >= 0
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40
+        && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 24;
+      allow update: if request.auth != null && (
+          (request.auth.uid == resource.data.owner
+            && changed().hasOnly(['price', 'div', 'dps', 'rate', 'ts', 'float', 'ownerName', 'name'])
+            && request.resource.data.price is int && request.resource.data.price >= 1
+            && (!changed().hasAny(['price']) || request.resource.data.price * 500 <= boardWorth(request.auth.uid))
+            && request.resource.data.div >= resource.data.div && request.resource.data.div <= 50
+            && request.resource.data.float is int && request.resource.data.float >= resource.data.float && request.resource.data.float <= 490
+            && request.resource.data.dps is number && request.resource.data.dps >= resource.data.dps
+            && (request.resource.data.dps - resource.data.dps) * resource.data.sold <= boardWorth(request.auth.uid)
+            && request.resource.data.rate is number && request.resource.data.rate >= 0
+            && request.resource.data.name is string && request.resource.data.name.size() <= 40
+            && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 24)
+        || (request.auth.uid != resource.data.owner
+            && changed().hasOnly(['sold', 'pay'])
+            && request.resource.data.sold is int && request.resource.data.sold > resource.data.sold
+            && request.resource.data.sold <= resource.data.float
+            && paidBy(request.resource.data.pay, resource.data.owner, (request.resource.data.sold - resource.data.sold) * resource.data.price)
+            && getAfter(/databases/$(database)/documents/companies/$(cid)/holders/$(request.auth.uid)).data.q
+               == (exists(/databases/$(database)/documents/companies/$(cid)/holders/$(request.auth.uid))
+                   ? get(/databases/$(database)/documents/companies/$(cid)/holders/$(request.auth.uid)).data.q : 0)
+                  + (request.resource.data.sold - resource.data.sold)));
+      allow delete: if request.auth != null && request.auth.uid == resource.data.owner && resource.data.sold == 0;
+
+      match /holders/{uid} {
+        function co() { return get(/databases/$(database)/documents/companies/$(cid)).data; }
+        function coA() { return getAfter(/databases/$(database)/documents/companies/$(cid)).data; }
+        allow read: if request.auth != null;
+        allow create: if signedIn(uid)
+          && request.resource.data.keys().hasOnly(['q', 'cd', 'name', 'ts'])
+          && request.resource.data.q is int && request.resource.data.q > 0
+          && request.resource.data.q == coA().sold - co().sold
+          && request.resource.data.cd == coA().dps
+          && request.resource.data.name is string && request.resource.data.name.size() <= 24;
+        allow update: if signedIn(uid) && (
+            (changed().hasOnly(['q', 'cd', 'ts'])
+              && request.resource.data.q is int && request.resource.data.q > resource.data.q
+              && request.resource.data.q - resource.data.q == coA().sold - co().sold
+              && request.resource.data.cd == coA().dps)
+          || (changed().hasOnly(['cd', 'ts'])
+              && request.resource.data.cd is number && request.resource.data.cd > resource.data.cd
+              && request.resource.data.cd <= co().dps));
+      }
+    }
+
+    match /elections/{w}/cands/{uid} {
+      allow read: if request.auth != null;
+      allow create: if signedIn(uid) && int(w) == wkNow()
+        && request.resource.data.keys().hasOnly(['name', 'tax', 'slogan', 'ts'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.tax is number && request.resource.data.tax >= 0 && request.resource.data.tax <= 4
+        && request.resource.data.slogan is string && request.resource.data.slogan.size() <= 60
+        && fresh(request.resource.data.ts)
+        && boardWorth(uid) >= 10000000;
+      allow delete: if signedIn(uid) && int(w) == wkNow();
+    }
+
+    match /elections/{w}/votes/{uid} {
+      allow read: if request.auth != null;
+      allow create: if signedIn(uid) && int(w) == wkNow()
+        && request.resource.data.keys().hasOnly(['c', 'ts'])
+        && request.resource.data.c is string
+        && exists(/databases/$(database)/documents/elections/$(w)/cands/$(request.resource.data.c))
+        && fresh(request.resource.data.ts)
+        && boardWorth(uid) >= 100000;
+    }
+
+    match /news/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['t', 'k', 'uid', 'name', 'txt', 'amt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.k in ['auc', 'seize', 'duel', 'land', 'landSale', 'landGov', 'ipo', 'share', 'cand', 'pres', 'rank', 'trade', 'strike']
+        && request.resource.data.txt is string && request.resource.data.txt.size() <= 100
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24
+        && request.resource.data.amt is number && request.resource.data.amt >= 0
+        && request.resource.data.amt <= boardWorth(request.auth.uid) * 10 + 1000000
+        && fresh(request.resource.data.t);
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
   }
 }
