@@ -1,7 +1,7 @@
 name: Scheduled notifications
 
 # يرسل إشعارات OneSignal المجانية: قبل كل مزاد، وتذكير الهدية اليومية.
-# يحتاج سرّين في GitHub: ONESIGNAL_APP_ID و ONESIGNAL_REST_KEY.
+# يحتاج سرًّا واحدًا في GitHub: ONESIGNAL_REST_KEY. رقم التطبيق ليس سريًا ومكتوب هنا.
 on:
   schedule:
     - cron: '50 2-23/3 * * *'   # 10 minutes before each auction (auctions start every 3 hours, UTC)
@@ -21,13 +21,13 @@ jobs:
     steps:
       - name: Build and send the message
         env:
-          APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
+          APP_ID: 9ddc0f53-bb77-412c-ae36-359412d8beb9
           REST_KEY: ${{ secrets.ONESIGNAL_REST_KEY }}
           EVENT_CRON: ${{ github.event.schedule }}
           IN_TITLE: ${{ github.event.inputs.title }}
           IN_BODY: ${{ github.event.inputs.body }}
         run: |
-          if [ -z "$APP_ID" ] || [ -z "$REST_KEY" ]; then echo "::warning::OneSignal secrets are not set yet."; exit 0; fi
+          if [ -z "$REST_KEY" ]; then echo "::warning::The ONESIGNAL_REST_KEY secret is not set yet."; exit 0; fi
           ITEMS=("فندق تراثي في أربيل" "حصة في ميناء أم قصر" "مخبز شهير في الكرادة" "دكان قديم في الشورجة" "مولّدة أهلية كبيرة" "خان تاريخي في الموصل")
           if [ -n "$IN_TITLE" ]; then
             TITLE="$IN_TITLE"; BODY="$IN_BODY"

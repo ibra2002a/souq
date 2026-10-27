@@ -12,4 +12,4 @@ export const firebaseConfig = {
 
 
 // رقم تطبيق OneSignal للإشعارات المجانية (App ID). من onesignal.com ← Settings ← Keys & IDs.
-export const oneSignalAppId = "YOUR_ONESIGNAL_APP_ID";
+export const oneSignalAppId = "9ddc0f53-bb77-412c-ae36-359412d8beb9";
