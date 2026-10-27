@@ -32,6 +32,12 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
+.lu-say{position:absolute;top:6px;left:50%;transform:translateX(-50%);max-width:92%;background:linear-gradient(135deg,#fff,#f1ead9);color:#2a2116;font-weight:700;font-size:14px;line-height:1.5;padding:7px 14px;border-radius:16px;box-shadow:0 6px 20px #0008;text-align:center;pointer-events:none;z-index:2}
+.lu-say::after{content:"";position:absolute;bottom:-7px;left:50%;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#f1ead9}
+.lu-say.pop{animation:luSay .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes luSay{from{transform:translateX(-50%) scale(.6);opacity:0}}
+#luNar[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+
 .rm-ludo{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
 .lb-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:12px;padding:7px 10px;background:rgba(62,99,221,.14);font-size:13px}
 .lb-row button{padding:6px 14px;border-radius:9px;flex:0 0 auto}
@@ -886,9 +892,9 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
   <div id="rmAudio" hidden></div><div class="gift-fx" id="giftFx"></div>
 </div>
 <div class="ludo" id="ludoUi" hidden role="dialog" aria-label="لودو">
-  <header class="rm-h"><button id="luClose" aria-label="رجوع للسهرة">✕</button><div><b>🎲 لودو</b><span id="luInfo"></span></div><span class="lu-pot num" id="luPot"></span></header>
+  <header class="rm-h"><button id="luClose" aria-label="رجوع للسهرة">✕</button><div><b>🎲 لودو</b><span id="luInfo"></span></div><span class="lu-pot num" id="luPot"></span><button id="luNar" aria-label="المعلّق الصوتي" aria-pressed="true">🎙️</button></header>
   <div class="lu-row" id="luTop"></div>
-  <div class="lu-bw"><svg class="lu-board" id="luBoard" viewBox="-0.2 -0.2 15.4 15.4" role="img" aria-label="لوحة اللودو"></svg><div class="lu-fx" id="luFx"></div><div class="lu-win" id="luWin" hidden></div></div>
+  <div class="lu-bw"><svg class="lu-board" id="luBoard" viewBox="-0.2 -0.2 15.4 15.4" role="img" aria-label="لوحة اللودو"></svg><div class="lu-fx" id="luFx"></div><div class="lu-say" id="luSay" hidden></div><div class="lu-win" id="luWin" hidden></div></div>
   <div class="lu-row" id="luBot"></div>
   <div class="lu-bot"><div class="die3 f1" id="luDie" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="lu-act" id="luAct"></div></div>
   <div class="lu-react" id="luReact"><button>😂</button><button>👏</button><button>🔥</button><button>😡</button><button>😎</button><button>🙏</button></div>
@@ -2681,6 +2687,9 @@ async function joinLudo(g){if(g.stake>S.cash){toast('رصيدك لا يكفي ل
   if(g.stake)modal(`<h2>🎲 تنضم للودو؟</h2><p>الرهان <b class="num">${fmt(g.stake)}</b>. إذا فزت تاخذ رهانات الكل.</p>`,[['انضم',go],['إلغاء',null,1]]);else go();}
 function openLudo(gid){closeLudo();const {doc,onSnapshot}=FB.F;LU.id=gid;LU.sig='';LU.rolled=-1;LU.stKey='';LU.disp=null;LU.animUntil=0;LU.winShown='';$('#luWin').hidden=true;$('#ludoUi').hidden=false;
   LU.gu=onSnapshot(doc(FB.db,'ludo',gid),s=>{if(!s.exists()){closeLudo();return;}const prev=LU.g;LU.g={id:s.id,...s.data()};
+    if(!prev&&LU.g.uids.includes(C.uid))setTimeout(()=>say([`هلا وغلا يا ${nm1()}! نورت اللودو`,`أهلًا بالبطل ${nm1()}! جاهز للتحدي؟`,`هلا بيك يا ${nm1()}، الله يوفقك باللعبة`],{key:'hi'+gid,force:1}),600);
+    if(prev&&LU.g.status!==prev.status&&LU.g.status==='play'&&prev.status==='wait')say(['بدأت اللعبة! الله يوفق الجميع','يلا بدأنا! منو البطل اليوم؟'],{force:1});
+    if(prev)setTimeout(()=>narEvents(prev,LU.g),Math.max(0,LU.animUntil-Date.now()));
     if(prev&&LU.g.seq===prev.seq+1)luAnimate(prev,LU.g);else if(!prev||prev.seq!==LU.g.seq||!LU.disp)LU.disp=(LU.g.pc||[]).slice();
     if(LU.g.status==='done'&&(!prev||prev.status!=='done'))ludoEnd(LU.g);if(LU.g.status==='cancel')ludoSettle(LU.g);renderLudo();},()=>{});
   LU.tick=setInterval(()=>{renderLudo();botTick();ludoAuto();},500);}
@@ -2691,7 +2700,7 @@ async function ludoCancel(){const g=LU.g;if(!g)return;const {doc,updateDoc}=FB.F
 async function ludoCommit(g,seat,d,m){if(LU.busy)return;LU.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'ludo',g.id);
   try{await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return;const x={id:r.id,...r.data()};if(x.seq!==g.seq||x.status!=='play'||x.turn!==seat)return;tx.update(ref,lapply(x,seat,d,m));});}
   catch(e){}LU.busy=false;LU.rolled=-1;}
-function ludoRoll(){const g=LU.g;if(!g||g.status!=='play'||g.uids[g.turn]!==C.uid||LU.rolled===g.seq)return;LU.rolled=g.seq;LU.anim=Date.now();lsfx.dice();LU.sig='';renderLudo();
+function ludoRoll(){const g=LU.g;if(!g||g.status!=='play'||g.uids[g.turn]!==C.uid||LU.rolled===g.seq)return;LU.rolled=g.seq;LU.anim=Date.now();narUnlock();lsfx.dice();LU.sig='';renderLudo();
   setTimeout(()=>{if(!LU.g||LU.g.seq!==g.seq)return;const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d);LU.sig='';renderLudo();
     if(!mv.length||(d===6&&(g.six||0)>=2)){setTimeout(()=>ludoCommit(g,g.turn,d,null),900);}
     else if(mv.length===1||new Set(mv.map(m=>g.pc[g.turn*4+m.j])).size===1)setTimeout(()=>ludoCommit(g,g.turn,d,mv[0]),450);},900);}
@@ -2784,9 +2793,39 @@ function botTick(){const g=LU.g;if(!g||g.status!=='play'||LU.busy||!isBot(g.uids
   if(Date.now()-(g.ts||0)>2*LTO)driver=C.uid;if(driver!==C.uid)return;
   if(Date.now()-(g.ts||0)<1400+(hashStr(g.id+g.seq)%900))return;
   const d=ldie(g.id,g.seq),m=(d===6&&(g.six||0)>=2)?null:botPick(g,g.turn,d);ludoCommit(g,g.turn,d,m);}
+/* --- Arabic voice narrator for ludo (Web Speech API; shows a subtitle bubble too) --- */
+const NAR={on:true,voice:null,unlocked:false,last:0,said:{},q:[]};try{NAR.on=localStorage.getItem('souq-nar')!=='0';}catch(e){}
+function narVoice(){if(!('speechSynthesis' in window))return null;if(NAR.voice)return NAR.voice;const vs=speechSynthesis.getVoices()||[];
+  const ar=vs.filter(v=>/^ar(\b|[-_])/i.test(v.lang||''));NAR.voice=ar.find(v=>/SA|IQ|AE|EG/i.test(v.lang)&&/Majed|Maged|Google|Hamed|Shakir/i.test(v.name))||ar.find(v=>/SA/i.test(v.lang))||ar[0]||null;return NAR.voice;}
+if('speechSynthesis' in window){try{speechSynthesis.onvoiceschanged=()=>{NAR.voice=null;narVoice();};}catch(e){}}
+function narUnlock(){if(NAR.unlocked||!('speechSynthesis' in window))return;NAR.unlocked=true;try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}catch(e){}}
+const narPick=a=>a[Math.floor(Math.random()*a.length)];
+function say(lines,opt){if(!NAR.on)return;const o=opt||{},now=Date.now();if(o.key){if(NAR.said[o.key])return;NAR.said[o.key]=1;}
+  if(!o.force&&now-NAR.last<1800)return;NAR.last=now;const t=Array.isArray(lines)?narPick(lines):lines;
+  const b=$('#luSay');if(b){b.textContent='🎙️ '+t;b.hidden=false;b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');clearTimeout(NAR.bt);NAR.bt=setTimeout(()=>{b.hidden=true;},Math.max(2600,t.length*85));}
+  if(!soundOn||!('speechSynthesis' in window))return;const v=narVoice();if(!v)return;
+  try{if(speechSynthesis.speaking&&!o.queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[🎲🏆🔥💥😂👏😎🙏😡⭐️]/gu,''));u.voice=v;u.lang=v.lang;u.rate=o.rate||1.05;u.pitch=o.pitch||1.05;u.volume=1;speechSynthesis.speak(u);}catch(e){}}
+const nm1=()=>String(myN()).replace(/^🤖\s*/,'').split(' ')[0];
+function narEvents(prev,g){if(!C||!prev||!g)return;const me=g.uids.indexOf(C.uid),L=g.last,n=g.uids.length;if(me<0)return;const N=nm1();
+  if(g.status==='done'&&prev.status!=='done'){const wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'').replace(/^🤖\s*/,'');
+    if(g.winner===C.uid)say([`مبروك يا ${N}! أنت البطل، فزت باللعبة!`,`يا سلام يا ${N}! فوز مستحق، عاشت إيدك!`,`بطل يا ${N}! كل القطع وصلت، والفلوس إلك!`],{force:1,rate:1});
+    else say([`للأسف يا ${N}، ${wn} فاز هالمرة. الجاية إلك إن شاء الله`,`خسرت هالجولة يا ${N}، بس لا تزعل، اللعب بعده ما خلص`,`${wn} سبقك يا ${N}! ارجع أقوى بالجولة الجاية`],{force:1,rate:1});return;}
+  if(!L||g.seq!==prev.seq+1)return;
+  const lost=[0,1,2,3].some(j=>prev.pc[me*4+j]>=0&&g.pc[me*4+j]<0);
+  if(lost&&L.s!==me){say([`أوووه! انأكلت قطعتك يا ${N}! رجعت للبيت`,`يا خسارة يا ${N}، أكلوا قطعتك!`,`لا لا لا! قطعتك انأكلت يا ${N}، انتقم!`],{force:1});return;}
+  if(L.s===me){
+    if(L.cap){say([`أكلتها! عاشت إيدك يا ${N}!`,`ضربة معلم يا ${N}! رجّعتها للبيت`,`يا سلام! أكلت قطعتهم يا ${N}`],{force:1});return;}
+    if(L.j>=0&&g.pc[me*4+L.j]===56){say([(r=>r===1?`وصلت قطعة للبيت يا ${N}! باقي قطعة وحدة بس`:`وصلت قطعة للبيت يا ${N}! باقي ${r} قطع`)(4-[0,1,2,3].filter(j=>g.pc[me*4+j]===56).length),`عاشت إيدك! قطعة سالمة بالبيت`],{force:1});return;}
+    if(L.j<0){if(L.d===6&&(prev.six||0)>=2)say([`ثلاث ستات! فشلت يا ${N}، راح الدور`,`حظك قوي زيادة يا ${N}، ثلاث ستات تحرق الدور!`],{force:1});else say([`فشلت يا ${N}، ما عندك حركة بهذا الرقم`,`ما زبطت يا ${N}، حظ أوفر بالرمية الجاية`,`لا حركة يا ${N}! صبرك`]);return;}
+    if(L.d===6&&prev.pc[me*4+L.j]<0){say([`ستة! وطلعت قطعة جديدة يا ${N}`,`طلعت للساحة يا ${N}! يلا`]);return;}
+    if(L.d===6){say([`ستة! حظك نار يا ${N}، العب مرة ثانية`,`ستة يا ${N}! دور إضافي`]);return;}
+  }else{const on=String(g.names[L.s]||'').replace(/^🤖\s*/,'');if(L.cap&&Math.random()<.5)say([`${on} أكل قطعة! انتبهوا`,`${on} قاعد ياكل الكل!`]);}}
+function narTurn(g){if(!g)return;const N=nm1();if(Math.random()<.45)say([`دورك يا ${N}، ارمِ النرد`,`يلا يا ${N}، دورك`,`${N}، الكل ينتظرك!`]);}
+function narHurry(g){say([`يلا يا ${nm1()}، الوقت راح يخلص!`,`بسرعة يا ${nm1()}! باقي خمس ثواني`],{key:'h'+g.id+g.seq,force:1});}
 function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;const n=g.uids.length,seats=LSEAT[Math.max(2,Math.min(4,n))]||LSEAT[4],me=g.uids.indexOf(C.uid),now=Date.now();
   const myTurn=g.status==='play'&&g.turn===me,rolled=myTurn&&LU.rolled===g.seq,rolling=rolled&&now-LU.anim<900,anim=now<LU.animUntil,d=rolled&&!rolling?ldie(g.id,g.seq):0,mv=d&&!anim?lmoves(g,me,d):[];
-  if(myTurn&&LU.myTurnSeq!==g.seq&&!anim){LU.myTurnSeq=g.seq;lsfx.turn();}
+  if(myTurn&&LU.myTurnSeq!==g.seq&&!anim){LU.myTurnSeq=g.seq;lsfx.turn();narTurn(g);}
+  if(myTurn&&!rolled&&g.ts+LTO-now<6e3&&g.ts+LTO-now>0)narHurry(g);
   const left=g.status==='play'?Math.max(0,Math.ceil((g.ts+LTO-now)/1000)):0;
   const sig=JSON.stringify([g.seq,g.status,g.uids,rolled,rolling,anim,left,LU.busy]);if(sig===LU.sig)return;LU.sig=sig;
   luStatic(n>=2?seats:[0,1,2,3]);
@@ -2811,7 +2850,7 @@ function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;con
   else if(g.status!=='done')w.hidden=true;
   const r=$('#luRoll');if(r)r.onclick=ludoRoll;const go=$('#luGo');if(go)go.onclick=ludoStart;const bb=$('#luBots');if(bb)bb.onclick=addBots;const x=$('#luX');if(x)x.onclick=ludoCancel;}
 document.querySelectorAll('#luReact button').forEach(b=>b.onclick=()=>{if(!RMS.id)return;const now=Date.now();if(now-(LU.reT||0)<1500)return;LU.reT=now;roomMsg(b.textContent,'msg');luFloat({txt:b.textContent,name:myN()});});
-$('#luClose').onclick=closeLudo;$('#rmLudoBtn').onclick=newLudoModal;
+$('#luClose').onclick=closeLudo;$('#luNar').setAttribute('aria-pressed',NAR.on);$('#luNar').onclick=()=>{NAR.on=!NAR.on;try{localStorage.setItem('souq-nar',NAR.on?'1':'0');}catch(e){}$('#luNar').setAttribute('aria-pressed',NAR.on);if(NAR.on){narUnlock();say('المعلّق رجع وياكم!',{force:1});}else{try{speechSynthesis.cancel();}catch(e){}$('#luSay').hidden=true;}};document.querySelector('#ludoUi').addEventListener('pointerdown',narUnlock);$('#rmLudoBtn').onclick=newLudoModal;
 
 /* ---------- Player market (Firestore listings, settled with transactions) ---------- */
 let MK={open:[],mine:[]},unMk=null,unMine=null,mkBusy=false,mkSig='';const settling=new Set();
