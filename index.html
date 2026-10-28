@@ -1275,7 +1275,8 @@ function incomeRate(){let r=0;S.b.forEach((b,i)=>{if(b.n&&b.mgr)r+=cycRev(i)/cyc
 function shopValue(){let v=0;S.b.forEach((b,i)=>{if(b.n){const d=DEF[i];v+=d.cost*(Math.pow(GROW,b.n)-1)/(GROW-1)+(b.team||[]).length*d.mgr;}});
   S.cities.forEach(id=>v+=cityById(id).cost);return v-DEF[0].cost;}
 function portValue(){let v=0;ASSETS.forEach(a=>{const h=S.h[a.id];if(h&&h.q)v+=h.q*price(a)*(1-FEE);});return v;}
-const worth=()=>S.cash+(S.gems||0)*GEMX+shopValue()+portValue()+landValue()+stakeValue()+(S.esc?S.esc.amt:0)-(S.loan?S.loan.owe:0);
+const heldSum=()=>[S.ludoHeld,S.tgHeld].reduce((a,H)=>a+Object.values(H||{}).reduce((b,v)=>b+(+v||0),0),0);
+const worth=()=>Math.max(0,S.cash)+(S.gems||0)*GEMX+heldSum();
 function ensureSeason(){const id=seasonId();if(!S.season||S.season.id!==id){S.season={id,start:worth()};}}
 const score=()=>Math.max(0,worth()-S.season.start);
 
@@ -2219,6 +2220,7 @@ function onLogout(){
   setAcct(null);
 }
 async function cloudSave(force){
+  if(force)for(let i=0;cloudBusy&&i<40;i++)await new Promise(r=>setTimeout(r,150));
   if(!C||!FB||cloudBusy)return;const key=Math.floor(S.earned)+'|'+Math.floor(worth());if(!force&&key===lastCloud)return;
   cloudBusy=true;S.ts=Date.now();const snap=JSON.parse(JSON.stringify(S));snap.pname=C.name;const {doc,setDoc}=FB.F;
   const w=Math.max(0,Math.floor(worth())),sc=Math.floor(score());
