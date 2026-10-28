@@ -31,7 +31,39 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
-[hidden]{display:none!important}.lu-rr{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 16px!important;border-color:#7fd3ff!important;color:#cfefff!important}.lu-rr small{font-size:11px;font-weight:400}.adm-link{display:block;text-align:center;padding:10px;border-radius:12px;text-decoration:none}
+[hidden]{display:none!important}.wseats.m3 .ws-vs,.wseats.m4 .ws-vs{display:none}.wseats.m4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.wseats.m3{gap:14px}
+.lobby{position:fixed;inset:0;z-index:36;display:flex;flex-direction:column;gap:12px;padding:max(12px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));background:#141b3a;background:radial-gradient(120% 60% at 50% 0,color-mix(in srgb,var(--gc,#3e63dd) 55%,#0b1020),#0b1020 70%);color:#fff;overflow-y:auto}
+.lb-h{display:flex;align-items:center;gap:10px} .lb-h button{width:40px;height:40px;border-radius:50%;border:1px solid #ffffff33;color:#fff;font-size:16px;flex:0 0 auto}
+.lb-h b{flex:1;font-family:var(--display);font-size:22px;display:flex;align-items:center;gap:8px} .lb-bal{font-size:14px;background:#0007;border:1px solid #ffffff22;border-radius:999px;padding:5px 12px;white-space:nowrap} .lb-bal span{color:#7fd3ff;margin-inline-start:6px}
+.lb-modes{display:flex;gap:8px;justify-content:center} .lb-modes button{flex:1;max-width:160px;padding:10px;border-radius:14px;border:1px solid #ffffff2a;background:#ffffff12;color:#fff;font-weight:700}
+.lb-modes button[aria-pressed="true"]{background:#fff;color:#111;box-shadow:0 6px 18px #0006} .lb-one{font-size:13px;opacity:.85;background:#0005;border-radius:999px;padding:6px 14px}
+.lb-tiers{display:flex;flex-direction:column;gap:10px}
+.arena{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-radius:20px;border:2px solid #ffffff33;color:#fff;text-align:start;background:linear-gradient(120deg,var(--a1),var(--a2));box-shadow:0 8px 0 color-mix(in srgb,var(--a1) 70%,#000),0 14px 26px #0007;transition:transform .12s}
+.arena::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 120% at 85% 10%,#ffffff40,transparent 60%);pointer-events:none}
+.arena:active{transform:translateY(5px);box-shadow:0 3px 0 color-mix(in srgb,var(--a1) 70%,#000)}
+.ar-l{display:flex;flex-direction:column;gap:3px} .ar-l b{font-family:var(--display);font-size:19px;text-shadow:0 2px 0 #0004} .ar-l small{font-size:13px;opacity:.92}
+.ar-p{display:flex;flex-direction:column;align-items:center;background:#0004;border-radius:14px;padding:6px 12px;min-width:84px} .ar-p i{font-style:normal;font-size:22px} .ar-p b{font-size:17px}
+.arena.lock{filter:grayscale(.75) brightness(.75)} .ar-lock{position:absolute;inset-inline-start:12px;bottom:6px;font-size:11px;background:#000a;border-radius:8px;padding:1px 8px}
+.lb-priv{padding:13px;border-radius:16px;border:1px dashed #ffffff55;background:#ffffff10;color:#fff;font-weight:700}
+.lb-search{position:fixed;inset:0;background:#0b1020e6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:2}
+.radar{position:relative;width:140px;height:140px;margin:0 auto} .radar i{position:absolute;inset:0;border-radius:50%;border:2px solid #7fd3ff;opacity:0;animation:radar 2.4s ease-out infinite}
+.radar i:nth-child(2){animation-delay:.8s} .radar i:nth-child(3){animation-delay:1.6s}
+@keyframes radar{0%{transform:scale(.2);opacity:.9}100%{transform:scale(1.2);opacity:0}}
+.lu-waitbox{position:absolute;inset:0;z-index:7;display:grid;place-items:center;background:#070b18d9;border-radius:14px;padding:8px}
+.wcard{width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:16px 12px;border-radius:22px;background:radial-gradient(120% 90% at 50% 0,#2b3f8f,#121a3a);border:2px solid #ffffff2a;box-shadow:0 14px 40px #000a;color:#fff;position:relative;overflow:hidden}
+.wc-top{display:flex;flex-direction:column;align-items:center;gap:4px} .wc-top b{font-family:var(--display);font-size:22px;display:flex;gap:6px;align-items:center}
+.wc-ar{font-size:12px;background:#ffffff1f;border-radius:999px;padding:2px 12px} .wc-pr{font-family:var(--display);font-size:20px;color:#ffd54f;text-shadow:0 2px 10px #ffd54f66}
+.wcard .radar{position:absolute;top:50%;left:50%;width:240px;height:240px;margin:-120px 0 0 -120px;pointer-events:none} .wcard .radar i{border-color:#ffffff30}
+.wseats{position:relative;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;z-index:1}
+.ws{display:flex;flex-direction:column;align-items:center;gap:4px;width:70px} .ws small{font-size:11px;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws .av{width:56px;height:56px;font-size:22px;border:3px solid #ffd54f;box-shadow:0 0 16px #ffd54f66}
+.ws-q{width:56px;height:56px;border-radius:50%;border:3px dashed #ffffff55;display:grid;place-items:center;font-size:22px;color:#ffffff88;animation:qblink 1.2s ease-in-out infinite}
+@keyframes qblink{50%{opacity:.35}}
+.ws-vs{font-style:normal;font-family:var(--display);font-weight:800;color:#ff8a65;font-size:15px;text-shadow:0 2px 0 #0006}
+.wc-msg{margin:0;font-size:13.5px;z-index:1} .wc-msg b{color:#ffd54f;font-size:16px} .wc-note{margin:0;font-size:11.5px;opacity:.7;z-index:1}
+.wc-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;z-index:1} .wc-act button{padding:10px 14px;border-radius:12px;font-size:14px;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.radar i,.ws-q{animation:none}}
+.lu-rr{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 16px!important;border-color:#7fd3ff!important;color:#cfefff!important}.lu-rr small{font-size:11px;font-weight:400}.adm-link{display:block;text-align:center;padding:10px;border-radius:12px;text-decoration:none}
 #cash{cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:26px}
 #cash .cd{font-size:20px;color:#7fd3ff} #cash .cw{font-size:14px;border:1px solid var(--brass);border-radius:999px;width:26px;height:26px;display:grid;place-items:center;color:var(--brass)}
 #cash.ask .cw{background:var(--bad);border-color:var(--bad);color:#fff;animation:recPulse .8s infinite alternate}
@@ -1042,7 +1074,7 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 <div class="ludo" id="ludoUi" hidden role="dialog" aria-label="لودو">
   <header class="rm-h"><button id="luClose" aria-label="رجوع للسهرة">✕</button><div><b>🎲 لودو</b><span id="luInfo"></span></div><span class="lu-pot num" id="luPot"></span><button id="luNar" aria-label="المعلّق الصوتي" aria-pressed="true">🎙️</button></header>
   <div class="lu-row" id="luTop"></div>
-  <div class="lu-bw"><svg class="lu-board" id="luBoard" viewBox="-0.2 -0.2 15.4 15.4" role="img" aria-label="لوحة اللودو"></svg><div class="lu-fx" id="luFx"></div><div class="lu-say" id="luSay" hidden></div><div class="lu-win" id="luWin" hidden></div></div>
+  <div class="lu-bw"><svg class="lu-board" id="luBoard" viewBox="-0.2 -0.2 15.4 15.4" role="img" aria-label="لوحة اللودو"></svg><div class="lu-fx" id="luFx"></div><div class="lu-waitbox" id="luWait" hidden></div><div class="lu-say" id="luSay" hidden></div><div class="lu-win" id="luWin" hidden></div></div>
   <div class="lu-row" id="luBot"></div>
   <div class="lu-bot"><div class="die3 f1" id="luDie" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="lu-act" id="luAct"></div></div>
   <div class="lu-react" id="luReact"><button>😂</button><button>👏</button><button>🔥</button><button>😡</button><button>😎</button><button>🙏</button></div>
@@ -1055,6 +1087,13 @@ body.m-spec::after{box-shadow:inset 0 0 80px rgba(255,138,61,.2)}
 </div>
 <div class="cm-drawer" id="cmDrawer" hidden><div class="cm-h"><b>💬 دردشة اللمّة</b><button id="cmClose" aria-label="إغلاق">✕</button></div><div class="cm-log" id="cmLog"></div><div class="cm-quick" id="cmQuick"></div><form class="chat-form" id="cmForm"><input id="cmIn" maxlength="200" placeholder="اكتب رسالة…" autocomplete="off" aria-label="رسالة"><button class="buy">إرسال</button></form></div>
 <div class="comm" id="comm" hidden><button id="cmMic" aria-label="المايك" aria-pressed="false">🎙️<small id="cmMicN" class="num"></small></button><button id="cmSpk" aria-label="السبيكر" aria-pressed="true">🔊</button><button id="cmRec" class="rec-b" aria-label="اضغط مطوّل وسجّل">🎤 <span>اضغط وسجّل</span><small id="cmRecT" class="num"></small></button><button id="cmChat" aria-label="الدردشة">💬<i class="cm-dot num" id="cmDot" hidden></i></button></div>
+<div class="lobby" id="lobby" hidden role="dialog" aria-label="الساحات">
+  <header class="lb-h"><button id="lbClose" aria-label="رجوع">✕</button><b id="lbTitle"></b><span class="lb-bal num" id="lbBal"></span></header>
+  <div class="lb-modes" id="lbModes"></div>
+  <div class="lb-tiers" id="lbTiers"></div>
+  <button class="lb-priv" id="lbPriv">🎉 العب ويا أصدقائي بسهرة خاصة</button>
+  <div class="lb-search" id="lbSearch" hidden><div class="radar"><i></i><i></i><i></i></div><b>ندوّر لك على لاعبين…</b></div>
+</div>
 <div class="call" id="callUi" hidden>
   <span class="av" id="callAv"></span><h2 id="callName"></h2><p id="callSt"></p><p class="num" id="callT"></p>
   <div class="cbtns"><button class="cb-dec" id="callDec" aria-label="رفض">✖</button><button class="cb-acc" id="callAcc" aria-label="رد">📞</button><button class="cb-mute" id="callMute" aria-label="كتم الميكروفون" aria-pressed="false">🎙️</button><button class="cb-end" id="callEnd" aria-label="إنهاء المكالمة">✖</button></div>
@@ -2985,7 +3024,7 @@ function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;con
   if(myTurn&&LU.myTurnSeq!==g.seq&&!anim){LU.myTurnSeq=g.seq;lsfx.turn();narTurn(g);}
   if(myTurn&&!rolled&&g.ts+LTO-now<6e3&&g.ts+LTO-now>0)narHurry(g);
   const left=g.status==='play'?Math.max(0,Math.ceil((g.ts+LTO-now)/1000)):0;
-  const sig=JSON.stringify([g.seq,g.rr,g.status,g.uids,rolled,rolling,anim,left,LU.busy,S.gems]);if(sig===LU.sig)return;LU.sig=sig;
+  const sig=JSON.stringify([g.seq,g.rr,g.status,g.uids,rolled,rolling,anim,left,LU.busy,S.gems,g.status==='wait'&&QP?Math.ceil((QP.at-now)/1000):0]);if(sig===LU.sig)return;LU.sig=sig;
   luStatic(n>=2?seats:[0,1,2,3]);
   const at=k=>seats.indexOf(k);$('#luTop').innerHTML=luPanel(g,at(0),seats,now)+luPanel(g,at(1),seats,now);$('#luBot').innerHTML=luPanel(g,at(3),seats,now)+luPanel(g,at(2),seats,now);
   applyBubbles();box.querySelectorAll('[data-luav]').forEach(el=>{if(isBot(el.dataset.luav)){el.textContent='🤖';el.style.background='#2a3a66';return;}paintAv(el,null,el.dataset.n);lvlBadge(el,el.dataset.luav);getProf(el.dataset.luav).then(p=>{if(p)paintAv(el,p.avatar,p.name||el.dataset.n);});});
@@ -2994,8 +3033,8 @@ function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;con
   const die=$('#luDie'),act=$('#luAct'),info=$('#luInfo'),lastD=g.last&&g.last.d||0;
   if(rolling){die.classList.add('roll');if(!LU.flick)LU.flick=setInterval(()=>{const e=$('#luDie');if(e)luDieFace(e,1+Math.floor(Math.random()*6)),e.classList.add('roll');},90);}
   else{clearInterval(LU.flick);LU.flick=null;luDieFace(die,rolled?d:lastD||1);die.classList.toggle('mine',myTurn);die.style.setProperty('--dc',LGRAD[seats[g.status==='play'?g.turn:0]][1]);}
-  if(g.status==='wait'){info.textContent=`ينتظر لاعبين ${ad(n)}/${ad(g.max)}`;
-    act.innerHTML=g.host===C.uid?`${n<g.max?'<button class="hire" id="luBots">أكمل ببوتات 🤖</button>':''}<button class="buy" id="luGo"${n<2?' disabled':''}>ابدأ ▶</button><button class="hire" id="luX">ألغِ</button>`:me>=0?'<span class="note">بانتظار صاحب اللعبة يبدأ…</span>':'';}
+  {const wb=$('#luWait');if(g.status==='wait'){wb.hidden=false;wb.innerHTML=waitCard(g,'ludo');bindWait(wb,'ludo');}else wb.hidden=true;}
+  if(g.status==='wait'){info.textContent=`ينتظر لاعبين ${ad(n)}/${ad(g.max)}`;act.innerHTML='';}
   else if(g.status==='play'){const tn=String(g.names[g.turn]||'').slice(0,16);
     info.textContent=myTurn?(rolled&&!rolling&&!anim?(mv.length?(d===6&&(g.six||0)>=2?'ثلاث ستات! راح دورك':'اختر القطعة اللي تضوي'):'ما عندك حركة بهذا الرقم'):'دورك!'):'دور '+tn+(g.last&&g.last.cap&&!anim?' · 💥 أكلة!':'');
     act.innerHTML=myTurn&&!rolled&&!anim?'<button class="buy lu-roll" id="luRoll">ارمِ النرد</button>':myTurn&&rolled&&!rolling&&!anim&&(g.rr||0)<RRMAX?`<button class="hire lu-rr" id="luRR">🔁 أعد الرمي <small>${ad(RRCOST)} 💎 · باقي ${ad(RRMAX-(g.rr||0))}</small></button>`:'';{const rb=$('#luRR');if(rb)rb.onclick=ludoReroll;}}
@@ -3114,8 +3153,62 @@ async function lvlBadge(el,uid){if(!el||isBot(uid))return;const box=el.closest('
 
 $('#cash').onclick=openWallet;
 
+/* ---------- Arena lobby (Yalla-style): pick a stake tier, real matchmaking, waiting room ---------- */
+const ARENAS=[['مبتدئين',10,'#2e7d32','#66bb6a',0],['هواة',50,'#1565c0','#42a5f5',0],['محترفين',100,'#6a1b9a','#ab47bc',1],['أبطال',500,'#c62828','#ef5350',2],['ملوك',1000,'#e65100','#ffa726',3],['أساطير',5000,'#4a148c','#ffd54f',4]];
+const GMETA={ludo:['🎲','لودو','#3e63dd'],dom:['','دومينو','#2f8f5f'],tawla:['🎯','طاولي','#a0612b'],chess:['♟️','شطرنج','#5b5b66'],colors:['🃏','ألوان','#c0392b'],tarneeb:['♠️','طرنيب','#1f6f8b']};
+const gModes=t=>t==='ludo'?[2,4]:TGMAX[t];
+let LB={type:'ludo',n:4,busy:false};
+function openLobby(type){if(!C||!FB){toast('سجّل دخولك بحساب Google حتى تلعب');login();return;}LB.type=type;const M=gModes(type);LB.n=M.includes(LB.n)?LB.n:(type==='ludo'?4:M[0]);renderLobby();$('#lobby').hidden=false;fun.pop();}
+function closeLobby(){$('#lobby').hidden=true;}
+function renderLobby(){const t=LB.type,[ic,nm,col]=GMETA[t],M=gModes(t),lv=lvlOf(gx().xp);
+  $('#lobby').style.setProperty('--gc',col);
+  $('#lbTitle').innerHTML=`${t==='dom'?DOMI:ic} ${nm}`;$('#lbBal').innerHTML=`🪙 ${fmt(S.cash)} <span>💎 ${fmt(S.gems||0)}</span>`;
+  $('#lbModes').innerHTML=M.length>1?M.map(n=>`<button data-n="${n}" aria-pressed="${n===LB.n}">${t==='tarneeb'?'٢ ضد ٢':ad(n)+' لاعبين'}</button>`).join(''):`<span class="lb-one">${t==='tarneeb'?'٤ لاعبين · فريقين':'لاعبين اثنين · وجهًا لوجه'}</span>`;
+  $('#lbModes').querySelectorAll('button').forEach(b=>b.onclick=()=>{LB.n=+b.dataset.n;fun.pop();renderLobby();});
+  const prizeOf=st=>t==='tarneeb'?st*2:st*LB.n;
+  $('#lbTiers').innerHTML=ARENAS.map(([an,st,c1,c2,need],i)=>{const lockL=lv<need,lockG=S.cash<st;
+    return `<button class="arena${lockL||lockG?' lock':''}" data-i="${i}" style="--a1:${c1};--a2:${c2}"><span class="ar-l"><b>ساحة ${an}</b><small>الدخول 🪙 ${fmt(st)}</small></span><span class="ar-p"><i>🏆</i><b class="num">${fmt(prizeOf(st))}</b></span>${lockL?`<span class="ar-lock">🔒 مستوى ${LVL[need][1]}</span>`:lockG?'<span class="ar-lock">🪙 رصيدك ما يكفي</span>':''}</button>`;}).join('');
+  $('#lbTiers').querySelectorAll('.arena').forEach(b=>b.onclick=()=>{const [an,st,,,need]=ARENAS[+b.dataset.i];if(lvlOf(gx().xp)<need){fun.wah();toast('🔒 هذه الساحة تنفتح بمستوى '+LVL[need][1]);return;}
+    if(S.cash<st){fun.wah();toast('رصيدك ما يكفي، بدّل جواهر بذهب أو اشحن');openWallet();return;}matchmake(t,LB.n,st);});}
+async function matchmake(type,n,stake){if(LB.busy)return;LB.busy=true;$('#lbSearch').hidden=false;fun.drum();
+  try{const {collection,query,where,getDocs,doc,getDoc}=FB.F,col=type==='ludo'?'ludo':'tables';
+    const cs=[where('status','==','wait'),where('stake','==',stake),where('max','==',n)];if(type!=='ludo')cs.push(where('type','==',type));
+    const r=await getDocs(query(collection(FB.db,col),...cs));const now=Date.now();
+    const open=r.docs.map(d=>({id:d.id,...d.data(),type:type==='ludo'?'ludo':d.data().type})).filter(g=>g.uids.length<g.max&&!g.uids.includes(C.uid)&&now-(g.ts||0)<9e4&&!g.uids.every(isBot)).sort((a,b)=>b.uids.length-a.uids.length);
+    for(const g of open){const rr=await getDoc(doc(FB.db,'rooms',g.room));if(!rr.exists())continue;const R=rr.data();if(R.status!=='open'||R.until<Date.now()||R.fee)continue;
+      if(RMS.id!==g.room){await payJoin(g.room,R);await new Promise(x=>setTimeout(x,700));}if(RMS.id!==g.room)continue;
+      const ok=type==='ludo'?await joinLudoDirect(g):await tgJoinDirect(g);if(ok){closeLobby();LB.busy=false;$('#lbSearch').hidden=true;return;}}
+    if(!RMS.id||!RMS.room||RMS.room.host!==C.uid){if(RMS.id)leaveRoom(true);await createRoom(GMETA[type][1]+' · ساحة '+(ARENAS.find(a=>a[1]===stake)||['سريعة'])[0],4,0,10,1);for(let k=0;k<15&&!(RMS.id&&RMS.room);k++)await new Promise(x=>setTimeout(x,200));}
+    if(!RMS.id){toast('تعذّر فتح الطاولة');}else{QP={at:Date.now()+2e4,type};if(type==='ludo')await createLudo(n,stake);else await tgNew(type,n,stake);closeLobby();}}
+  catch(e){toast('تعذّر البحث، تأكد من الاتصال');}
+  LB.busy=false;$('#lbSearch').hidden=true;}
+async function joinLudoDirect(g){if(g.stake>S.cash)return false;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'ludo',g.id);
+  try{const ok=await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return false;const x=r.data();if(x.status!=='wait'||x.uids.length>=x.max||x.uids.includes(C.uid))return false;tx.update(ref,{uids:x.uids.concat(C.uid),names:x.names.concat(myN())});return true;});
+    if(!ok)return false;if(g.stake){S.cash-=g.stake;S.ludoHeld[g.id]=g.stake;led('ludo',-g.stake,'دخول ساحة لودو');save();}sfx.coin();openLudo(g.id);return true;}catch(e){return false;}}
+async function tgJoinDirect(g){if(g.stake>S.cash)return false;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'tables',g.id);
+  try{const ok=await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return false;const x=r.data();if(x.status!=='wait'||x.uids.length>=x.max||x.uids.includes(C.uid))return false;tx.update(ref,{uids:x.uids.concat(C.uid),names:x.names.concat(myN())});return true;});
+    if(!ok)return false;if(g.stake){S.cash-=g.stake;S.tgHeld[g.id]=g.stake;led('ludo',-g.stake,'دخول ساحة '+TGN[g.type]);save();}sfx.coin();openTable(g.id);return true;}catch(e){return false;}}
+async function leaveWait(kind){const g=kind==='ludo'?LU.g:TG.g;if(!g||g.status!=='wait')return;const {doc,runTransaction}=FB.F,ref=doc(FB.db,kind==='ludo'?'ludo':'tables',g.id);
+  if(g.host===C.uid){kind==='ludo'?ludoCancel():tgCancel();return;}
+  try{const ok=await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return false;const x=r.data();const i=x.uids.indexOf(C.uid);if(x.status!=='wait'||i<0)return false;
+      tx.update(ref,{uids:x.uids.filter((_,k)=>k!==i),names:x.names.filter((_,k)=>k!==i)});return true;});
+    if(ok){const H=kind==='ludo'?S.ludoHeld:S.tgHeld,h=H[g.id];if(h){delete H[g.id];S.cash+=h;led('ludo',h,'انسحاب قبل البداية');save();}toast('طلعت ورجع ذهبك');kind==='ludo'?closeLudo():closeTable();}}
+  catch(e){toast('تعذّر الانسحاب');}}
+function waitCard(g,kind){const n=g.uids.length,me=g.uids.indexOf(C.uid),isHost=g.host===C.uid,[ic,nm]=GMETA[kind==='ludo'?'ludo':g.type],
+    prize=g.type==='tarneeb'?g.stake*2:g.stake*g.max,left=QP&&isHost?Math.max(0,Math.ceil((QP.at-Date.now())/1000)):null,ar=(ARENAS.find(a=>a[1]===g.stake)||['خاصة'])[0];
+  const seats=[...Array(g.max)].map((_,i)=>{const u=g.uids[i];return u?`<div class="ws on"><span class="av" data-luav="${u}" data-n="${eh(g.names[i]||'')}"></span><small>${eh(String(g.names[i]||'').replace(/^🤖\s*/,'').slice(0,10))}</small></div>`:`<div class="ws"><span class="ws-q">?</span><small>ننتظر…</small></div>`;}).join('<i class="ws-vs">VS</i>');
+  return `<div class="wcard"><div class="wc-top"><span class="wc-ar">ساحة ${ar}</span><b>${kind==='ludo'?'🎲':g.type==='dom'?DOMI:ic} ${nm}</b><span class="wc-pr">🏆 ${fmt(prize)} 🪙</span></div>
+    <div class="radar"><i></i><i></i><i></i></div><div class="wseats m${g.max}">${seats}</div>
+    <p class="wc-msg">${n>=g.max?'اكتملت الطاولة! تبدأ هسه…':left!==null?(left>0?`ندوّر لاعبين حقيقيين… إذا ما أحد إجا خلال <b class="num">${ad(left)}</b> ثانية نكمل ببوتات 🤖`:'نجيب البوتات…'):isHost?'ادعُ أصدقاءك للسهرة، أو كمّل ببوتات':'ننتظر صاحب الطاولة يبدأ…'}</p>
+    <div class="wc-act">${isHost?`${n<g.max?'<button class="hire" data-w="bots">🤖 أكمل ببوتات</button>':''}<button class="buy" data-w="go"${n<2?' disabled':''}>ابدأ ▶</button>`:''}<button class="hire" data-w="leave">${isHost?'ألغِ':'اطلع'}</button></div>
+    <p class="wc-note">الدخول 🪙 ${fmt(g.stake)} · الفائز ياخذ الجائزة كلها</p></div>`;}
+function bindWait(box,kind){box.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{const w=b.dataset.w;if(w==='bots')(kind==='ludo'?addBots:tgBots)();else if(w==='go')(kind==='ludo'?ludoStart:tgStart)();else leaveWait(kind);});
+  box.querySelectorAll('[data-luav]').forEach(el=>{if(isBot(el.dataset.luav)){el.textContent='🤖';el.style.background='#2a3a66';return;}paintAv(el,null,el.dataset.n);getProf(el.dataset.luav).then(p=>{if(p)paintAv(el,p.avatar,p.name||el.dataset.n);});});}
+
+$('#lbClose').onclick=closeLobby;$('#lbPriv').onclick=()=>{closeLobby();setTab('rooms');toast('سوّ سهرة واعزم أصدقاءك، وبعدها اختار اللعبة من 🎲');};
+
 /* ---------- Games hub: levels, XP leaderboard, quick play, daily gift ---------- */
-const LVL=[['🥉','برونزي',0,100],['🥈','فضي',300,500],['🥇','ذهبي',1000,1000],['💎','ماسي',3000,1000],['👑','أسطوري',8000,1000]],LVGEM=[0,20,50,100,300];
+const LVL=[['🥉','برونزي',0,100],['🥈','فضي',300,500],['🥇','ذهبي',1000,1000],['💎','ماسي',3000,5000],['👑','أسطوري',8000,5000]],LVGEM=[0,20,50,100,300];
 const gx=()=>S.gx||(S.gx={xp:0,w:0,p:0,seen:[],dirty:0});
 function lvlOf(xp){let i=0;LVL.forEach((l,k)=>{if(xp>=l[2])i=k;});return i;}
 const lvlCap=()=>LVL[lvlOf(gx().xp)][3];
@@ -3143,17 +3236,17 @@ function renderLvl(){const G=gx(),k=lvlOf(G.xp),L=LVL[k],nx=LVL[k+1],pct=nx?Math
   $('#lvlChip').innerHTML=`<span>${L[0]}</span><b>${L[1]}</b><span class="lb"><i style="width:${pct}%"></i></span><small class="num">${fmt(G.xp)}</small>`;}
 $('#lvlChip').onclick=()=>setTab('top');
 function renderGames(){const G=gx(),k=lvlOf(G.xp),sig=JSON.stringify([!!C,G.xp,G.w,G.p,dailyOpen(),Math.floor(S.cash),RMS.id,TR.rows.map(r=>[r.id,r.pts]),Math.floor(Date.now()/6e4),TR.prev&&TR.prev.day]);if(sig===GM.sig)return;GM.sig=sig;
-  $('#gTour').innerHTML=tourCard();{const tg=$('#tourGo');if(tg)tg.onclick=()=>quickPlay('ludo');}
+  $('#gTour').innerHTML=tourCard();{const tg=$('#tourGo');if(tg)tg.onclick=()=>openLobby('ludo');}
   $('#gHome').innerHTML=`<span class="big">${LVL[k][0]}</span><div><b>${C?eh(myN()):'هلا بيك!'}</b><span>${LVL[k][1]} · ${ad(G.w)} فوز من ${ad(G.p)} لعبة</span><span class="num">رصيدك ${fmt(S.cash)} ذهب</span></div>`;
   $('#gCards').innerHTML=`
-   <div class="g-card gl-ludo"><span class="gi">🎲</span><h3>لودو</h3><p>٢ إلى ٤ لاعبين، بوتات، ومعلّق صوتي يحجي وياك.</p><div class="gb"><button class="buy" id="qLudo">العب الآن</button><button class="alt" id="rLudo">العب بسهرة</button></div></div>
-   <div class="g-card gl-dom"><span class="gi">${DOMI}</span><h3>دومينو</h3><p>لعبة المقاهي العراقية، ٢ إلى ٤ لاعبين.</p><div class="gb"><button class="buy" id="qDom">العب الآن</button><button class="alt" id="rDom">العب بسهرة</button></div></div>
-   <div class="g-card gl-tawla"><span class="gi">🎯</span><h3>طاولي</h3><p>النرد الكلاسيكي، لاعبين اثنين.</p><div class="gb"><button class="buy" id="qTaw">العب الآن</button><button class="alt" id="rTaw">العب بسهرة</button></div></div>
-   <div class="g-card gl-chess"><span class="gi">♟️</span><h3>شطرنج</h3><p>ملك الألعاب، ويا بوت يفكر.</p><div class="gb"><button class="buy" id="qChs">العب الآن</button><button class="alt" id="rChs">العب بسهرة</button></div></div>
-   <div class="g-card gl-colors"><span class="gi">🃏</span><h3>ألوان</h3><p>طابق اللون أو الرقم، و+٢ و+٤ وعكس الدور.</p><div class="gb"><button class="buy" id="qClr">العب الآن</button><button class="alt" id="rClr">العب بسهرة</button></div></div>
-   <div class="g-card gl-trn"><span class="gi">♠️</span><h3>طرنيب</h3><p>٤ لاعبين بفريقين، طلبة وحكم، لحد ٣١.</p><div class="gb"><button class="buy" id="qTrn">العب الآن</button><button class="alt" id="rTrn">العب بسهرة</button></div></div></div>`;
-  $('#qLudo').onclick=()=>quickPlay('ludo');$('#rLudo').onclick=()=>{setTab('rooms');toast('ادخل سهرة واضغط 🎲 جوه');};
-  [['qDom','dom'],['qTaw','tawla'],['qChs','chess'],['qClr','colors'],['qTrn','tarneeb']].forEach(([id,t])=>{const b=$('#'+id);if(b)b.onclick=()=>quickPlay(t);});
+   <div class="g-card gl-ludo"><span class="gi">🎲</span><h3>لودو</h3><p>٢ إلى ٤ لاعبين، بوتات، ومعلّق صوتي يحجي وياك.</p><div class="gb"><button class="buy" id="qLudo">🏟️ الساحات</button><button class="alt" id="rLudo">العب بسهرة</button></div></div>
+   <div class="g-card gl-dom"><span class="gi">${DOMI}</span><h3>دومينو</h3><p>لعبة المقاهي العراقية، ٢ إلى ٤ لاعبين.</p><div class="gb"><button class="buy" id="qDom">🏟️ الساحات</button><button class="alt" id="rDom">العب بسهرة</button></div></div>
+   <div class="g-card gl-tawla"><span class="gi">🎯</span><h3>طاولي</h3><p>النرد الكلاسيكي، لاعبين اثنين.</p><div class="gb"><button class="buy" id="qTaw">🏟️ الساحات</button><button class="alt" id="rTaw">العب بسهرة</button></div></div>
+   <div class="g-card gl-chess"><span class="gi">♟️</span><h3>شطرنج</h3><p>ملك الألعاب، ويا بوت يفكر.</p><div class="gb"><button class="buy" id="qChs">🏟️ الساحات</button><button class="alt" id="rChs">العب بسهرة</button></div></div>
+   <div class="g-card gl-colors"><span class="gi">🃏</span><h3>ألوان</h3><p>طابق اللون أو الرقم، و+٢ و+٤ وعكس الدور.</p><div class="gb"><button class="buy" id="qClr">🏟️ الساحات</button><button class="alt" id="rClr">العب بسهرة</button></div></div>
+   <div class="g-card gl-trn"><span class="gi">♠️</span><h3>طرنيب</h3><p>٤ لاعبين بفريقين، طلبة وحكم، لحد ٣١.</p><div class="gb"><button class="buy" id="qTrn">🏟️ الساحات</button><button class="alt" id="rTrn">العب بسهرة</button></div></div></div>`;
+  $('#qLudo').onclick=()=>openLobby('ludo');$('#rLudo').onclick=()=>{setTab('rooms');toast('ادخل سهرة واضغط 🎲 جوه');};
+  [['qDom','dom'],['qTaw','tawla'],['qChs','chess'],['qClr','colors'],['qTrn','tarneeb']].forEach(([id,t])=>{const b=$('#'+id);if(b)b.onclick=()=>openLobby(t);});
   [['rDom'],['rTaw'],['rChs'],['rClr'],['rTrn']].forEach(([id])=>{const b=$('#'+id);if(b)b.onclick=()=>{setTab('rooms');toast('ادخل سهرة واختر اللعبة من الأزرار جوه');};});
   const day=dailyDay(),open=dailyOpen();
   $('#gDaily').innerHTML=`<div class="sec-h"><h2>🎁 الهدية اليومية</h2><span class="sub">اليوم ${ad(day)} من ٧</span></div><div class="streak">${[1,2,3,4,5,6,7].map(i=>`<div class="${i<day||(!open&&i===day)?'got':i===day?'now':''}"><small>${ad(i)}</small><b class="num">${fmt(dailyReward(i))}</b></div>`).join('')}</div>${open?'<button class="buy wide" id="gClaim">استلم هديتك</button>':'<p class="note">رجع باچر حتى تاخذ هدية أكبر.</p>'}`;
@@ -3169,7 +3262,7 @@ function quickPlay(type){if(!C||!FB){toast('سجّل دخولك بحساب Googl
       if(!RMS.id){await createRoom({ludo:'لودو',dom:'دومينو',tawla:'طاولي',chess:'شطرنج',colors:'ألوان',tarneeb:'طرنيب'}[type]+' سريع · '+myN(),4,0,10,1);await new Promise(r=>setTimeout(r,900));}
       if(!RMS.id){toast('تعذّر فتح الطاولة');return;}QP={at:Date.now()+2e4,type};
       if(type==='ludo')await createLudo(n,st);else await tgNew(type,n,st);}],['إلغاء',null,1]]);}
-function quickTick(game,addFn,startFn){if(!QP||!game||game.status!=='wait'||game.host!==C.uid)return;const left=Math.ceil((QP.at-Date.now())/1000);
+function quickTick(game,addFn,startFn){if(!QP||!game||game.status!=='wait'||game.host!==C.uid)return;if(game.uids.length>=game.max){QP=null;fun.drum();setTimeout(startFn,600);return;}const left=Math.ceil((QP.at-Date.now())/1000);
   if(left>0){if(left%5===0&&QP.told!==left){QP.told=left;say(left===20?jk('waitFind'):jk('waitBots',{K:left}),{force:1});}return;}
   QP=null;addFn().then(()=>setTimeout(startFn,900));}
 function showRules(){modal(`<h2>📜 قوانين السهرات</h2><div class="rules">
@@ -3302,14 +3395,12 @@ function tgPanel(g,i,now){const LTO=tgTO(g),u=g.uids[i],turn=g.status==='play'&&
   let extra='';if(g.type==='dom'&&g.st.hands)extra=`${ad((g.st.hands[i]||[]).length)} حجر`;if(g.type==='colors'&&g.st.hands)extra=`🃏 ${ad((g.st.hands[i]||[]).length)}`;if(g.type==='chess')extra=i?'♚ أسود':'♔ أبيض';if(g.type==='tarneeb')extra=(i%2===(Math.max(0,g.uids.indexOf(C.uid)))%2?'فريقنا':'فريقهم')+(g.st.hbs===i&&g.st.hb?' · طالب '+ad(g.st.hb):'');if(g.type==='tawla'&&g.st.off)extra=`🏁 ${ad(g.st.off[i]||0)}/١٥${g.st.bar[i]?' · بار '+ad(g.st.bar[i]):''}`;
   return `<div class="lu-cp${turn?' on':''}${g.winner===u?' win':''}" style="--c:${c};--c2:${c};--p:${Math.round(left*360)}deg"><span class="lu-av"><span class="av" data-luav="${u}" data-n="${eh(g.names[i]||'')}"></span></span><div><b>${eh(String(g.names[i]||'لاعب').slice(0,12))}${u===C.uid?' <small>(أنت)</small>':''}</b><small class="num">${extra}</small></div>${turn?`<span class="lu-tm num">${ad(Math.ceil(left*LTO/1000))}</span>`:''}</div>`;}
 function renderTable(){const g=TG.g,box=$('#tgUi');if(!g||box.hidden)return;const n=g.uids.length,me=g.uids.indexOf(C.uid),now=Date.now(),myTurn=g.status==='play'&&g.turn===me;
-  const left=g.status==='play'?Math.ceil((g.ts+LTO-now)/1000):0,sig=JSON.stringify([g.seq,g.status,g.uids,TG.sel,left,TG.busy]);if(sig===TG.sig)return;TG.sig=sig;
+  const left=g.status==='play'?Math.ceil((g.ts+LTO-now)/1000):0,sig=JSON.stringify([g.seq,g.status,g.uids,TG.sel,left,TG.busy,g.status==='wait'&&QP?Math.ceil((QP.at-now)/1000):0]);if(sig===TG.sig)return;TG.sig=sig;
   $('#tgTitle').innerHTML=gIcon(g.type)+' '+TGN[g.type];$('#tgPot').textContent=g.stake?'💰 '+fmt(g.stake*n):'';
   $('#tgPl').innerHTML=g.uids.map((_,i)=>tgPanel(g,i,now)).join('');
   applyBubbles();box.querySelectorAll('[data-luav]').forEach(el=>{if(isBot(el.dataset.luav)){el.textContent='🤖';el.style.background='#2a3a66';return;}paintAv(el,null,el.dataset.n);lvlBadge(el,el.dataset.luav);getProf(el.dataset.luav).then(p=>{if(p)paintAv(el,p.avatar,p.name||el.dataset.n);});});
   const B=$('#tgBoard'),act=$('#tgAct'),info=$('#tgInfo');
-  if(g.status==='wait'){B.innerHTML=`<div class="qwait"><span class="spin"></span><b>ينتظر لاعبين ${ad(n)}/${ad(g.max)}</b><span class="note">ادعُ أصدقاءك للسهرة، أو كمّل ويا بوتات</span></div>`;info.textContent='';
-    act.innerHTML=g.host===C.uid?`${n<g.max?'<button class="hire" id="tgB">أكمل ببوتات 🤖</button>':''}<button class="buy" id="tgGo"${n<2?' disabled':''}>ابدأ ▶</button><button class="hire" id="tgX">ألغِ</button>`:'<span class="note">بانتظار صاحب الطاولة يبدأ…</span>';
-    const b1=$('#tgB');if(b1)b1.onclick=tgBots;const b2=$('#tgGo');if(b2)b2.onclick=tgStart;const b3=$('#tgX');if(b3)b3.onclick=tgCancel;return;}
+  if(g.status==='wait'){B.innerHTML=waitCard(g,'tg');bindWait(B,'tg');info.textContent='';act.innerHTML='';return;}
   ({dom:renderDom,tawla:renderTawla,chess:renderChess,colors:renderColors,tarneeb:renderTarneeb})[g.type](g,me,myTurn,B,act);
   const tn=String(g.names[g.turn]||'').replace(/^🤖\s*/,'');info.textContent=g.status==='play'?(myTurn?'دورك!':'دور '+tn):g.status==='done'?'انتهت اللعبة':g.status==='draw'?'تعادل 🤝':'انلغت';
   const w=$('#tgWin');if((g.status==='done'||g.status==='draw')&&TG.won!==g.id){TG.won=g.id;const wi=g.uids.indexOf(g.winner),team=g.type==='tarneeb',iw=tgIWon(g);
@@ -4118,7 +4209,7 @@ function start(){
   ensureSeason();
   let t0='games';try{t0=localStorage.getItem('souq-tab')||'shop';}catch(e){}
   setTab(['games','rooms','fr','top'].includes(t0)?t0:'games');renderMeAv();gamesInit();
-  [6000,25000].forEach(ms=>setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem('souq-rules');}catch(e){}if(!seen&&$('#modal').hidden&&$('#ludoUi').hidden&&$('#tgUi').hidden&&$('#roomUi').hidden){try{localStorage.setItem('souq-rules','1');}catch(e){}showRules();}},ms));
+  [6000,25000].forEach(ms=>setTimeout(()=>{let seen=true;try{seen=!!localStorage.getItem('souq-rules');}catch(e){}if(!seen&&$('#modal').hidden&&$('#ludoUi').hidden&&$('#tgUi').hidden&&$('#roomUi').hidden&&$('#lobby').hidden){try{localStorage.setItem('souq-rules','1');}catch(e){}showRules();}},ms));
   checkAch(true);ensureDaily();
   setTimeout(()=>{if(dailyOpen()&&$('#modal').hidden)modal(`<h2>هدية اليوم ${ad(dailyDay())}</h2><p>ادخل كل يوم لتكبر هديتك حتى اليوم السابع.</p><div class="big num">${fmt(dailyReward(dailyDay()))} د.ع</div>`,[['لاحقًا',null,true],['استلم',()=>claimDaily(null)]]);},1800);
   requestAnimationFrame(frame);

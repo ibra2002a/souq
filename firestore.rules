@@ -596,6 +596,13 @@ service cloud.firestore {
         && request.resource.data.room is string && inRoom(request.resource.data.room)
         && fresh(request.resource.data.ts);
       allow update: if request.auth != null && (
+          (resource.data.status == 'wait' && request.auth.uid in resource.data.uids && request.auth.uid != resource.data.host
+            && changed().hasOnly(['uids', 'names'])
+            && request.resource.data.uids.size() == resource.data.uids.size() - 1
+            && !(request.auth.uid in request.resource.data.uids)
+            && resource.data.uids.hasAll(request.resource.data.uids)
+            && request.resource.data.names.size() == request.resource.data.uids.size())
+        ||
           (resource.data.status == 'wait' && !(request.auth.uid in resource.data.uids)
             && changed().hasOnly(['uids', 'names'])
             && request.resource.data.uids.size() == resource.data.uids.size() + 1
@@ -653,6 +660,13 @@ service cloud.firestore {
         && request.resource.data.room is string && inRoom(request.resource.data.room)
         && fresh(request.resource.data.ts);
       allow update: if request.auth != null && (
+          (resource.data.status == 'wait' && request.auth.uid in resource.data.uids && request.auth.uid != resource.data.host
+            && changed().hasOnly(['uids', 'names'])
+            && request.resource.data.uids.size() == resource.data.uids.size() - 1
+            && !(request.auth.uid in request.resource.data.uids)
+            && resource.data.uids.hasAll(request.resource.data.uids)
+            && request.resource.data.names.size() == request.resource.data.uids.size())
+        ||
           (resource.data.status == 'wait' && !(request.auth.uid in resource.data.uids)
             && changed().hasOnly(['uids', 'names'])
             && request.resource.data.uids.size() == resource.data.uids.size() + 1
