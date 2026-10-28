@@ -57,6 +57,9 @@ a{color:var(--blue)}
     <h1 style="margin:0">لوحة لمّة 🛠️</h1>
     <p id="gateMsg" style="color:var(--muted);margin:0">لوحة تحكم المالك. ادخل بحساب Google المسموح له.</p>
     <button class="btn" id="loginBtn">الدخول بحساب Google</button>
+    <div id="inApp" class="card" style="max-width:420px;text-align:start;gap:6px" hidden><b style="color:var(--brass)">⚠️ افتح اللوحة بـ Safari أو Chrome</b>
+      <span style="color:var(--muted);font-size:13.5px">إذا فتحتها من داخل تطبيق (واتساب، Claude، إنستغرام…) تسجيل الدخول ما يشتغل. انسخ الرابط والصقه بالمتصفح.</span>
+      <button class="ghost" id="copyBtn">📋 انسخ رابط اللوحة</button></div>
   </div>
 
   <div id="app" hidden>
@@ -105,8 +108,12 @@ const when=t=>new Date(t).toLocaleString('ar-IQ',{timeZone:'Asia/Baghdad',day:'n
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600);}
 let unsubs=[],PEND=[],HIST=[],seen=null;
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));['pend','hist','grant','player','users'].forEach(k=>$('#t-'+k).hidden=k!==b.dataset.t);if(b.dataset.t==='users')loadUsers();});
-$('#loginBtn').onclick=async()=>{const p=new A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});try{await A.signInWithPopup(auth,p);}catch(e){toast(e.code==='auth/popup-blocked'?'اسمح بالنوافذ المنبثقة وحاول مرة ثانية':'تعذّر الدخول');}};
+$('#loginBtn').onclick=async()=>{const p=new A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});try{await A.signInWithPopup(auth,p);}catch(e){$('#inApp').hidden=false;toast(e.code==='auth/popup-blocked'?'اسمح بالنوافذ المنبثقة وحاول مرة ثانية':e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/web-storage-unsupported'?'افتح اللوحة بـ Safari أو Chrome':'تعذّر الدخول');}};
 $('#outBtn').onclick=()=>A.signOut(auth);
+const URL0='https://ibra2002a.github.io/souq/admin.html';
+const inApp=/FBAN|FBAV|Instagram|Line\/|WhatsApp|Snapchat|Telegram|TikTok|Claude|wv\)|; wv/i.test(navigator.userAgent)||(/iPhone|iPad/.test(navigator.userAgent)&&!/Safari\//.test(navigator.userAgent));
+if(inApp)$('#inApp').hidden=false;
+$('#copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(URL0);toast('✅ انسخ الرابط، الصقه بـ Safari');}catch(e){prompt('انسخ الرابط:',URL0);}};
 A.onAuthStateChanged(auth,u=>{unsubs.forEach(f=>f());unsubs=[];
   if(!u){$('#app').hidden=true;$('#gate').hidden=false;$('#loginBtn').hidden=false;$('#gateMsg').textContent='لوحة تحكم المالك. ادخل بحساب Google المسموح له.';return;}
   if(!ADMINS.includes(String(u.email||'').toLowerCase())){$('#app').hidden=true;$('#gate').hidden=false;$('#gateMsg').innerHTML='⛔ هذا الحساب ('+esc(u.email)+') غير مسموح له.<br>ادخل بحساب المالك.';$('#loginBtn').textContent='جرّب حساب ثاني';A.signOut(auth).catch(()=>{});return;}
