@@ -22,7 +22,8 @@ header{display:flex;align-items:center;gap:10px;justify-content:space-between}
 header h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px} header h1 img{width:34px;height:34px;border-radius:9px}
 .who{font-size:12px;color:var(--muted);text-align:end}
 .btn{background:var(--brass);color:#141414} .ghost{background:none;border:1px solid var(--line);color:var(--ink)} .ok{background:var(--good);color:#06130b} .no{background:none;border:1px solid var(--bad);color:var(--bad)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px} .stats4{grid-template-columns:repeat(4,1fr)} .stats4 b{font-size:17px}
+.urow{display:flex;justify-content:space-between;gap:8px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13.5px} .urow small{color:var(--muted);display:block;font-size:11.5px} .urow .on{color:var(--good)}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
 .stat span{font-size:12px;color:var(--muted)} .stat b{font-size:20px}
 .tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:5px;overflow-x:auto}
@@ -65,11 +66,18 @@ a{color:var(--blue)}
       <div class="stat"><span>دخل اليوم</span><b id="sDay">٠</b></div>
       <div class="stat"><span>دخل هذا الشهر</span><b id="sMonth">٠</b></div>
     </div>
+    <div class="stats stats4">
+      <div class="stat"><span>👥 المسجلين</span><b id="sUsers">…</b></div>
+      <div class="stat"><span>🆕 سجلوا اليوم</span><b id="sToday">…</b></div>
+      <div class="stat"><span>🟢 أونلاين هسه</span><b id="sOnline">…</b></div>
+      <div class="stat"><span>🎮 لعبوا</span><b id="sPlayed">…</b></div>
+    </div>
     <nav class="tabs">
       <button data-t="pend" aria-selected="true">📥 الطلبات<i class="badge" id="bPend" hidden></i></button>
       <button data-t="hist" aria-selected="false">📜 السجل</button>
       <button data-t="grant" aria-selected="false">🎁 منح</button>
       <button data-t="player" aria-selected="false">🔍 لاعب</button>
+      <button data-t="users" aria-selected="false">👥 اللاعبين</button>
     </nav>
     <section class="card" id="t-pend"><h2>طلبات الشحن الجديدة</h2><div id="pendList"></div>
       <label style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)"><input type="checkbox" id="sndChk" style="width:auto" checked> صوت وإشعار لما يوصل طلب جديد</label></section>
@@ -79,6 +87,7 @@ a{color:var(--blue)}
       <div class="row"><label>💎 جواهر<input id="gGem" type="number" min="0" value="0" inputmode="numeric"></label><label>🪙 ذهب<input id="gGold" type="number" min="0" value="0" inputmode="numeric"></label></div>
       <label>السبب (يشوفه اللاعب)<input id="gNote" maxlength="40" value="هدية من الإدارة"></label>
       <button class="btn" id="gGo">امنح</button><div id="gOut" style="color:var(--muted);font-size:13px"></div></section>
+    <section class="card" id="t-users" hidden><h2>آخر اللاعبين المسجلين</h2><div id="usersList"><div class="empty">جاري التحميل…</div></div></section>
     <section class="card" id="t-player" hidden><h2>معلومات لاعب</h2>
       <label>رقم حساب اللاعب<input id="pPid" placeholder="SQ-XXXXXX" maxlength="12"></label><button class="btn" id="pGo">ابحث</button><div id="pOut"></div></section>
   </div>
@@ -95,7 +104,7 @@ const pidFmt=v=>{const c=String(v||'');return c.length===8?c.slice(0,2)+'-'+c.sl
 const when=t=>new Date(t).toLocaleString('ar-IQ',{timeZone:'Asia/Baghdad',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600);}
 let unsubs=[],PEND=[],HIST=[],seen=null;
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));['pend','hist','grant','player'].forEach(k=>$('#t-'+k).hidden=k!==b.dataset.t);});
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));['pend','hist','grant','player','users'].forEach(k=>$('#t-'+k).hidden=k!==b.dataset.t);if(b.dataset.t==='users')loadUsers();});
 $('#loginBtn').onclick=async()=>{const p=new A.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});try{await A.signInWithPopup(auth,p);}catch(e){toast(e.code==='auth/popup-blocked'?'اسمح بالنوافذ المنبثقة وحاول مرة ثانية':'تعذّر الدخول');}};
 $('#outBtn').onclick=()=>A.signOut(auth);
 A.onAuthStateChanged(auth,u=>{unsubs.forEach(f=>f());unsubs=[];
@@ -107,7 +116,17 @@ function start(){
     PEND=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.ts-b.ts);const ids=new Set(PEND.map(t=>t.id));
     if(seen){const fresh=PEND.filter(t=>!seen.has(t.id));if(fresh.length)alertNew(fresh);}seen=ids;renderPend();},e=>toast('ما عندك صلاحية: '+e.code)));
   const hist=st=>unsubs.push(F.onSnapshot(F.query(F.collection(db,'topups'),F.where('status','==',st),F.limit(300)),s=>{HIST=HIST.filter(x=>x.status!==st).concat(s.docs.map(d=>({id:d.id,...d.data()})));renderHist();},()=>{}));
-  hist('approved');hist('rejected');}
+  hist('approved');hist('rejected');loadStats();setInterval(loadStats,60000);}
+async function cnt(q){try{if(F.getCountFromServer){const r=await F.getCountFromServer(q);return r.data().count;}const r=await F.getDocs(q);return r.size;}catch(e){return null;}}
+const day0=()=>{const d=Date.now()+3*36e5;return d-d%864e5-3*36e5;};
+async function loadStats(){const P=F.collection(db,'profiles');
+  const [u,t,o,g]=await Promise.all([cnt(P),cnt(F.query(P,F.where('joined','>=',day0()))),cnt(F.query(F.collection(db,'presence'),F.where('ts','>',Date.now()-3e5))),cnt(F.collection(db,'gboard'))]);
+  const show=(id,v)=>{$(id).textContent=v===null?'—':n(v);};show('#sUsers',u);show('#sToday',t);show('#sOnline',o);show('#sPlayed',g);}
+async function loadUsers(){const L=$('#usersList');try{const [ps,pr]=await Promise.all([F.getDocs(F.query(F.collection(db,'profiles'),F.orderBy('joined','desc'),F.limit(40))),F.getDocs(F.query(F.collection(db,'presence'),F.where('ts','>',Date.now()-3e5)))]);
+    const online=new Set(pr.docs.map(d=>d.id));
+    L.innerHTML=ps.docs.length?ps.docs.map(d=>{const x=d.data();return `<div class="urow"><span><b>${esc(String(x.name||'لاعب').slice(0,24))}</b>${online.has(d.id)?' <span class="on">● أونلاين</span>':''}<small>${pidFmt(x.pid)} · سجّل ${x.joined?when(x.joined):'—'}</small></span><button class="ghost" data-p="${esc(x.pid||'')}" style="padding:6px 10px">عرض</button></div>`;}).join(''):'<div class="empty">ماكو لاعبين بعد.</div>';
+    L.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{if(!b.dataset.p)return;$('#pPid').value=b.dataset.p;document.querySelector('.tabs [data-t="player"]').click();$('#pGo').click();});}
+  catch(e){L.innerHTML='<div class="empty">تعذّر التحميل: '+esc(e.code||e.message)+'</div>';}}
 function alertNew(list){const t=list[list.length-1];if(!$('#sndChk').checked)return;
   try{const a=new (window.AudioContext||window.webkitAudioContext)();[880,1175,1568].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;o.connect(g);g.connect(a.destination);const s=a.currentTime+i*.12;g.gain.setValueAtTime(.15,s);g.gain.exponentialRampToValueAtTime(.001,s+.25);o.start(s);o.stop(s+.3);});}catch(e){}
   try{navigator.vibrate&&navigator.vibrate([100,60,100]);}catch(e){}

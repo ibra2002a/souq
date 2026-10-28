@@ -622,8 +622,13 @@ service cloud.firestore {
                  && request.resource.data.max == resource.data.uids.size()
                  && request.resource.data.pc.size() == resource.data.uids.size() * 4)
               || request.resource.data.status == 'cancel'))
+        || (resource.data.status == 'play' && request.auth.uid == resource.data.uids[resource.data.turn]
+            && changed().hasOnly(['rr'])
+            && request.resource.data.rr is int && request.resource.data.rr == resource.data.get('rr', 0) + 1
+            && request.resource.data.rr <= 3)
         || (resource.data.status == 'play' && request.auth.uid in resource.data.uids
-            && changed().hasOnly(['pc', 'seq', 'turn', 'six', 'last', 'ts', 'status', 'winner'])
+            && changed().hasOnly(['pc', 'seq', 'turn', 'six', 'last', 'ts', 'status', 'winner', 'rr'])
+            && request.resource.data.get('rr', 0) == 0
             && request.resource.data.seq == resource.data.seq + 1
             && request.resource.data.status in ['play', 'done']
             && request.resource.data.pc.size() == resource.data.pc.size()

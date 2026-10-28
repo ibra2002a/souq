@@ -31,7 +31,7 @@
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
-[hidden]{display:none!important}.adm-link{display:block;text-align:center;padding:10px;border-radius:12px;text-decoration:none}
+[hidden]{display:none!important}.lu-rr{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 16px!important;border-color:#7fd3ff!important;color:#cfefff!important}.lu-rr small{font-size:11px;font-weight:400}.adm-link{display:block;text-align:center;padding:10px;border-radius:12px;text-decoration:none}
 #cash{cursor:pointer;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:26px}
 #cash .cd{font-size:20px;color:#7fd3ff} #cash .cw{font-size:14px;border:1px solid var(--brass);border-radius:999px;width:26px;height:26px;display:grid;place-items:center;color:var(--brass)}
 #cash.ask .cw{background:var(--bad);border-color:var(--bad);color:#fff;animation:recPulse .8s infinite alternate}
@@ -1653,7 +1653,7 @@ document.querySelectorAll('#segSoc button').forEach(b=>b.onclick=()=>setSoc(b.da
 function renderSocial(){if(socTab==='elec')renderElec();else if(socTab==='chat')renderChat();else if(socTab==='ally')renderAlly();else if(socTab==='duel')renderDuel();}
 
 /* ---------- Wallet ledger & stats ---------- */
-const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],land:['🏠','شراء عقار'],topup:['💎','شحن'],ludo:['🎲','لودو'],room:['🎉','سهرة'],gift2:['🎁','هدية بالسهرة'],build:['🏗️','بناء'],edu:['🎓','تعلّم'],landS:['🏚️','بيع عقار'],rent:['🏠','إيجار'],share:['📈','شراء أسهم'],divIn:['💵','أرباح أسهم'],divOut:['💵','توزيع أرباح'],fire:['📄','فصل مدير'],bonus:['🎁','مكافأة مدير'],strike:['✊','إضراب'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
+const LEDI={gift:['🎁','هدية'],task:['✅','مهمة'],tradeW:['📈','ربح بورصة'],tradeL:['📉','خسارة بورصة'],rank:['🏅','ترقية'],loan:['🏦','قرض'],repay:['🏦','سداد'],seize:['⛔','حجز'],theft:['🕵️','سرقة'],land:['🏠','شراء عقار'],reroll:['🔁','إعادة رمي'],topup:['💎','شحن'],ludo:['🎲','لودو'],room:['🎉','سهرة'],gift2:['🎁','هدية بالسهرة'],build:['🏗️','بناء'],edu:['🎓','تعلّم'],landS:['🏚️','بيع عقار'],rent:['🏠','إيجار'],share:['📈','شراء أسهم'],divIn:['💵','أرباح أسهم'],divOut:['💵','توزيع أرباح'],fire:['📄','فصل مدير'],bonus:['🎁','مكافأة مدير'],strike:['✊','إضراب'],p2pS:['🤝','بيع للاعب'],p2pB:['🤝','شراء من لاعب'],auc:['🔨','مزاد'],duel:['⚔️','تحدي'],ref:['👥','دعوة'],wheel:['🎡','عجلة الحظ'],xferIn:['📥','تحويل وارد'],tax:['💸','ضريبة'],quit:['🚪','استقالة'],neglect:['🏚️','إهمال'],spoil:['🌾','تلف'],ins:['🛡️','تأمين'],xferOut:['📤','تحويل صادر'],lend:['🤝','إقراض'],borrow:['🤝','قرض من لاعب'],lrepay:['💳','سداد قرض'],lback:['💰','استرداد قرض']};
 function led(k,a,n){if(!S||!Array.isArray(S.led))return;S.led.unshift({t:Date.now(),k,a:Math.round(a),n:String(n||'').slice(0,60)});if(S.led.length>80)S.led.length=80;meSig='';}
 function tradeStat(pl,vol){S.tr.vol+=vol;if(pl>0)S.tr.w++;else if(pl<0)S.tr.l++;S.tr.best=Math.max(S.tr.best,pl);S.tr.worst=Math.min(S.tr.worst,pl);}
 function histTick(){const h=S.hist,now=Date.now();if(!h.length||now-h[h.length-1][0]>=5*6e4){h.push([now,Math.round(worth())]);if(h.length>288)h.splice(0,h.length-288);}}
@@ -2814,7 +2814,7 @@ const lcell=([c,r],k)=>lrot([c+.5,r+.5],k);
 function lpos(k,j,v){if(v<0)return lrot([[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]][j].map(n=>n+.5),k);
   if(v<=50)return lcell(LTRACK[v],k);if(v<=55)return lcell([v-50,7],k);const o=[[-.35,-.35],[.35,-.35],[-.35,.35],[.35,.35]][j];return lrot([6.6+o[0]*.6,7.5+o[1]*.6],k);}
 const labs=(k,v)=>v>=0&&v<=50?(v+13*k)%52:-1;
-const ldie=(gid,seq)=>hashStr('ludo:'+gid+':'+seq)%6+1;
+const ldie=(gid,seq,rr)=>hashStr('ludo:'+gid+':'+seq+(rr?':r'+rr:''))%6+1,RRCOST=5,RRMAX=3;
 function lmoves(g,seat,d){const out=[];for(let j=0;j<4;j++){const v=g.pc[seat*4+j];if(v<0){if(d===6)out.push({j,to:0});}else if(v<56&&v+d<=56)out.push({j,to:v+d});}return out;}
 function lapply(g,seat,d,m){const pc=g.pc.slice(),n=g.uids.length,k=LSEAT[n][seat];let cap=false;
   if(m){pc[seat*4+m.j]=m.to;const a=labs(k,m.to);
@@ -2851,6 +2851,7 @@ function openLudo(gid){closeLudo();const {doc,onSnapshot}=FB.F;LU.id=gid;LU.sig=
   LU.gu=onSnapshot(doc(FB.db,'ludo',gid),s=>{if(!s.exists()){closeLudo();return;}const prev=LU.g;LU.g={id:s.id,...s.data()};
     if(!prev&&LU.g.uids.includes(C.uid))setTimeout(()=>{fun.ding();say(jk('hi'),{key:'hi'+gid,force:1});},600);
     if(prev&&LU.g.status!==prev.status&&LU.g.status==='play'&&prev.status==='wait'){fun.drum();say(jk('start'),{force:1});}
+    if(prev&&prev.seq===LU.g.seq&&(LU.g.rr||0)>(prev.rr||0)&&LU.g.uids[LU.g.turn]!==C.uid){lsfx.dice();say(jk('rerollOther',{O:pn(LU.g,LU.g.turn)}));}
     if(prev)setTimeout(()=>narEvents(prev,LU.g),Math.max(0,LU.animUntil-Date.now()));
     if(prev&&LU.g.seq===prev.seq+1)luAnimate(prev,LU.g);else if(!prev||prev.seq!==LU.g.seq||!LU.disp||prev.status!==LU.g.status||(LU.disp.length!==(LU.g.pc||[]).length))LU.disp=(LU.g.pc||[]).slice();
     if(LU.g.status==='done'&&(!prev||prev.status!=='done'))ludoEnd(LU.g);if(LU.g.status==='cancel')ludoSettle(LU.g);renderLudo();},()=>{});
@@ -2860,17 +2861,26 @@ async function ludoStart(){const g=LU.g;if(!g||g.host!==C.uid||g.uids.length<2)r
   try{await updateDoc(doc(FB.db,'ludo',g.id),{status:'play',pc:Array(g.uids.length*4).fill(-1),turn:0,seq:0,six:0,ts:Date.now(),max:g.uids.length});roomMsg('🎲 بدأت لعبة اللودو!','msg');}catch(e){toast('تعذّر البدء');}}
 async function ludoCancel(){const g=LU.g;if(!g)return;const {doc,updateDoc}=FB.F;try{await updateDoc(doc(FB.db,'ludo',g.id),{status:'cancel',ts:Date.now()});}catch(e){toast('تعذّر الإلغاء');}}
 async function ludoCommit(g,seat,d,m){if(LU.busy)return;LU.busy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'ludo',g.id);
-  try{await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return;const x={id:r.id,...r.data()};if(x.seq!==g.seq||x.status!=='play'||x.turn!==seat)return;tx.update(ref,lapply(x,seat,d,m));});}
+  try{await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return;const x={id:r.id,...r.data()};if(x.seq!==g.seq||(x.rr||0)!==(g.rr||0)||x.status!=='play'||x.turn!==seat)return;tx.update(ref,{...lapply(x,seat,d,m),rr:0});});}
   catch(e){}LU.busy=false;LU.rolled=-1;}
 function ludoRollFx(){}
 function ludoRoll(){const g=LU.g;if(!g||g.status!=='play'||g.uids[g.turn]!==C.uid||LU.rolled===g.seq)return;LU.rolled=g.seq;LU.anim=Date.now();narUnlock();lsfx.dice();LU.sig='';renderLudo();
-  setTimeout(()=>{if(!LU.g||LU.g.seq!==g.seq)return;const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d);LU.sig='';renderLudo();
-    if(!mv.length||(d===6&&(g.six||0)>=2)){setTimeout(()=>ludoCommit(g,g.turn,d,null),900);}
-    else if(mv.length===1||new Set(mv.map(m=>g.pc[g.turn*4+m.j])).size===1)setTimeout(()=>ludoCommit(g,g.turn,d,mv[0]),450);},900);}
-function ludoPick(j){const g=LU.g;if(!g||LU.rolled!==g.seq||Date.now()-LU.anim<900||Date.now()<LU.animUntil)return;const d=ldie(g.id,g.seq),m=lmoves(g,g.turn,d).find(x=>x.j===j);if(m)ludoCommit(g,g.turn,d,m);}
+  setTimeout(()=>ludoAutoMove(g.seq,g.rr||0),900);}
+const canReroll=g=>(g.rr||0)<RRMAX&&(S.gems||0)>=RRCOST;
+function ludoAutoMove(seq,rr){const g=LU.g;if(!g||g.seq!==seq||(g.rr||0)!==rr||LU.rolled!==seq)return;const d=ldie(g.id,g.seq,g.rr),mv=lmoves(g,g.turn,d),rc=canReroll(g);LU.sig='';renderLudo();
+  const still=()=>LU.g&&LU.g.seq===seq&&(LU.g.rr||0)===rr&&!LU.rrBusy;
+  if(!mv.length||(d===6&&(g.six||0)>=2)){setTimeout(()=>{if(still())ludoCommit(LU.g,g.turn,d,null);},rc?3200:900);}
+  else if(mv.length===1||new Set(mv.map(m=>g.pc[g.turn*4+m.j])).size===1)setTimeout(()=>{if(still())ludoCommit(LU.g,g.turn,d,mv[0]);},rc?1800:450);}
+async function ludoReroll(){const g=LU.g;if(!g||g.status!=='play'||g.uids[g.turn]!==C.uid||LU.rolled!==g.seq||LU.busy||LU.rrBusy)return;
+  if((g.rr||0)>=RRMAX){toast('خلصت محاولات الإعادة لهذا الدور');return;}if((S.gems||0)<RRCOST){toast('تحتاج '+ad(RRCOST)+' 💎 للإعادة، اشحن من المحفظة');openWallet();return;}
+  LU.rrBusy=true;const {doc,runTransaction}=FB.F,ref=doc(FB.db,'ludo',g.id),rr0=g.rr||0;
+  try{const ok=await runTransaction(FB.db,async tx=>{const r=await tx.get(ref);if(!r.exists())return false;const x=r.data();if(x.seq!==g.seq||(x.rr||0)!==rr0||x.status!=='play')return false;tx.update(ref,{rr:rr0+1});return true;});
+    if(ok){S.gems-=RRCOST;led('reroll',-RRCOST*GEMX,'إعادة رمي باللودو');save();LU.anim=Date.now();lsfx.dice();say(jk('reroll'),{force:1});LU.sig='';setTimeout(()=>ludoAutoMove(g.seq,rr0+1),950);}}
+  catch(e){toast('تعذّرت الإعادة');}LU.rrBusy=false;}
+function ludoPick(j){const g=LU.g;if(!g||LU.rolled!==g.seq||Date.now()-LU.anim<900||Date.now()<LU.animUntil)return;const d=ldie(g.id,g.seq,g.rr),m=lmoves(g,g.turn,d).find(x=>x.j===j);if(m)ludoCommit(g,g.turn,d,m);}
 function ludoAuto(){const g=LU.g;if(!g||g.status!=='play'||LU.busy||Date.now()-(g.ts||0)<LTO||isBot(g.uids[g.turn]))return;const n=g.uids.length,me=g.uids.indexOf(C.uid);if(me<0)return;
   let helper=(g.turn+1)%n;for(let i=1;i<n;i++){const s2=(g.turn+i)%n;if(!isBot(g.uids[s2])){helper=s2;break;}}if(me!==helper&&g.uids[g.turn]!==C.uid&&Date.now()-(g.ts||0)<2*LTO)return;
-  const d=ldie(g.id,g.seq),mv=lmoves(g,g.turn,d).sort((a,b)=>b.to-a.to);ludoCommit(g,g.turn,d,(d===6&&(g.six||0)>=2)?null:mv[0]||null);}
+  const d=ldie(g.id,g.seq,g.rr),mv=lmoves(g,g.turn,d).sort((a,b)=>b.to-a.to);ludoCommit(g,g.turn,d,(d===6&&(g.six||0)>=2)?null:mv[0]||null);}
 function ludoEnd(g){const st=g.stake||0,pot=st*g.uids.length,win=g.winner===C.uid,wi=g.uids.indexOf(g.winner),wn=String(g.names[wi]||'لاعب').slice(0,24);
   if(g.uids.includes(C.uid))gxAward('ludo',win,g.uids.some(isBot),g.id);
   if(win){tourWin(g.uids.some(isBot));confetti();bump(g.uids.some(isBot)?'botWins':'ludoHuman');toast('🏆 فزت باللودو!'+(pot?' تقبض '+fmt(pot):''));bump('ludoWins');if(pot>=1e8)news('ludo',myN()+' يفوز بلودو وقبض '+fmt(pot),pot);}
@@ -2956,7 +2966,7 @@ function botTick(){const g=LU.g;if(!g||g.status!=='play'||LU.busy||!isBot(g.uids
   let driver=g.host;if(Date.now()-(g.ts||0)>LTO){driver=g.uids.find(u=>!isBot(u)&&u!==g.host)||g.host;}
   if(Date.now()-(g.ts||0)>2*LTO)driver=C.uid;if(driver!==C.uid)return;
   if(Date.now()-(g.ts||0)<1400+(hashStr(g.id+g.seq)%900))return;
-  const d=ldie(g.id,g.seq),m=(d===6&&(g.six||0)>=2)?null:botPick(g,g.turn,d);ludoCommit(g,g.turn,d,m);}
+  const d=ldie(g.id,g.seq,g.rr),m=(d===6&&(g.six||0)>=2)?null:botPick(g,g.turn,d);ludoCommit(g,g.turn,d,m);}
 /* --- Arabic voice narrator for ludo (Web Speech API; shows a subtitle bubble too) --- */
 const NAR={on:true,voice:null,unlocked:false,last:0,said:{},q:[]};try{NAR.on=localStorage.getItem('souq-nar')!=='0';}catch(e){}
 function narVoice(){if(!('speechSynthesis' in window))return null;if(NAR.voice)return NAR.voice;const vs=speechSynthesis.getVoices()||[];
@@ -2971,11 +2981,11 @@ function say(lines,opt){if(!NAR.on)return;const o=opt||{},now=Date.now();if(o.ke
   try{if(speechSynthesis.speaking&&!o.queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\p{Extended_Pictographic}|\uFE0F/gu,''));u.voice=v;u.lang=v.lang;u.rate=o.rate||1.08;u.pitch=o.pitch||1.12;u.volume=1;speechSynthesis.speak(u);}catch(e){}}
 const nm1=()=>String(myN()).replace(/^🤖\s*/,'').split(' ')[0];
 function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;const n=g.uids.length,seats=LSEAT[Math.max(2,Math.min(4,n))]||LSEAT[4],me=g.uids.indexOf(C.uid),now=Date.now();
-  const myTurn=g.status==='play'&&g.turn===me,rolled=myTurn&&LU.rolled===g.seq,rolling=rolled&&now-LU.anim<900,anim=now<LU.animUntil,d=rolled&&!rolling?ldie(g.id,g.seq):0,mv=d&&!anim?lmoves(g,me,d):[];
+  const myTurn=g.status==='play'&&g.turn===me,rolled=myTurn&&LU.rolled===g.seq,rolling=rolled&&now-LU.anim<900,anim=now<LU.animUntil,d=rolled&&!rolling?ldie(g.id,g.seq,g.rr):0,mv=d&&!anim?lmoves(g,me,d):[];
   if(myTurn&&LU.myTurnSeq!==g.seq&&!anim){LU.myTurnSeq=g.seq;lsfx.turn();narTurn(g);}
   if(myTurn&&!rolled&&g.ts+LTO-now<6e3&&g.ts+LTO-now>0)narHurry(g);
   const left=g.status==='play'?Math.max(0,Math.ceil((g.ts+LTO-now)/1000)):0;
-  const sig=JSON.stringify([g.seq,g.status,g.uids,rolled,rolling,anim,left,LU.busy]);if(sig===LU.sig)return;LU.sig=sig;
+  const sig=JSON.stringify([g.seq,g.rr,g.status,g.uids,rolled,rolling,anim,left,LU.busy,S.gems]);if(sig===LU.sig)return;LU.sig=sig;
   luStatic(n>=2?seats:[0,1,2,3]);
   const at=k=>seats.indexOf(k);$('#luTop').innerHTML=luPanel(g,at(0),seats,now)+luPanel(g,at(1),seats,now);$('#luBot').innerHTML=luPanel(g,at(3),seats,now)+luPanel(g,at(2),seats,now);
   applyBubbles();box.querySelectorAll('[data-luav]').forEach(el=>{if(isBot(el.dataset.luav)){el.textContent='🤖';el.style.background='#2a3a66';return;}paintAv(el,null,el.dataset.n);lvlBadge(el,el.dataset.luav);getProf(el.dataset.luav).then(p=>{if(p)paintAv(el,p.avatar,p.name||el.dataset.n);});});
@@ -2988,7 +2998,7 @@ function renderLudo(){const g=LU.g,box=$('#ludoUi');if(!g||box.hidden)return;con
     act.innerHTML=g.host===C.uid?`${n<g.max?'<button class="hire" id="luBots">أكمل ببوتات 🤖</button>':''}<button class="buy" id="luGo"${n<2?' disabled':''}>ابدأ ▶</button><button class="hire" id="luX">ألغِ</button>`:me>=0?'<span class="note">بانتظار صاحب اللعبة يبدأ…</span>':'';}
   else if(g.status==='play'){const tn=String(g.names[g.turn]||'').slice(0,16);
     info.textContent=myTurn?(rolled&&!rolling&&!anim?(mv.length?(d===6&&(g.six||0)>=2?'ثلاث ستات! راح دورك':'اختر القطعة اللي تضوي'):'ما عندك حركة بهذا الرقم'):'دورك!'):'دور '+tn+(g.last&&g.last.cap&&!anim?' · 💥 أكلة!':'');
-    act.innerHTML=myTurn&&!rolled&&!anim?'<button class="buy lu-roll" id="luRoll">ارمِ النرد</button>':'';}
+    act.innerHTML=myTurn&&!rolled&&!anim?'<button class="buy lu-roll" id="luRoll">ارمِ النرد</button>':myTurn&&rolled&&!rolling&&!anim&&(g.rr||0)<RRMAX?`<button class="hire lu-rr" id="luRR">🔁 أعد الرمي <small>${ad(RRCOST)} 💎 · باقي ${ad(RRMAX-(g.rr||0))}</small></button>`:'';{const rb=$('#luRR');if(rb)rb.onclick=ludoReroll;}}
   else{info.textContent=g.status==='done'?'انتهت اللعبة':'انلغت اللعبة';act.innerHTML='';}
   const w=$('#luWin');if(g.status==='done'&&!anim){if(LU.winShown!==g.id){LU.winShown=g.id;const wi=g.uids.indexOf(g.winner),k=seats[wi];
       w.innerHTML=`<div class="lw-c" style="--c:${LGRAD[k][1]}"><span class="lw-t">🏆</span><span class="av lw-av" id="lwAv"></span><b>${eh(String(g.names[wi]||'').slice(0,24))}</b><span>${g.winner===C.uid?'مبروك! فزت باللعبة':'فاز باللعبة'}</span>${g.stake?`<span class="lw-pot num">+${fmt(g.stake*n)}</span>`:''}
@@ -3386,6 +3396,8 @@ const JOKE={
   madeThem:['نجحت طلبتهم… خلّي نردّها الجولة الجاية'],
   brokeUs:['انكسرت الطلبة يا {N}… طلبت هواية!','انكسرت! يا {N} الطمع ما يفيد'],
   brokeThem:['كسرناهم! يستاهلون، طمعوا بالطلبة','انكسرت طلبتهم! ياااا سلام'],
+  reroll:['أعاد الرمي! يا ربي ستّة… يا ربي ستّة!','الجواهر تتكلم! خلّي نشوف هالمرة','إعادة! الحظ ينشرى بالجواهر لو شنو؟'],
+  rerollOther:['{O} دفع جواهر وأعاد الرمي! شغلة فلوس','{O} يعيد الرمي… شكله زعلان من الرقم'],
   waitFind:['ندوّر لك لاعبين يا {N}… انتظر شوية، الناس بالطريق','لحظة يا {N}، نجمّع اللمّة'],
   waitBots:['باقي {K} ثانية، إذا ما أحد إجا نجيب بوتات… والبوتات ما تجامل!']};
 function jk(key,v){const a=JOKE[key]||[''],t=a[Math.floor(Math.random()*a.length)];return t.replace(/\{(\w)\}/g,(_,k)=>v&&v[k]!==undefined?String(v[k]):k==='N'?nm1():'');}
